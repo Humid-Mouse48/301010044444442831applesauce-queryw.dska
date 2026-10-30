@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Gorilla Tag Web</title>
+    <link rel="shortcut icon" href="gtag/TemplateData/favicon.ico">
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #231F20;
+      }
+      #unity-container {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        background: #231F20;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      /* Hide unused default unity elements */
+      #unity-logo,
+      #unity-fullscreen-button,
+      #unity-footer,
+      #unity-build-title,
+      #unity-webgl-logo,
+      #unity-warning {
+        display: none !important;
+      }
+
+      /* Loading bar track styling */
+      #unity-loading-bar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        z-index: 1000;
+      }
+      #unity-progress-bar-empty {
+        width: 350px !important;
+        height: 16px !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        padding: 2px !important;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+        box-sizing: border-box !important;
+      }
+      #unity-progress-bar-full {
+        height: 100% !important;
+        background-color: #00ff99 !important;
+        background: #00ff99 !important;
+        border-radius: 6px !important;
+        transition: width 0.1s ease-out;
+        box-sizing: border-box !important;
+      }
+
+      /* Tiny minimalist crosshair injected on top of the container */
+      #game-crosshair {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 8px !important;
+        height: 8px !important;
+        pointer-events: none !important;
+        display: none; /* Hidden during loading, shown when game starts */
+        z-index: 2147483647 !important;
+      }
+      #game-crosshair::before,
+      #game-crosshair::after {
+        content: '' !important;
+        position: absolute !important;
+        background-color: #00ff99 !important;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+      }
+      /* Horizontal line */
+      #game-crosshair::before {
+        top: 3px !important;
+        left: 0 !important;
+        width: 8px !important;
+        height: 2px !important;
+      }
+      /* Vertical line */
+      #game-crosshair::after {
+        top: 0 !important;
+        left: 3px !important;
+        width: 2px !important;
+        height: 8px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <!-- Crosshair inside container -->
+      <div id="game-crosshair"></div>
+    </div>
+
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var crosshair = document.querySelector("#game-crosshair");
+
+      // Aggressively force height, background color, and styling attributes every 10ms
+      var styleLock = setInterval(function() {
+        if (progressBarFull) {
+          progressBarFull.style.cssText = "height: 100% !important; background-color: #00ff99 !important; background: #00ff99 !important; border-radius: 6px !important; width: " + (progressBarFull.style.width || "0%") + ";";
+        }
+      }, 10);
+
+      var buildUrl = "gtag/Build";
+      var loaderUrl = buildUrl + "/gtagweb.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/gtagweb.data.unityweb",
+        frameworkUrl: buildUrl + "/gtagweb.framework.js.unityweb",
+        codeUrl: buildUrl + "/gtagweb.wasm.unityweb",
+        streamingAssetsUrl: "gtag/StreamingAssets",
+        companyName: "boolonx",
+        productName: "gorilla tag web",
+        productVersion: "1.0",
+      };
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, function(progress) {
+          if (progressBarFull) {
+            progressBarFull.style.width = (100 * progress) + "%";
+          }
+        }).then((unityInstance) => {setTimeout(() => {
+  try {
+    unityInstance.SendMessage('LeftHandController', 'SetLocalPosition', '-0.6, 0.0, 0.5'); 
+    unityInstance.SendMessage('RightHandController', 'SetLocalPosition', '0.6, 0.0, 0.5');
+  } catch (e) {
+    unityInstance.SendMessage('LeftHandTrigger', 'transform.localPosition.x', -0.6);
+    unityInstance.SendMessage('RightHandTrigger', 'transform.localPosition.x', 0.6);
+  }
+}, 3500);
+
+          clearInterval(styleLock);
+          if (loadingBar) {
+            loadingBar.style.display = "none";
+          }
+          if (crosshair) {
+            crosshair.style.display = "block";
+          }
+        }).catch((message) => {
+          clearInterval(styleLock);
+          console.error(message);
+        });
+      };
+
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

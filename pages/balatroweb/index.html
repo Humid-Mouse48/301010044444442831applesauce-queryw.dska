@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>const PREFIX = "Balatro_vanilla_";const originalOpen = indexedDB.open;const originalDeleteDatabase = indexedDB.deleteDatabase;indexedDB.open = function(name, version) {const prefixedName = PREFIX + name;return version !== undefined?originalOpen.call(this, prefixedName, version):originalOpen.call(this, prefixedName);};indexedDB.deleteDatabase = function(name) {const prefixedName = PREFIX + name;return originalDeleteDatabase.call(this, prefixedName);};</script><script src="love.min.js"></script><title>Love.js</title><style>
+#canvas {position:absolute;top: 0;left: 0;width: 100vw;height: 100vh;}
+body {width: 100vw;height: 100vh;margin: 0px; background-color: #111; color: white; font-family: sans-serif;}
+#loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    z-index: 10;
+}
+#loading img {
+    width: 80px; /* Adjust this value if you want it smaller or larger */
+    height: auto;
+    image-rendering: pixelated; /* Keeps pixel art sharp */
+}
+</style></head>
+<body>
+<div id="loading">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYf7I8DiFw-F05FTmXDJhlSvhOdoTopP_kbQm2Vf-RFw&s=10" alt="Joker">
+    <div>Loading...</div>
+</div>
+<canvas id="canvas"></canvas>
+<script src="module.js"></script>
+<script>(async()=>{const d=await getSource();Module={INITIAL_MEMORY:2**28,canvas:canvas,printErr:console.error,arguments:["game.love"]};Module.preRun = [function(){Module.addRunDependency("fp game.love");var ptr = Module.getMemory(d.length);Module['HEAPU8'].set(d, ptr);Module.FS_createDataFile('/', "game.love", d, true, true, true);Module.removeRunDependency("fp game.love")}];
+Module.onRuntimeInitialized = function() {
+    const loadingEl = document.getElementById('loading');
+    if (loadingEl) {
+        loadingEl.style.display = 'none';
+    }
+};
+Love(Module)})()</script>
+</body></html>

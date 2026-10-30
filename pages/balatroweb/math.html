@@ -1,0 +1,2676 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IXL | Math, Language Arts, Science, Social Studies, and Spanish</title> 
+<link
+  rel="icon"
+  href="/ixl-favicon.png"
+  type="image/png"
+>
+
+<meta name="title" content="IXL | Math, Language Arts, Science, Social Studies, and Spanish">
+
+<meta name="google-adsense-account" content="ca-pub-1740887682850526">
+
+
+<meta name="description" content="IXL is the world's most popular subscription-based learning site for K–12. Used by over 18 million students, IXL provides personalized learning in more than 20,000 topics, covering math, language arts, science, social studies, and Spanish. Interactive questions, awards, and certificates keep kids motivated as they master skills.">
+  
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1740887682850526"
+     crossorigin="anonymous"></script>
+
+
+<!-- 1. The full-page image -->
+<img id="timed-image" src="/ixlfaker.png" alt="dummyimage" class="fullscreen-img">
+
+<!-- 2. The CSS styling to force it to fill the entire screen -->
+<style>
+    .fullscreen-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 2147483647;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<!-- 3. The JavaScript to hide it after 2 seconds -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      const img = document.getElementById('timed-image');
+      if (img) img.style.display = 'none';
+    }, 2000); // 4000 milliseconds = 4 seconds
+  });
+</script>
+
+
+
+  
+  <style>
+    :root {
+      --primary-color: #1e293b; 
+      --secondary-color: #00ff99; 
+      --text-main: #ffffff; 
+      --text-muted: #64748b;
+      --radius-card: 12px; 
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.15);
+    }
+
+    body {
+      background-color: #010206; 
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body.game-active {
+      overflow: hidden;
+      padding: 0 !important;
+    }
+
+    /* --- Menu Button Top Left --- */
+    .menu-toggle-btn {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      background-color: var(--primary-color);
+      color: var(--text-main);
+      border: 2px solid #334155;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 1000;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-toggle-btn:hover {
+      border-color: var(--secondary-color);
+      color: var(--secondary-color);
+      box-shadow: 0 0 10px rgba(0, 255, 153, 0.2);
+    }
+
+    .menu-toggle-btn:hover .icon-svg {
+      stroke: var(--secondary-color);
+    }
+
+    .side-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 10001;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .side-menu-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 260px;
+      height: 100%;
+      background-color: #0f172a;
+      border-right: 2px solid #334155;
+      z-index: 10002;
+      padding: 24px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu.open {
+      left: 0;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+
+    .close-menu-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      transition: var(--transition);
+    }
+
+    .close-menu-btn:hover {
+      color: #ef4444;
+    }
+
+    .close-menu-btn:hover .icon-svg {
+      stroke: #ef4444;
+    }
+
+    .menu-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .menu-item-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      background-color: var(--primary-color);
+      color: var(--text-main);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    .menu-item-btn:hover {
+      border-color: var(--secondary-color);
+      color: var(--text-muted);
+      background-color: #1e293b;
+    }
+
+    .menu-item-btn:hover .icon-svg {
+      stroke: var(--secondary-color);
+    }
+
+    /* Icon Utilities */
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      stroke: #ffffff;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      flex-shrink: 0;
+      transition: stroke 0.3s ease;
+    }
+
+    /* --- Settings Modal Overlay --- */
+    .settings-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 10003;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .settings-modal {
+      background-color: #0f172a;
+      border: 2px solid #334155;
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 450px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+
+    .settings-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text-main);
+    }
+
+    .settings-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .setting-group label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .setting-input {
+      padding: 8px 12px;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .setting-input:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+    }
+
+    select.setting-input {
+      cursor: pointer;
+      color-scheme: dark;
+      color: var(--text-main);
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+      padding-right: 34px;
+    }
+
+    select.setting-input::-ms-expand {
+      display: none;
+    }
+
+    select.setting-input option {
+      background-color: #1e293b;
+      color: #ffffff;
+    }
+
+    /* --- Suggestions Modal Overlay --- */
+    .suggestions-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 10003;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .suggestions-modal {
+      background-color: #0f172a;
+      border: 2px solid #334155;
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 700px;
+      height: 80vh;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-sizing: border-box;
+    }
+
+    .suggestions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+
+    .suggestions-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text-main);
+    }
+
+    .suggestions-body {
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #1e293b;
+    }
+
+    .suggestions-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* --- Announcement Modal Overlay Styles --- */
+    .announcement-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 10004;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .announcement-modal {
+      background-color: #0f172a;
+      border: 2px solid #334155;
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 450px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+   .announcement-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+      text-align: center;
+    }
+
+    .announcement-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      width: 100%;
+      text-align: center;
+    }
+
+    .announcement-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .announcement-body p {
+      margin: 0;
+      color: var(--text-main);
+      line-height: 1.5;
+      text-align: center;
+      width: 100%;
+    }
+    .announcement-btn {
+      width: 100%;
+      padding: 10px 14px;
+      background-color: var(--primary-color);
+      color: var(--text-main);
+      border: 2px solid #334155;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 8px;
+      box-sizing: border-box;
+    }
+
+    .announcement-btn:hover {
+      border-color: var(--secondary-color);
+      color: var(--secondary-color);
+      box-shadow: 0 0 10px rgba(0, 255, 153, 0.2);
+    }
+
+    /* --- Centered Header & Search Layout --- */
+    .top-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; 
+      margin-bottom: 25px;
+      padding: 0 20px;
+      gap: 15px; 
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .logo-link:hover {
+      transform: scale(1.03); 
+    }
+
+    .site-logo {
+      height: 65px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center; 
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .search-icon .icon-svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+      transition: stroke 0.3s ease;
+    }
+
+    .search-wrapper:focus-within .search-icon .icon-svg {
+      stroke: var(--secondary-color);
+    }
+
+    #game-search {
+      width: 100%;
+      padding: 12px 45px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background-color: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 50px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    #game-search:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 4px rgba(0, 255, 153, 0.15);
+    }
+
+    #clear-search {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none;
+      padding: 4px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #clear-search .icon-svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+    }
+
+    #clear-search:hover .icon-svg {
+      stroke: #ef4444;
+    }
+
+    /* --- Category Filter Chips Container --- */
+    .categories-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      max-width: 800px;
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .category-chip {
+      background-color: var(--primary-color);
+      color: var(--text-muted);
+      border: 1.5px solid #334155;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .category-chip:hover {
+      border-color: var(--secondary-color);
+      color: var(--text-main);
+    }
+
+    .category-chip.active {
+      background-color: var(--secondary-color);
+      color: #010206;
+      border-color: var(--secondary-color);
+    }
+
+    /* --- Grid & Horizontal Card Styles --- */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); 
+      gap: 16px; 
+      padding: 0 20px;
+    }
+
+    @media (max-width: 1200px) {
+      .game-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .game-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end; 
+      aspect-ratio: 16 / 9;
+      height: auto;
+      padding: 12px; 
+      background-color: #1e293b;
+      border: 2px solid #334155;
+      border-radius: var(--radius-card);
+      cursor: pointer;
+      overflow: hidden; 
+      transition: var(--transition);
+      text-align: left;
+    }
+
+    .card-bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+      z-index: 1;
+      opacity: 0.75;
+      transition: var(--transition);
+    }
+
+    .game-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(1, 2, 6, 0.9) 0%, rgba(1, 2, 6, 0.2) 65%, transparent 100%);
+      z-index: 2;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-title {
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--secondary-color);
+      box-shadow: 0 8px 22px -4px rgba(0, 255, 153, 0.35);
+    }
+
+    .game-card:hover .card-bg-image {
+      transform: scale(1.06);
+      opacity: 0.95;
+    }
+
+    .no-results-msg {
+      display: none;
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 40px;
+    }
+
+    /* --- Full Screen Modal --- */
+    .full-screen-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 9999;
+      display: none;
+    }
+
+    .close-game-btn {
+      background-color: #1e293b;
+      color: #ffffff;
+      border: 2px solid #334155;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      z-index: 10000;
+    }
+
+    .close-game-btn:hover {
+      background-color: #ef4444;
+    }
+
+    /* --- In-Game Controls Container --- */
+    #game-controls {
+      position: absolute;
+      display: flex;
+      gap: 10px;
+      z-index: 10000;
+      transition: var(--transition);
+    }
+
+    #game-controls.corner-top-left {
+      top: 20px;
+      left: 20px;
+      right: auto;
+      bottom: auto;
+    }
+
+    #game-controls.corner-top-right {
+      top: 20px;
+      right: 20px;
+      left: auto;
+      bottom: auto;
+    }
+
+    #game-controls.corner-bottom-left {
+      bottom: 20px;
+      left: 20px;
+      top: auto;
+      right: auto;
+    }
+
+    #game-controls.corner-bottom-right {
+      bottom: 20px;
+      right: 20px;
+      top: auto;
+      left: auto;
+    }
+
+    .version-badge {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      z-index: 100;
+    }
+  </style>
+
+<style id="control-center-middle">
+#game-controls.corner-top-middle {
+  top: 20px !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+}
+#game-controls.corner-bottom-middle {
+  bottom: 20px !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  transform: translateX(-50%) !important;
+}
+</style>
+
+<style id="clean-liquid-glass">
+:root {
+  --glass-bg: rgba(30, 41, 59, 0.38);
+  --glass-border: rgba(255,255,255,0.15);
+  --glass-shadow: 0 14px 45px rgba(0,0,0,0.28);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(0,255,153,0.045), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(148,163,184,0.05), transparent 30%),
+    #010206 !important;
+}
+
+.menu-toggle-btn,
+.side-menu,
+.menu-item-btn,
+.settings-modal,
+.suggestions-modal,
+.announcement-modal,
+#game-search,
+.category-chip,
+.game-card,
+.close-game-btn,
+.announcement-btn,
+.setting-input {
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,0.09),
+      rgba(255,255,255,0.025) 25%,
+      rgba(30,41,59,0.20) 55%,
+      rgba(1,2,6,0.22)
+    ) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,0.20),
+    inset -1px -1px 0 rgba(0,0,0,0.18),
+    inset 0 0 25px rgba(255,255,255,0.02),
+    0 16px 48px rgba(0,0,0,0.28) !important;
+  backdrop-filter: blur(26px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(155%) !important;
+}
+
+/* Preserve the original rectangular game-card geometry exactly. */
+.game-card {
+  aspect-ratio: 16 / 9 !important;
+  height: auto !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.20),
+    rgba(255,255,255,0.045) 18%,
+    transparent 38%,
+    transparent 78%,
+    rgba(255,255,255,0.055)
+  );
+  z-index: 3;
+}
+
+.game-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    125deg,
+    rgba(255,255,255,0.07),
+    transparent 28%,
+    transparent 72%,
+    rgba(255,255,255,0.05)
+  );
+  z-index: 3;
+}
+
+.game-card img {
+  opacity: .90 !important;
+  filter: saturate(.96) contrast(1.01) !important;
+}
+
+.game-card .game-overlay {
+  z-index: 4;
+}
+
+.category-chip,
+.category-chip:hover,
+.category-chip:focus,
+.category-chip:active,
+.category-chip.active,
+.category-chip.active:hover,
+.category-chip.active:focus {
+  color: var(--text-main) !important;
+}
+
+.category-chip.active {
+  background: linear-gradient(
+    135deg,
+    rgba(0,255,153,0.17),
+    rgba(0,255,153,0.045)
+  ) !important;
+  border-color: rgba(0,255,153,0.36) !important;
+}
+
+.settings-overlay,
+.suggestions-overlay,
+.announcement-overlay {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+</style>
+
+<style id="darker-glass-background">
+/* Darker background while preserving the existing palette */
+html, body {
+  background:
+    radial-gradient(circle at 10% 5%, rgba(0,255,153,0.018), transparent 25%),
+    radial-gradient(circle at 90% 15%, rgba(30,41,59,0.025), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(0,255,153,0.012), transparent 35%),
+    #000103 !important;
+}
+
+body::before {
+  opacity: 0.18 !important;
+}
+
+/* Make glass surfaces slightly darker so the background feels deeper */
+.menu-toggle-btn,
+.side-menu,
+.menu-item-btn,
+.settings-modal,
+.suggestions-modal,
+.announcement-modal,
+#game-search,
+.category-chip,
+.game-card,
+.close-game-btn,
+.announcement-btn,
+.setting-input {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.045),
+      rgba(30,41,59,0.105) 45%,
+      rgba(0,1,3,0.30) 100%
+    ) !important;
+}
+</style>
+
+<style id="ultra-dark-background">
+html, body {
+  background: #010206 !important;
+}
+
+/* Remove most ambient background glow while keeping the glass visible */
+body::before {
+  opacity: 0.08 !important;
+}
+
+.menu-toggle-btn,
+.side-menu,
+.menu-item-btn,
+.settings-modal,
+.suggestions-modal,
+.announcement-modal,
+#game-search,
+.category-chip,
+.game-card,
+.close-game-btn,
+.announcement-btn,
+.setting-input {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.025),
+      rgba(30,41,59,0.065) 45%,
+      rgba(0,0,0,0.42) 100%
+    ) !important;
+}
+</style>
+
+<style id="category-hover-smooth">
+/* Restored smooth category-button hover animation */
+.category-chip {
+  transition:
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.category-chip:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--secondary-color) !important;
+  color: var(--text-main) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 153, 0.12),
+    0 5px 16px rgba(0, 255, 153, 0.18),
+    inset 0 0 16px rgba(0, 255, 153, 0.05);
+}
+
+.category-chip.active {
+  transition:
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-chip.active:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--secondary-color) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 153, 0.18),
+    0 5px 18px rgba(0, 255, 153, 0.24),
+    inset 0 0 18px rgba(0, 255, 153, 0.08);
+}
+
+.category-chip:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-chip,
+  .category-chip:hover,
+  .category-chip.active,
+  .category-chip.active:hover,
+  .category-chip:active {
+    transition: none;
+    transform: none;
+  }
+}
+</style>
+
+
+<style id="category-button-tint">
+.category-chip {
+  background: rgba(30, 41, 59, 0.78) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-chip:hover {
+  background: rgba(30, 41, 59, 0.88) !important;
+  border-color: rgba(0, 255, 153, 0.48) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(0, 255, 153, 0.10);
+}
+
+.category-chip:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.category-chip.active {
+  background: rgba(0, 255, 153, 0.18) !important;
+  color: #ffffff !important;
+  border-color: rgba(0, 255, 153, 0.65) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 0 14px rgba(0, 255, 153, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-chip {
+    transition: none !important;
+  }
+}
+</style>
+
+
+<style id="opaque-glass-ui">
+/* Opaque tinted-glass treatment for menu, announcements, and search */
+.menu-btn,
+.announcement-btn,
+#game-search {
+  background: rgba(30, 41, 59, 0.78) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-btn:hover,
+.announcement-btn:hover,
+#game-search:hover,
+#game-search:focus {
+  background: rgba(30, 41, 59, 0.88) !important;
+  border-color: rgba(0, 255, 153, 0.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(0, 255, 153, 0.10);
+}
+
+.menu-btn:hover,
+.announcement-btn:hover {
+  transform: translateY(-2px);
+}
+
+.menu-btn:active,
+.announcement-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-btn,
+  .announcement-btn,
+  #game-search {
+    transition: none !important;
+  }
+}
+</style>
+
+
+<style id="menu-exact-category-tint">
+header .menu-btn {
+  background: rgba(30, 41, 59, 0.78) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+header .menu-btn:hover {
+  background: rgba(30, 41, 59, 0.88) !important;
+  border-color: rgba(0, 255, 153, 0.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(0, 255, 153, 0.10) !important;
+}
+</style>
+
+
+<style id="menu-gui-same-tint">
+.side-menu {
+  background: rgba(30, 41, 59, 0.78) !important;
+  border-right: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.07),
+    8px 0 24px rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.menu-header {
+  border-bottom-color: rgba(148, 163, 184, 0.22) !important;
+}
+
+.menu-item-btn {
+  background: rgba(30, 41, 59, 0.78) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.menu-item-btn:hover {
+  background: rgba(30, 41, 59, 0.88) !important;
+  border-color: rgba(0, 255, 153, 0.48) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(0, 255, 153, 0.10) !important;
+}
+</style>
+
+
+<style id="transparent-menu-settings">
+/* Settings inside the menu use the default transparent treatment */
+.side-menu .setting-input,
+.side-menu .setting-group input,
+.side-menu .setting-group select,
+.side-menu .setting-group textarea {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+</style>
+
+
+
+
+<style id="overlay-transparent-glass">
+/* Overlay backgrounds: transparent default glass instead of dark opaque fill */
+.side-menu-overlay,
+.settings-overlay,
+.suggestions-overlay,
+.announcement-overlay {
+  background: rgba(1, 2, 6, 0.28) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* The slide-out menu itself uses the default transparent glass treatment. */
+.side-menu {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.045),
+      rgba(30,41,59,0.105) 45%,
+      rgba(0,1,3,0.30) 100%
+    ) !important;
+  border-right: 1px solid rgba(255,255,255,0.16) !important;
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,0.20),
+    inset -1px -1px 0 rgba(0,0,0,0.18),
+    8px 0 30px rgba(0,0,0,0.28) !important;
+  backdrop-filter: blur(26px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(155%) !important;
+}
+</style>
+
+
+<style id="menu-overlay-dark-button-tint">
+/* Darker menu overlay backdrop */
+.side-menu-overlay {
+  background: rgba(0, 0, 0, 0.68) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Restore the top-left Menu button's tinted #1e293b glass */
+.menu-toggle-btn {
+  background: rgba(30, 41, 59, 0.78) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.menu-toggle-btn:hover {
+  background: rgba(30, 41, 59, 0.88) !important;
+  border-color: rgba(0, 255, 153, 0.48) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(0, 255, 153, 0.10) !important;
+}
+</style>
+
+
+<style id="menu-overlay-announcement-same-tint">
+/* Match the menu overlay backdrop to the announcement box tint. */
+.side-menu-overlay {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(1, 2, 6, 0.72),
+      rgba(1, 2, 6, 0.58) 50%,
+      rgba(0, 1, 3, 0.76)
+    ) !important;
+  backdrop-filter: blur(26px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(135%) !important;
+}
+
+.side-menu {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(1, 2, 6, 0.72),
+      rgba(1, 2, 6, 0.58) 50%,
+      rgba(0, 1, 3, 0.76)
+    ) !important;
+  border-right-color: rgba(148, 163, 184, 0.18) !important;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.08),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.22),
+    8px 0 30px rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: blur(26px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(135%) !important;
+}
+</style>
+
+<style id="exact-menu-announcement-same-tint">
+/* Menu and announcement use the exact same dark site-background glass tint. */
+.side-menu,
+.announcement-modal {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(1, 2, 6, 0.72),
+      rgba(1, 2, 6, 0.58) 50%,
+      rgba(0, 1, 3, 0.76)
+    ) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.08),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.22),
+    0 16px 48px rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: blur(26px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(135%) !important;
+}
+
+.side-menu-overlay {
+  background: rgba(1, 2, 6, 0.28) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+</style>
+</head>
+<body>
+  
+  <!-- Menu Button on Top Left -->
+  <button class="menu-toggle-btn" onclick="toggleMenu()">
+    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    Menu
+  </button>
+
+  <!-- Version Badge on Top Right -->
+  <div class="version-badge">© Geeked Sites 2026</div>
+
+  <!-- Side Navigation Menu -->
+  <div class="side-menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+  <aside class="side-menu" id="sideMenu">
+    <div class="menu-header">
+      <button class="close-menu-btn" onclick="toggleMenu()" aria-label="Close menu">
+        <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="menu-items">
+      <a href="index.html" class="menu-item-btn" onclick="toggleMenu()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Homepage
+      </a>
+      <button class="menu-item-btn" onclick="openSuggestions()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Suggest a Game
+      </button>
+      <button class="menu-item-btn" onclick="openSettings()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Settings
+      </button>
+      <button class="menu-item-btn" id="geekedCloakBtn" onclick="launchGeekedCloaker()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Cloak Tab
+      </button>
+    </div>
+  </aside>
+
+  <!-- Settings Overlay Modal -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnOverlay(event)">
+    <div class="settings-modal">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="close-menu-btn" onclick="closeSettings()" aria-label="Close settings">
+          <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main);">
+            <input type="checkbox" checked> Enable Hover Effects
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <label for="panic-key-input">Quick Switch Key</label>
+          <input type="text" id="panic-key-input" class="setting-input" maxlength="1" value="'" placeholder="e.g. '">
+        </div>
+
+        <div class="setting-group">
+          <label for="panic-url-input">Quick Switch Target URL</label>
+          <input type="url" id="panic-url-input" class="setting-input" value="https://google.com" placeholder="https://google.com">
+        </div>
+
+        <div class="setting-group">
+          <label for="controls-corner-input">In-Game Controls Corner</label>
+          <select id="controls-corner-input" class="setting-input" onchange="setGameControlsCorner(this.value)">
+            <option value="top-right">Top Right (Default)</option>
+            <option value="top-middle">Top Middle</option>
+            <option value="top-left">Top Left</option>
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-middle">Bottom Middle</option>
+            <option value="bottom-left">Bottom Left</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Suggestions Overlay Modal -->
+  <div class="suggestions-overlay" id="suggestionsOverlay" onclick="closeSuggestionsOnOverlay(event)">
+    <div class="suggestions-modal">
+      <div class="suggestions-header">
+        <h2>Suggest a Game</h2>
+        <button class="close-menu-btn" onclick="closeSuggestions()" aria-label="Close suggestions">
+          <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="suggestions-body">
+        <iframe src="https://tally.so/r/ODNJV7" title="Game Suggestion Form"></iframe>
+      </div>
+    </div>
+  </div>
+
+ <!-- Announcement Overlay Modal -->
+  <div class="announcement-overlay" id="announcementOverlay" onclick="closeAnnouncementOnOverlay(event)">
+    <div class="announcement-modal">
+      <div class="announcement-header">
+        <h2>Announcement</h2>
+      </div>
+      <div class="announcement-body">
+        <p style="margin: 0; color: var(--text-main); line-height: 1.5; text-align: center;">Added: Yandere Simulator. Fixed: Baltaro. </p>
+        <button class="announcement-btn" onclick="closeAnnouncement()">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="top-header">
+    <a href="#" class="logo-link" aria-label="Home">
+      <img src="https://i.postimg.cc/Y2dD78QJ/Screenshot-2026-08-21-4-16-19-PM-removebg-preview-(1).png" alt="Geeked Sites Logo" class="site-logo">
+    </a>
+
+    <div class="search-container">
+      <div class="search-wrapper">
+        <span class="search-icon" aria-hidden="true">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input 
+          type="text" 
+          id="game-search" 
+          placeholder="Search for a game..." 
+          onkeyup="filterGames()"
+          aria-label="Search games"
+        >
+        <button id="clear-search" onclick="clearSearch()" aria-label="Clear search">
+          <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Category Filter Chips -->
+    <div id="categories-wrapper" class="categories-container"></div>
+  </header>
+
+ <main id="game-container" class="game-grid">
+    
+    <button class="game-card" onclick="loadGame('/pages/1datedanger.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5XZOtxcgUdFA5fWU3p1D5nOtaY7SHEoRcCD4-p1ThMCy7LtnsYvHBmO4m&s=10" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">1 Date Danger</span>
+      </div>
+    </button>
+  
+    <button class="game-card" onclick="loadGame('/pages/3dash.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIpZVsWkI8EeUIN2hIoA0hRhvs8__Q2T9gXkETZksUbA&s=10" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">3Dash</span>
+      </div>
+    </button>
+  
+    <button class="game-card" onclick="loadGame('/pages/60secondburgerrun.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKHZdu3hP-aa5zjMHsNt0jYCUUBc9GTFjHABlyFJFCuA&s=10" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">60 Second Burger Run</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/adanceoffireandice.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGndN6p8MPxR8LNXHBwWK7d75Ciae4HeHES9AHBltaew&s" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">A Dance of Fire and Ice</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/angrybirds.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/02dfK0Hv/image-1.jpg" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">Angry Birds</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/animalcrossing.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/kX8q5J9W/Animal-Crossing-20-Year-Annivers.jpg" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">Animal Crossing</span>
+      </div>
+    </button>
+  
+    <button class="game-card" onclick="loadGame('/pages/amongus.html')">
+      <img class="card-bg-image" src="https://cdn.mos.cms.futurecdn.net/XhoJ8bY6bSJMTkLmMW4BtL-650-80.jpg.webp" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">Among Us</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/asmallworldcup/index.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdHzzTBoPXPSGVX0khetaXUeVWhEU8Z-WuR5txrezC0A&s=10" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">A Small World Cup</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/badmondaysimulator.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxV8T1DoSHMabpLr0lqYtGK6jgkSBpiuJfub1vjS5bCQ8L8nwQgcy0P6A&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bad Monday Simulator</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/badtimesim.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvdnNltw4IkOcHsCDBPUbP8OMTNqa9NCAo6jRMvvSDHA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bad Time Simulator</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/balatroweb/')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC2MWbFAk0MUqxwVl1tpBH4nWKexZGlzLK77MNpXTGJQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Balatro</span>
+      </div>
+    </button>
+
+ <button class="game-card" onclick="loadGame('/pages/baldisbasics.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7j_6IdCu6yMepH1zOKKcIKuArItrF3s-hrRdZgd5B3g&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Baldi's Basics</span>
+      </div>
+    </button>
+    
+        <button class="game-card" onclick="loadGame('/pages/basketballstars.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHPzrznYD0vNYK_o8l_QxspBc3YOHvrcB-NnaVvI2Mbw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Basketball Stars</span>
+      </div>
+    </button> 
+       
+       <button class="game-card" onclick="loadGame('/pages/basketrandom.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIwQmUUVP5n21AbRS70y69ZyYT9dAZWREbwmmQE1hrvA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Basket Random</span>
+      </div>
+    </button>
+    
+        <button class="game-card" onclick="loadGame('/pages/BERGENTRUCK201x.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwQ_2coHUi-jzX1Ptxle2IeSkARO9ZlHtJ522HNbc02Q&s" alt="">
+      <div class="card-content">
+        <span class="card-title">BERGENTRUCK201x</span>
+      </div>
+    </button>
+    
+        <button class="game-card" onclick="loadGame('/pages/bfdia5b.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqXHtDsunxTHvKSGv-ZikZmf6gadTZBj_wgslBeCKzxw&s=100" alt="">
+      <div class="card-content">
+        <span class="card-title">BFDIA 5B</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/bitlife.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF8kuicJcK0cWR0Ry-_5IMwdrwq_ka7TgTX508jtCHbA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">BitLife</span>
+      </div>
+    </button>
+    
+      <button class="game-card" onclick="loadGame('/pages/bladeball.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTss7LJYyaY5KKyFI3R055BiSSeQH6EBjx30BeGGRoIFQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Blade Ball</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/blockblast.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMsMN2hxRbVpkOL7-vJLBrQqWEO5_H0C53gbKc7RlJ6g&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Block Blast</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/blockysnakes.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiWQAdVi0XWVVopazYjCKoRzdkvM4PAoRwy2bXTllOGQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Blocky Snakes</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/bloodmoney.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIvySdii0iiZJr6lTWt3viUdt8DpHSYf3rl8vOmch2Yw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloodmoney</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloonstd1.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGctUq_jnQCIbJdB8ZSFDUGGmBaK_HdW60N6Y0Qaa1YA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloons Tower Defense</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloonstd2.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/26F0Q0LH/cover-1638358840555.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloons Tower Defense 2</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloonstd3.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/8zcDsfJz/bloons3-1714172823739.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloons Tower Defense 3</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloonstd4.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/J4hkxpBm/SI-DSi-Ware-Bloons-TD4-image1600w.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloons Tower Defense 4</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloonstd5.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/3rqtg0kw/f3b35c4de43eb2a84076fdf0833184fdca451ac2d7d8d3410bbc4846a51abf50.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloons Tower Defense 5</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/bloxorz.html')">
+      <img class="card-bg-image" src="https://www.coolmathgames.com/sites/default/files/Bloxorz_OG-logo.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Bloxorz</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/boomslingers.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQasww08bfMJ2LRrGJGjuPLtgkhCRK09xwOTSjc9bTsbVN6MH0ykbrjylu2Ts2LOW1mRKe3XR1UqCGXXLkq1kt05Req5bc7mnQO4tQ9K_s&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Boom Slingers</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/bossslayer.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLipDnvYhzcNG-XY1tCQM2XvlQDXSwPIk-ytfkSFdu7g&s=10" alt="Among Us cover art">
+      <div class="card-content">
+        <span class="card-title">Boss Slayer</span>
+      </div>
+    </button>
+  
+    <button class="game-card" onclick="loadGame('/pages/bouncemasters.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREvekW_B9LKdjhWGynJ028m9f8daXEjxStTlNZHL3G2gGicvainu2vH8LVSIzX6zIxfyY2sIWnxgAsKz3Q-hkSaxHhFWQeUSSXvReVz7lB&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bouncemasters</span>
+      </div>
+    </button>
+    
+      <button class="game-card" onclick="loadGame('/pages/bowmasters.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzH_f2ucbsbaDpGOU2u8wZ9wBhqt7O0CnBS8vwPhX6nQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Bowmasters</span>
+      </div>
+    </button>
+    
+       <button class="game-card" onclick="loadGame('/pages/brawlstars.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKT44rf5hSZYS1yKk4S725ckf3TxEQEi84XyXPy6_dUw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Brawl Stars</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/cactusmccoy.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/YT-jhiU5mKM/maxresdefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Cactus McCoy</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/cactusmccoy2.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/Hkxh5g4f/icn-heroimage.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Cactus McCoy 2</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/clashofvikings.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/hvH32kjH/image.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Clash of Vikings</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/cloverpit.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/J4JSWdRz/Clover-Pit-Key-Art-1920x1080.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">CloverPit</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/cuphead.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQREOmHh1YCCZSA5KOe6f4Lz9cxshHep-Cqtaz5Hj_AYA&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Cuphead</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/deltarune.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuJ6GFCAumszl8W_IC0g3B5T_wsJFVqjMNZCNzNynbQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Deltarune</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/deltatraveler.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ6WunTQBBfEG2V2LeNA6cAonQJ5rvG511yhCLsWxOTQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Deltatraveler</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ddlc.html')">
+      <img class="card-bg-image" src="https://upload.wikimedia.org/wikipedia/en/7/7c/Doki_Doki_Literature_Club_Cover.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" alt="">
+      <div class="card-content">
+        <span class="card-title">Doki Doki Literature Club</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/doodlejump.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJMFHTYDgLhbMj4Exl2A3hTtlemyV4ATu90RaxxU344g&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Doodle Jump</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/dbzdevolution.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEd1bwyUmMScW1vJYG1HSMDtj7IrNXOvz4X4GmvC2Hw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Dragon Ball Devolution</span>
+      </div>
+    </button>
+    
+        
+    <button class="game-card" onclick="loadGame('/pages/dborgins.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/pLxKyDpw/6-1-97149-13.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Dragon Ball: Orgins</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/dborgins2.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZNP04-O4Vs7ujZXcM9ekxjCjyLG_qcuedo5szb1g-hg&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Dragon Ball: Orgins 2</span>
+      </div>
+    </button>
+
+      <button class="game-card" onclick="loadGame('/pages/dragonvsbricks.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG3n7tG90-Vsbjk5IIYzYuDJN3Zbv3EyCzac0zoEeVKw&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Dragon vs Icy Bricks</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/driftboss.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/85GvDOJv21k/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAUuFRvX1ktvtlyueMCisTMHHYZWA" alt="">
+      <div class="card-content">
+        <span class="card-title">Drift Boss</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/drivemad.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzfoWjRroSnUUWDS3m3-vMSufTekaJnLcKCOMWRxXsBCGF_JNgvoM-keR9jRipsdhp-_GeiBeXflhOdkUrpHXF-oN-nxJmqfRoTZodUT9W&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Drive Mad</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ducklife.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHaypThZbA9YnerLj_Elv3sKQc6S_thh50xZqB5EeS5PlSYzCUH77wIydX&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Duck Life</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ducklife2.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIQ_BufY__6sAuuqoYTQFR75m0wXh0SkX76tgz5zlBaA&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Duck Life 2</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ducklife3.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBM5fEGiVxRqbyLi5UDkfNH7CLmJip3nk7GyuVyi_KqQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Duck Life 3</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ducklife4.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/DZgTz9Xr/duck-life-4-classic-101f2.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Duck Life 4 Classic</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ducklife5.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcPuOEbk9hbkpiGbg0Q6cHUbefkw1ymE0_RKVLSimiuQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Duck Life 5</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/escaperoad.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/gjphGfW5/escape-road-asm-16x9-cover-metadata-none-quality-100-width-1200-height-630-fit-crop.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Escape Road</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fireboyandwatergirl.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/05DzxmRN/fireboy-and-watergirl-1-forest-temple-3.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Fireboy And Watergirl</span>
+      </div>
+    </button>
+   
+    <button class="game-card" onclick="loadGame('/pages/fnaf1.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXzh4krVDvdfMayf3bO_9yXHEODyziQ1NaxyY6XOYWww&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fnaf2.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR7nb9ZfIfJQ2dyesd3VHrZylIJM_sKo2wLfTZ1jxo4w&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's 2</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fnaf3.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ImkB1s1ujIBeWn2rSSfIVdCCxSdiRZShi8QloSMGZA&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's 3</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fnaf4.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/pd064GLd/header.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's 4</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fnaf5.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/WbPXWLwH/header.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's 5: SL</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('./pages/fnaf6.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLKwRfvh3NyJ0ZE0AtFt-eBp9rfN899dMlPOVrh4HNRQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Five Nights At Freddy's 6: PS</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/flyinggorilla.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDSzGlGau7ZmAf12ocF1G_8w_Sd5dSU35K8L1Ycu43u1G1UFYvtdRoG7Ws&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Flying Gorilla</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/fnafworld.html')">
+      <img class="card-bg-image" src="https://upload.wikimedia.org/wikipedia/en/f/f8/FNAFWorldlogo.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" alt="">
+      <div class="card-content">
+        <span class="card-title">FNAF World</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fortzone.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/E_duOab1e84/maxresdefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Fortzone Battle Royale</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/fnf.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmmjEx0-A8iAdSOt9Q5og-RJpiNc31Mtg5SX_dUaENRQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Friday Night Funkin</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/getyoked.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/YqJ3qfd3/0eezqm.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Get Yoked</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/webdashers.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4ehTwxBPoyuDolqk-q5Z5irrfIVlT9Tuw1SVLVeXPbw&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Geometry Dash</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/geometrydashlite.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVbML9JmSzlecUBvfAHecC-pP1Qf1WpoVRR3X3jFZLSQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Geometry Dash Lite</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/gladihoppers.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/c49QxCkW/maxresdefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Gladihoppers</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/googlebaseball.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/NFg1Bbnd/image.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Google Baseball</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/gtag/index.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/y3bR3s546CU/maxresdefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Gorilla Tag</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/granny.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Bf8t68Ck6HyAmMwBe-ACysAm038YdlunxrShtxFOmQ&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Granny</span>
+      </div>
+    </button>
+      
+    <button class="game-card" onclick="loadGame('/pages/gunspin.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQsVS-xlT6ydL46Q2kUooqvceAtGpL62S2PmaOSjJT-g&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Gunspin</span>
+      </div>
+    </button>
+    
+       <button class="game-card" onclick="loadGame('/pages/gswitch3/')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9O4jyHs_3-Fmp4ZvvRcPb2GlfVvn2NfAnMTnjb_Nq-Q&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">G-Switch 3</span>
+      </div>
+    </button>
+    
+        <button class="game-card" onclick="loadGame('/pages/gswitch4.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ5rJVknbTPQR86tTSp7MOsF0badorrmqCZt7M_aM16Q&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">G-Switch 4: Creator</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/helixjump.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/P5bTSy9k/71MZwja-YPXL.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Helix Jump</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/minecraft.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXBvwPDf79vK_64k22v410KU90ahL_bd2jQJ2prVZ65w&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Minecraft</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/motox3m.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6MY8j-zwIfhdFaLJEQxu1sUlwzM4ZJ9tU6kcpEvZVCw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Moto X3M</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/motox3m2.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/GFKzn0KoLTw/maxresdefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Moto X3M 2</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/paperio.html')">
+      <img class="card-bg-image" src="https://play-lh.googleusercontent.com/h4OAd4kgLOR9q9s3Fh0N_k4rX_jy7svTHmohKJD06p6xLKV5DBzB06n6AnrLfK-YvNehhvZjTji2SYOdhxz4gaM" alt="">
+      <div class="card-content">
+        <span class="card-title">Paper.io</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/peopleplayground.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/cJ0j0Z4C/peopleplayground.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">People Playground</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ragdollarchers.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTuMzRXkXdEsuZkKlf9SW-jE1JrbM_Dsq7WpS5HAroyw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Ragdoll Archers</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ragdollhit.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG6IZwu6mNk4M1oGcDvpswR7XvC2Qdat0DUkv_kWdTgw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Ragdoll Hit</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ragdollio.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfpULC82FnP7CyFGP3klgUwIez-Ps2cNBMqUcI8aY4IA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Ragdoll.io</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/redball4vol1.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUsqPNajCYSkuAd8IoxZHqILPHCmbmyGdoHF9OPhBuLA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Red Ball 4</span>
+      </div>
+      </button>
+    
+        <button class="game-card" onclick="loadGame('/pages/sandboxels.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmdbmkJi-w1k874YKEKRMPjcfql5hfCN94D_GSQuwYRA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Sandboxels</span>
+      </div>
+    </button>
+    
+
+    
+    <button class="game-card" onclick="loadGame('/pages/sandtris.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFW9M4mEyM8O9omsEgWO1IRXM6nI3MKgFtsAk5mQPGdA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Sandtris</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/skyriders.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTZoHLcVOvkxg74bKS7HRJkAEk_3DRAefED2xx5A9jCQ&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Sky Riders</span>
+      </div>
+    </button>
+   
+    <button class="game-card" onclick="loadGame('/pages/slitherio.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfkJQPCJe9dp2D2YAIlYBmvQJ2xF1KL8jBhlvWqe3aBjo3JBAqwxgt8oqmfkszW02FG8aY-ACX1SjyAqtCLBPC2u2KVDAMsj4RloTo4us&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Slither.io</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/slimerancher.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzmG4EabbmmDSP207N_1bBg__xCZBNW42V1kLa3BEAMQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Slime Rancher</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/slope.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCRSORt7l9G07aW0QmsuJyOAiH-sdHxnLhV8JzPG-oZQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Slope</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/snake.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/0NyjkF5z/image.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Snake</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/snowballio.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/pTsy5PX4/snowballio.webp" alt="">
+      <div class="card-content">
+        <span class="card-title">Snowball.io</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/snowrider3d.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiyu1hc_ZeY6_Wdyy66XLMT2d2OtHsBK-c1JVUK1cDb773GpW-qKeoxdiOYsunG5Oda-3Wx29FcRa_3ec9bq4-xNuaSnE7jG6AJ0ARhnE&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Snow Rider 3D</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/solarsmash.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6-3pyL3bXxT6W0PZJOywm2pSMC0SdPlCf-oSdsp4PdCnm3EYx0G7PSCMMgVHZc-20dsWcTAXogVHs9wJelOov1JVWDJFU_8TmejUtXyZe5A&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Solar Smash</span>
+      </div>
+    </button>
+    
+       <button class="game-card" onclick="loadGame('/pages/sonicmania.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VPhG7tgRXBNhzWnL_QqAICyDyejA63Y_GPfbgM4oRQ&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Sonic Mania</span>
+      </div>
+    </button>
+    
+          <button class="game-card" onclick="loadGame('/pages/sonicroboblast2.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzC9z-PxTtMJttvV_LJX6SG1ps3AvxMHJZZqz2W2LLeQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Sonic Robo Blast 2</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/sonicthehedgehog.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz6IR8VLMs2kmz1KlvtWIfC_Bcprl72h8S8PQgAEflA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Sonic The Hedgehog</span>
+      </div>
+    </button>
+    
+       <button class="game-card" onclick="loadGame('/pages/spacewaves.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/g04vs5c3/pad-screenshot-0.webp" alt="">
+      <div class="card-content">
+        <span class="card-title">Space Waves</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/stickmanduel.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/RC33nMFZ/Banner-Supreme-Duelist-Stickman.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Stickman Duel</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/stickmanhook.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScWCtZy6g2G1HRGtxAwl8wZTC9dPyA1d78noiBfUfMxA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Stickman Hook</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/stickwar.html')">
+      <img class="card-bg-image" src="https://m.media-amazon.com/images/I/81qP2v+zOfL.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Stick War Legacy</span>
+      </div>
+    </button>
+    
+      <button class="game-card" onclick="loadGame('/pages/stickwithit.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBmbepzyR_1k6dg34ozXvC1_wS3fwj3XmKg--OC76e5Q&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Stick With It</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/subwaysurfers')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE3DLoerj8_xDBOq1hlOtO0lYuTCxMaQy1xqWw-aiULQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Subway Surfers</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/survivalrace.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc89xd7dwRhTIs8c6o9pWAYRRTvYpasF0BhLmpL8niUQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Survival Race</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/survivorio.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZ1m8dOO4QKvL3JJ-XsywobaPaa_d8adaF8aPNnxpPrg&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Survivor.io</span>
+      </div>
+    </button>
+    
+       <button class="game-card" onclick="loadGame('/pages/tinyfishing.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmNDVbJi83--xTdWs8c67l4xb8HGL1rqn-elQRE2awnQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Tiny Fishing</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/terraria.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTiqIKoD1CGru8EvYZIsU9qvzgSaPwMy9ZpzKSFrFdLQ&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Terraria</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/ucn.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/qqSC5pK1/header.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Ultimate Custom Night</span>
+      </div>
+    </button>
+   
+    <button class="game-card" onclick="loadGame('/pages/ultrakill.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWvdbbQqfs_gbiRBXPgdRsM8yO-ZhztvPhiOt7YcmIdA&s" alt="">
+      <div class="card-content">
+        <span class="card-title">Ultrakill</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/undertale.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXgY44UOvfNxbiqQ7Ebk3yqY6LSmhRRmIwd-rgn2amAQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Undertale</span>
+      </div>
+    </button>
+   
+    <button class="game-card" onclick="loadGame('/pages/undertaleyellow.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqB80EqG5kUncyn-05EZOWWu9lOH9GcR1p8BWjCss4LA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Undertale Yellow</span>
+      </div>
+    </button>
+      
+    <button class="game-card" onclick="loadGame('/pages/vex3.html')">
+      <img class="card-bg-image" src="https://www.coolmathgames.com/sites/default/files/Vex3_OG-logo.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Vex 3</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/vex4.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/9XSF684B/vex-4.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Vex 4</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/vex5.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/pd6LPqGR/vex-5.webp" alt="">
+      <div class="card-content">
+        <span class="card-title">Vex 5</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/vex6.html')">
+      <img class="card-bg-image" src="https://i.ytimg.com/vi/lxsUd3FvsQY/sddefault.jpg" alt="">
+      <div class="card-content">
+        <span class="card-title">Vex 6</span>
+      </div>
+    </button>
+    
+    <button class="game-card" onclick="loadGame('/pages/whg.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBO4goyZrt_Ak0YwAApNs_co3uczaNl9uIXzStwg8aew&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">World's Hardest Game</span>
+      </div>
+    </button>
+    
+     <button class="game-card" onclick="loadGame('/pages/yanderesimulator.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9iLwTwJoZQG86IiAt2Po7fA-wUVdt860HWzu1-xoQJQ&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Yandere Simulator</span>
+      </div>
+    </button>
+  </main>
+
+  <div id="no-results" class="no-results-msg">
+    <p>No games match your search. Try another keyword!</p>
+  </div>
+
+  <section id="game-screen-wrapper" class="full-screen-wrapper">
+    <div id="game-controls" class="corner-top-right">
+      <button id="close-game-btn" class="close-game-btn" style="position: static;" onclick="closeGame()">✕ Close</button>
+      <button id="fullscreen-game-btn" class="close-game-btn" style="position: static; font-size: 1.2rem; padding: 10px 12px;" onclick="toggleFullScreenGame()">⛶</button>
+    </div>
+    <div id="game-frame-container" style="width: 100%; height: 100%;"></div>
+  </section>
+
+  <script>
+    let activeCategory = 'All';
+
+    function toggleMenu() {
+      const menu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('menuOverlay');
+      menu.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    function openSettings() {
+      toggleMenu();
+      document.getElementById('settingsOverlay').style.display = 'flex';
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsOverlay').style.display = 'none';
+    }
+
+    function closeSettingsOnOverlay(e) {
+      if (e.target.id === 'settingsOverlay') {
+        closeSettings();
+      }
+    }
+
+    function openSuggestions() {
+      toggleMenu();
+      document.getElementById('suggestionsOverlay').style.display = 'flex';
+    }
+
+    function closeSuggestions() {
+      document.getElementById('suggestionsOverlay').style.display = 'none';
+    }
+
+    function closeSuggestionsOnOverlay(e) {
+      if (e.target.id === 'suggestionsOverlay') {
+        closeSuggestions();
+      }
+    }
+
+    /* --- Announcement Modal Controls --- */
+    function closeAnnouncement() {
+      document.getElementById('announcementOverlay').style.display = 'none';
+    }
+
+    function closeAnnouncementOnOverlay(e) {
+      if (e.target.id === 'announcementOverlay') {
+        closeAnnouncement();
+      }
+    }
+
+    /* --- In-Game Controls Corner Position --- */
+    const CONTROL_CORNERS = ['top-left', 'top-middle', 'top-right', 'bottom-left', 'bottom-middle', 'bottom-right'];
+    const CONTROLS_CORNER_KEY = 'geekedControlsCorner';
+
+    function setGameControlsCorner(corner, persist) {
+      if (persist === undefined) persist = true;
+
+      const controls = document.getElementById('game-controls');
+      const select = document.getElementById('controls-corner-input');
+
+      if (!CONTROL_CORNERS.includes(corner)) {
+        corner = 'top-right';
+      }
+
+      CONTROL_CORNERS.forEach(c => controls.classList.remove('corner-' + c));
+      controls.classList.add('corner-' + corner);
+
+      if (select) select.value = corner;
+
+      if (persist) {
+        try { localStorage.setItem(CONTROLS_CORNER_KEY, corner); } catch (err) {}
+      }
+    }
+
+    function loadGameControlsCorner() {
+      let savedCorner = 'top-right';
+      try {
+        savedCorner = localStorage.getItem(CONTROLS_CORNER_KEY) || 'top-right';
+      } catch (err) {
+        savedCorner = 'top-right';
+      }
+      setGameControlsCorner(savedCorner, false);
+    }
+
+    /* --- Key Switch Listener --- */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      const triggerKey = (document.getElementById('panic-key-input').value || "'").toLowerCase();
+      let targetUrl = document.getElementById('panic-url-input').value || 'https://google.com';
+
+      if (e.key.toLowerCase() === triggerKey) {
+        if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+          targetUrl = 'https://' + targetUrl;
+        }
+        window.open(targetUrl, '_blank');
+      }
+    });
+
+    /* --- Auto Broad Genre Assignment --- */
+    function getGameCategory(title) {
+      const t = title.toLowerCase();
+      
+      if (t.includes("baldi") || t.includes("eaglercraft")) {
+        return 'Arcade';
+      }
+
+      if (t.includes("bloodmoney")) {
+        return 'Horror';
+      }
+      
+        if (t.includes("fnaf world")) {
+        return 'RPG';
+      }
+
+      if (t.includes("among us")) {
+        return 'Strategy';
+      }
+
+      if (t.includes('bloxorz') || t.includes('red ball')) {
+        return 'Puzzle';
+      }
+
+      if (t.includes('bloxorz') || t.includes('terraria')) {
+        return 'Sandbox';
+   
+      }
+
+      if (t.includes('funkin') || t.includes('geometry dash') || t.includes('osu')) return 'Rhythm';
+      if (t.includes('five nights') || t.includes('fnaf') || t.includes('doki doki')) return 'Horror';
+      if (t.includes('bloons') || t.includes('vikings') || t.includes('bloxorz')) return 'Strategy';
+      if (t.includes('drift') || t.includes('drive')) return 'Driving';
+      if (t.includes('fortzone') || t.includes('shooter')) return 'Action';
+      if (t.includes('fortzone') || t.includes('ragdoll')) return 'Action';
+      if (t.includes('yandere simulator') || t.includes('yandere')) return 'Horror';
+      if (t.includes('simulator') || t.includes('bitlife')) return 'Simulation';
+      if (t.includes('google') || t.includes('doodle') || t.includes('angry birds')) return 'Arcade';
+      if (t.includes('solar smash') || t.includes('duck life') || t.includes('simulator')) return 'Simulation';
+      if (t.includes('snow rider 3d') || t.includes('race') || t.includes('escape road')) return 'Driving';
+      if (t.includes('duel') || t.includes('vikings') || t.includes('clash of')) return 'Strategy';
+      if (t.includes('boom slingers') || t.includes('vikings') || t.includes('boom')) return 'Strategy';
+      if (t.includes('boom slingers') || t.includes('vikings') || t.includes('bloxorz')) return 'Puzzle';
+      if (t.includes('ultrakill') || t.includes('shooter')) return 'Action';
+      if (t.includes('3dash') || t.includes('geometry dash') || t.includes('osu')) return 'Rhythm';
+      if (t.includes('g-switch 3') || t.includes('doodle') || t.includes('angry birds')) return 'Arcade';
+      if (t.includes('fireboy') || t.includes('doodle') || t.includes('angry birds')) return 'Puzzle';
+      if (t.includes('moto x3m') || t.includes('doodle') || t.includes('bergentruck201x')) return 'Driving';
+      if (t.includes('hardest game') || t.includes('google') || t.includes('angry birds')) return 'Arcade';
+      if (t.includes('sonic') || t.includes('google') || t.includes('angry birds')) return 'Arcade';
+      if (t.includes('stick war') || t.includes('vikings') || t.includes('boom')) return 'Strategy';
+      if (t.includes('ultimate custom night') || t.includes('fnaf') || t.includes('doki doki')) return 'Horror';
+      if (t.includes('minecraft') || t.includes('fnaf') || t.includes('doki doki')) return 'Sandbox';
+ if (t.includes('gun') || t.includes('fnaf') || t.includes('doki doki')) return 'Action';
+ if (t.includes('boss slayer') || t.includes('vikings') || t.includes('boom')) return 'Strategy';
+     if (t.includes('cloverpit') || t.includes('fnaf') || t.includes('doki doki')) return 'Horror';
+      if (t.includes('1 date danger') || t.includes('fnaf') || t.includes('doki doki')) return 'Simulation';
+       if (t.includes('moto x3m') || t.includes('doodle') || t.includes('rider')) return 'Driving';
+        if (t.includes('undertale') || t.includes('deltarune') || t.includes('rider')) return 'RPG';
+         if (t.includes('cuphead') || t.includes('fnaf world') || t.includes('rider')) return 'RPG';
+         if (t.includes('bfdia 5b') || t.includes('vikings') || t.includes('bloxorz')) return 'Puzzle';
+    return 'Casual';
+    }
+
+    function generateCategories() {
+      const cards = document.getElementsByClassName('game-card');
+      const categoriesSet = new Set(['All']);
+
+      for (let i = 0; i < cards.length; i++) {
+        const title = cards[i].querySelector('.card-title').innerText;
+        const category = getGameCategory(title);
+        cards[i].setAttribute('data-category', category);
+        categoriesSet.add(category);
+      }
+
+      const wrapper = document.getElementById('categories-wrapper');
+      wrapper.innerHTML = '';
+
+      const orderedCategories = Array.from(categoriesSet).sort((a, b) => {
+        if (a === 'All') return -1;
+        if (b === 'All') return 1;
+        return a.localeCompare(b);
+      });
+
+      orderedCategories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'category-chip' + (cat === 'All' ? ' active' : '');
+        btn.innerText = cat;
+        btn.onclick = () => filterByCategory(cat, btn);
+        wrapper.appendChild(btn);
+      });
+    }
+
+    function filterByCategory(category, clickedBtn) {
+      activeCategory = category;
+      
+      const chips = document.querySelectorAll('.category-chip');
+      chips.forEach(c => c.classList.remove('active'));
+      clickedBtn.classList.add('active');
+
+      filterGames();
+    }
+
+    function filterGames() {
+      const searchInput = document.getElementById('game-search');
+      const filter = searchInput.value.toLowerCase();
+      const cards = document.getElementsByClassName('game-card');
+      const clearBtn = document.getElementById('clear-search');
+      let matchCount = 0;
+
+      clearBtn.style.display = filter.length > 0 ? 'flex' : 'none';
+
+      for (let i = 0; i < cards.length; i++) {
+        const title = cards[i].querySelector('.card-title').innerText;
+        const cardCategory = cards[i].getAttribute('data-category');
+
+        const matchesSearch = title.toLowerCase().indexOf(filter) > -1;
+        const matchesCategory = (activeCategory === 'All') || (cardCategory === activeCategory);
+
+        if (matchesSearch && matchesCategory) {
+          cards[i].style.display = "flex";
+          matchCount++;
+        } else {
+          cards[i].style.display = "none";
+        }
+      }
+
+      document.getElementById('no-results').style.display = matchCount === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById('game-search');
+      searchInput.value = '';
+      filterGames();
+      searchInput.focus();
+    }
+
+    function loadGame(url) {
+      if (!url) return;
+      // Added comprehensive permissions policy to allow xr-spatial-tracking, fullscreen, accelerometer, and gyroscope[cite: 8]
+      document.getElementById('game-frame-container').innerHTML = `<iframe src="${url}" allow="xr-spatial-tracking; fullscreen; accelerometer; gyroscope" style="width:100%; height:100%; border:none;" title="Active Game Frame"></iframe>`;
+      document.getElementById('game-screen-wrapper').style.display = 'block';
+      document.body.classList.add('game-active');
+    }
+
+    function closeGame() {
+      document.getElementById('game-frame-container').innerHTML = '';
+      document.getElementById('game-screen-wrapper').style.display = 'none';
+      document.body.classList.remove('game-active');
+    }
+
+    function launchGeekedCloaker() {
+      toggleMenu();
+
+      const originalTitle = document.title;
+      const originalFaviconNode = document.querySelector("link[rel*='icon']");
+      let originalFaviconHref = originalFaviconNode ? originalFaviconNode.href : "";
+
+      if (originalFaviconHref && !originalFaviconHref.startsWith('http') && !originalFaviconHref.startsWith('data:')) {
+        const tempAnchor = document.createElement('a');
+        tempAnchor.href = originalFaviconHref;
+        originalFaviconHref = tempAnchor.href;
+      }
+
+      const cleanWindow = window.open('about:blank', '_blank');
+      
+      if (!cleanWindow) {
+        alert("Popup blocker active! Please allow popups to open the cloaked site.");
+        return;
+      }
+
+      let rawCodeString = document.documentElement.outerHTML;
+
+      cleanWindow.document.body.style.margin = '0';
+      cleanWindow.document.body.style.padding = '0';
+      cleanWindow.document.body.style.overflow = 'hidden';
+      cleanWindow.document.body.style.backgroundColor = '#121212';
+
+      cleanWindow.document.title = originalTitle;
+      if (originalFaviconHref) {
+        const targetFavicon = cleanWindow.document.createElement('link');
+        targetFavicon.rel = 'icon';
+        targetFavicon.type = originalFaviconNode.type || 'image/x-icon';
+        targetFavicon.href = originalFaviconHref;
+        cleanWindow.document.head.appendChild(targetFavicon);
+      }
+
+      const frameContainer = cleanWindow.document.createElement('iframe');
+      frameContainer.style.position = 'fixed';
+      frameContainer.style.top = '0';
+      frameContainer.style.left = '0';
+      frameContainer.style.width = '100vw';
+      frameContainer.style.height = '100vh';
+      frameContainer.style.border = 'none';
+
+      const scriptFreeBlob = new Blob([rawCodeString], { type: 'text/html;charset=utf-8' });
+      frameContainer.src = URL.createObjectURL(scriptFreeBlob);
+
+      cleanWindow.document.body.appendChild(frameContainer);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateCategories();
+      loadGameControlsCorner();
+    });
+
+    function toggleFullScreenGame() {
+      const gameWrapper = document.getElementById('game-screen-wrapper');
+
+      if (!document.fullscreenElement) {
+        if (gameWrapper.requestFullscreen) {
+          gameWrapper.requestFullscreen();
+        } else if (gameWrapper.webkitRequestFullscreen) {
+          gameWrapper.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+    function handleFullscreenChange() {
+      const closeBtn = document.getElementById('close-game-btn');
+
+      if (document.fullscreenElement) {
+        closeBtn.style.display = "none";
+      } else {
+        closeBtn.style.display = "block";
+      }
+    }
+  </script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/SxzwysFt/Screenshot-2026-08-21-231620-removebg-preview.png">
+
+<script>window.addEventListener("beforeunload", (event) => {
+  // Cancel the event as standard practice
+  event.preventDefault();
+  
+  // Chrome requires returnValue to be set
+  event.returnValue = true;
+});</script>
+
+
+<script>
+  // Find all iframes on your page
+  document.querySelectorAll('iframe').forEach(iframe => {
+    // Read whatever relative path is currently inside the src attribute
+    const currentPath = iframe.getAttribute('src');
+    
+    // Ensure the iframe has a path and isn't already an external absolute URL
+    if (currentPath && !currentPath.startsWith('http://') && !currentPath.startsWith('https://')) {
+      // Clean up any leading slash if necessary, then force your hosted absolute domain
+      const cleanPath = currentPath.startsWith('/') ? currentPath : '/' + currentPath;
+      iframe.src = window.location.origin + cleanPath;
+    }
+  });
+</script>
+
+</body>
+</html>
+```[cite: 8]

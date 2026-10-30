@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Gorilla Tag Web</title>
+    <link rel="shortcut icon" href="gtag/TemplateData/favicon.ico">
+    <link rel="stylesheet" href="gtag/TemplateData/style.css">
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #231F20;
+      }
+      #unity-container {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        background: #231F20;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      /* Hide default unity UI elements safely */
+      #unity-logo,
+      #unity-fullscreen-button,
+      #unity-footer,
+      #unity-build-title,
+      #unity-webgl-logo,
+      #unity-warning {
+        display: none !important;
+      }
+
+      /* Tiny minimalist crosshair injected dynamically on top of the container */
+      #game-crosshair {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 8px !important;
+        height: 8px !important;
+        pointer-events: none !important;
+        display: block !important;
+        z-index: 2147483647 !important;
+      }
+      #game-crosshair::before,
+      #game-crosshair::after {
+        content: '' !important;
+        position: absolute !important;
+        background-color: #00ff99 !important;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8) !important;
+      }
+      /* Horizontal line */
+      #game-crosshair::before {
+        top: 3px !important;
+        left: 0 !important;
+        width: 8px !important;
+        height: 2px !important;
+      }
+      /* Vertical line */
+      #game-crosshair::after {
+        top: 0 !important;
+        left: 3px !important;
+        width: 2px !important;
+        height: 8px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+
+      var buildUrl = "gtag/Build";
+      var loaderUrl = buildUrl + "/gtagweb.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/gtagweb.data.unityweb",
+        frameworkUrl: buildUrl + "/gtagweb.framework.js.unityweb",
+        codeUrl: buildUrl + "/gtagweb.wasm.unityweb",
+        streamingAssetsUrl: "gtag/StreamingAssets",
+        companyName: "boolonx",
+        productName: "gorilla tag web",
+        productVersion: "1.0",
+      };
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, function(progress) {
+          // Standard progress handling
+        }).then((unityInstance) => {
+          // Remove loading bar once loaded successfully
+          if (loadingBar) loadingBar.remove();
+
+          // Safely inject the crosshair into the container after the game boots up
+          if (!document.getElementById('game-crosshair')) {
+            var crosshair = document.createElement('div');
+            crosshair.id = 'game-crosshair';
+            container.appendChild(crosshair);
+          }
+        }).catch((message) => {
+          console.error(message);
+        });
+      };
+
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
+```[cite: 8]
