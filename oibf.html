@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IXL | Math, Language Arts, Science, Social Studies, and Spanish</title> 
+  <link rel="icon" href="/ixl-favicon.png" type="image/png">
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1740887682850526" crossorigin="anonymous"></script>
+
+  <meta name="title" content="IXL | Math, Language Arts, Science, Social Studies, and Spanish">
+  <meta name="description" content="IXL is the world's most popular subscription-based learning site for K–12. Used by over 18 million students, IXL provides personalized learning in more than 20,000 topics, covering math, language arts, science, social studies, and Spanish. Interactive questions, awards, and certificates keep kids motivated as they master skills.">
+
+<script src=cloaking.obf.js></script><style>
+
+    :root {
+      --primary-color: #1e293b; 
+      --secondary-color: #00ff99; 
+      --text-main: #ffffff; 
+      --text-muted: #64748b;
+      --radius-card: 18px; 
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      background-color: #010206; 
+      margin: 0;
+      padding: 20px 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 250px;
+      background: linear-gradient(to top, rgba(0, 255, 153, 0.08), transparent);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #particle-canvas {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .top-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; 
+      margin-top: 20px;
+      margin-bottom: 35px;
+      padding: 0 20px;
+      gap: 15px; 
+      text-align: center;
+      z-index: 2;
+    }
+
+    .site-logo {
+      height: 70px;
+      width: auto;
+      object-fit: contain;
+      transition: var(--transition);
+      border: none;
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .site-logo:hover {
+      transform: scale(1.04);
+    }
+
+    .glass-hub-wrapper {
+      position: relative;
+      width: 100%;
+      padding: 30px 0 20px 0;
+      background: rgba(3, 8, 16, 0.45);
+      border-top: 2px solid #1e293b;
+      border-bottom: 2px solid #1e293b;
+      border-left: none;
+      border-right: none;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+      box-sizing: border-box;
+      overflow: hidden;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hub-grid {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 10px 40px 15px 40px;
+      box-sizing: border-box;
+      scroll-behavior: auto;
+      scrollbar-width: none;
+    }
+
+    .hub-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    
+    .scrollbar-container {
+      width: 240px;
+      height: 12px;
+      background: rgba(10, 20, 35, 0.85);
+      border-radius: 10px;
+      margin-top: 15px;
+      position: relative;
+      cursor: pointer;
+      z-index: 3;
+      user-select: none;
+      border: 1px solid rgba(0, 255, 153, 0.2);
+    }
+
+    .scrollbar-thumb {
+      height: 100%;
+      width: 60px;
+      background: var(--secondary-color);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 153, 0.6);
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .scrollbar-thumb:active {
+      cursor: grabbing;
+      background: #00cc7a;
+    }
+
+    .hub-card {
+      position: relative;
+      flex: 0 0 calc(33.333% - 14px);
+      min-width: 280px;
+      height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(12, 28, 52, 0.65), rgba(6, 16, 32, 0.5));
+      border: 1px solid rgba(0, 255, 153, 0.25);
+      border-radius: var(--radius-card);
+      cursor: pointer;
+      overflow: hidden;
+      text-decoration: none;
+      transition: transform 0.45s cubic-bezier(0.2,0.8,0.2,1), border-color 0.35s ease, box-shadow 0.45s ease, background 0.45s ease;
+      box-sizing: border-box;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .hub-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.14) 45%, transparent 65%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .card-bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      opacity: 0.5;
+      filter: saturate(0.9);
+      transition: transform 0.65s cubic-bezier(0.2,0.8,0.2,1), opacity 0.45s ease, filter 0.45s ease;
+    }
+
+    .hub-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(1, 2, 6, 0.95) 0%, rgba(1, 2, 6, 0.3) 70%, transparent 100%);
+      z-index: 2;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 3;
+    }
+
+    .hub-card-title {
+      color: var(--text-main);
+      font-size: 1.4rem;
+      font-weight: 700;
+      transition: color 0.3s ease;
+    }
+
+    .hub-card-desc {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .hub-card:hover {
+      transform: translateY(-8px) scale(1.012);
+      border-color: var(--secondary-color);
+      background: linear-gradient(135deg, rgba(0, 255, 153, 0.15), rgba(12, 28, 52, 0.65));
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 153, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .hub-card:hover::before {
+      transform: translateX(120%);
+    }
+
+    .hub-card:hover .card-bg-image {
+      transform: scale(1.09);
+      opacity: 0.72;
+      filter: saturate(1.15);
+    }
+
+    .hub-card:hover .hub-card-title {
+      color: var(--secondary-color);
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 30px;
+      padding-bottom: 10px;
+      text-align: center;
+      color: #334155;
+      font-size: 0.75rem;
+      font-weight: 500;
+      z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+      .site-logo {
+        height: 55px;
+      }
+      .hub-card {
+        flex: 0 0 82%;
+      }
+      .scrollbar-container {
+        width: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Green Floating Particles Canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <header class="top-header">
+    <a href="">
+      <img src="https://i.postimg.cc/kG3nkXTk/Geekedsiteslogo-(1).png" alt="Geeked Sites Logo" class="site-logo">
+    </a>
+  </header>
+
+  <div class="glass-hub-wrapper">
+    <main class="hub-grid" id="hubGrid">
+      <a href="math.html" class="hub-card">
+        <img class="card-bg-image" src="https://i.postimg.cc/wvYZzydj/image-(2).png" alt="Geeked Games Background">
+        <div class="card-content">
+          <div class="hub-card-title">Games</div>
+          <div class="hub-card-desc">Access a library of fun and epic games.</div>
+        </div>
+      </a>
+
+      <a href="science.html" class="hub-card">
+        <img class="card-bg-image" src="https://i.postimg.cc/BQnHgKdL/Screenshot-2026-09-05-163407.png" alt="Geeked Games Background">
+        <div class="card-content">
+          <div class="hub-card-title">Geeked x CloudMoon</div>
+          <div class="hub-card-desc">A brand new way of playing your favorite online games!</div>
+        </div>
+      </a>
+
+      <a href="movies.html" class="hub-card">
+        <img class="card-bg-image" src="https://i.postimg.cc/9fZwSLq6/Screenshot-2026-10-26-203653.png" alt="Geeked Games Background">
+        <div class="card-content">
+          <div class="hub-card-title">Movies</div>
+          <div class="hub-card-desc">The perfect place to watch all your favorite movies.</div>
+        </div>
+      </a>
+
+      <a href="reading.html" class="hub-card">
+        <img class="card-bg-image" src="https://i.postimg.cc/bwXXZ9Wh/Screenshot-2026-09-20-201028.png" alt="Geeked Games Background">
+        <div class="card-content">
+          <div class="hub-card-title">Proxy</div>
+          <div class="hub-card-desc">View any website without any blockers interrupting.</div>
+        </div>
+      </a>
+    </main>
+
+    
+    <div class="scrollbar-container" id="scrollTrack">
+      <div class="scrollbar-thumb" id="scrollThumb"></div>
+    </div>
+  </div>
+
+  <footer>
+    © Geeked Sites 2026
+  </footer>
+
+  <!-- Particle Animation Script -->
+  <script>
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const particles = [];
+    const particleCount = 50;
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 50;
+        this.size = Math.random() * 3 + 1;
+        this.speedY = Math.random() * 1.2 + 0.4;
+        this.speedX = (Math.random() - 0.5) * 0.6;
+        this.opacity = 0;
+        this.maxOpacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.015 + 0.005;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+
+        if (this.y > canvas.height - 150) {
+          this.opacity += this.fadeSpeed;
+          if (this.opacity > this.maxOpacity) this.opacity = this.maxOpacity;
+        } else {
+          this.opacity -= 0.004;
+        }
+
+        if (this.opacity <= 0 || this.y < 0) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(this.opacity, 0);
+        ctx.fillStyle = '#00ff99';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00ff99';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+      particles[i].y = Math.random() * canvas.height;
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+   
+    const grid = document.getElementById('hubGrid');
+    const thumb = document.getElementById('scrollThumb');
+    const track = document.getElementById('scrollTrack');
+    let isDragging = false;
+    let startX = 0;
+    let startThumbLeft = 0;
+
+    function updateScrollbarThumb() {
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      if (maxScroll <= 0) {
+        track.style.display = 'none';
+        return;
+      }
+      track.style.display = 'block';
+
+      const maxThumbPos = track.clientWidth - thumb.clientWidth;
+      const scrollRatio = grid.scrollLeft / maxScroll;
+      thumb.style.left = (scrollRatio * maxThumbPos) + 'px';
+    }
+
+    grid.addEventListener('scroll', () => {
+      if (!isDragging) updateScrollbarThumb();
+    });
+
+   
+    function onPointerDown(e) {
+      isDragging = true;
+      startX = e.clientX || e.touches[0].clientX;
+      startThumbLeft = parseFloat(thumb.style.left) || 0;
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+      const deltaX = currentX - startX;
+      const maxThumbPos = track.clientWidth - thumb.clientWidth;
+      let newLeft = Math.max(0, Math.min(maxThumbPos, startThumbLeft + deltaX));
+      
+      thumb.style.left = newLeft + 'px';
+      
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      grid.scrollLeft = (newLeft / maxThumbPos) * maxScroll;
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+    }
+
+    thumb.addEventListener('pointerdown', onPointerDown);
+
+    
+    track.addEventListener('click', (e) => {
+      if (e.target === thumb) return;
+      const rect = track.getBoundingClientRect();
+      const clickX = e.clientX - rect.left - (thumb.clientWidth / 2);
+      const maxThumbPos = track.clientWidth - thumb.clientWidth;
+      const clampedX = Math.max(0, Math.min(maxThumbPos, clickX));
+      
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      grid.scrollLeft = (clampedX / maxThumbPos) * maxScroll;
+      updateScrollbarThumb();
+    });
+
+    window.addEventListener('resize', updateScrollbarThumb);
+    updateScrollbarThumb();
+  </script>
+
+</body>
+</html>

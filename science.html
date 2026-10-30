@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IXL | Math, Language Arts, Science, Social Studies, and Spanish</title> 
+<link
+  rel="icon"
+  href="/ixl-favicon.png"
+  type="image/png"
+>
+
+<meta name="title" content="IXL | Math, Language Arts, Science, Social Studies, and Spanish">
+
+
+<meta name="description" content="IXL is the world's most popular subscription-based learning site for K–12. Used by over 18 million students, IXL provides personalized learning in more than 20,000 topics, covering math, language arts, science, social studies, and Spanish. Interactive questions, awards, and certificates keep kids motivated as they master skills.">
+  
+
+<!-- 1. The full-page image -->
+<img id="timed-image" src="/ixlfaker.png" alt="dummyimage" class="fullscreen-img">
+
+<!-- 2. The CSS styling to force it to fill the entire screen -->
+<style>
+  .fullscreen-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;       /* Spans 100% of the screen width */
+    height: 100vh;      /* Spans 100% of the screen height */
+    object-fit: cover;  /* Prevents distortion by scaling the image cleanly */
+    z-index: 9999;      /* Forces it to sit on top of all text and elements */
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<!-- 3. The JavaScript to hide it after 2 seconds -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      const img = document.getElementById('timed-image');
+      if (img) img.style.display = 'none';
+    }, 2000); // 4000 milliseconds = 4 seconds
+  });
+</script>
+
+    <style>
+        /* Remove default browser margins and padding */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents double scrollbars */
+        }
+
+        /* Force the iframe to fill the entire viewport */
+        iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 
+      allow="fullscreen" is the modern standard.
+      allowfullscreen is a legacy fallback for older browsers.
+    -->
+    <iframe 
+        src="https://cdn.jsdelivr.net/gh/CloudMoonApp/web@main/260605.svg" 
+        allow="fullscreen" 
+        allowfullscreen>
+    </iframe>
+
+</body>
+</html>

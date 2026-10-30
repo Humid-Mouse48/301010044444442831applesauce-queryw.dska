@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <style>
+        /* YouTube Light Mode Color Palette */
+        :root {
+            --yt-black: #ffffff;        /* Pure White Background */
+            --yt-dark-gray: #f9f9f9;   /* Off-white secondary surfaces */
+            --yt-border: #cccccc;      /* Clear light gray borders */
+            --yt-white: #0f0f0f;       /* Dark charcoal for main text */
+            --yt-light-gray: #606060;  /* Muted dark gray for channel metadata */
+            --yt-red: #ff0000;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Roboto", "Arial", sans-serif;
+            background-color: var(--yt-black);
+            color: var(--yt-white);
+        }
+
+        /* Header / Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: 56px;
+            background-color: var(--yt-black);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo-img {
+            height: 20px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .search-container {
+            display: flex;
+            flex: 0 1 600px;
+            margin: 0 40px;
+        }
+
+        .search-bar {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--yt-border);
+            border-radius: 40px 0 0 40px;
+            padding: 0 16px;
+            color: var(--yt-white);
+            font-size: 16px;
+            height: 40px;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .search-bar:focus {
+            border-color: #1c62b9;
+        }
+
+        .search-btn {
+            background-color: #f8f8f8;
+            border: 1px solid var(--yt-border);
+            border-left: none;
+            border-radius: 0 40px 40px 0;
+            color: var(--yt-white);
+            padding: 0 20px;
+            cursor: pointer;
+            height: 42px;
+        }
+
+        .search-btn:hover {
+            background-color: #f0f0f0;
+            border-color: #c6c6c6;
+        }
+
+        /* Server / Instance Status Indicator */
+        .status-badge {
+            font-size: 12px;
+            color: var(--yt-light-gray);
+            background-color: var(--yt-dark-gray);
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--yt-border);
+        }
+
+        /* Main Layout */
+        main {
+            margin-top: 80px;
+            padding: 0 24px;
+        }
+
+        /* Video Grid Layout */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px 16px;
+        }
+
+        .video-card {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .thumbnail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            display: flex;
+            gap: 12px;
+        }
+
+        .video-details h3 {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 2.2rem;
+            max-height: 4.4rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .channel-name, .video-meta {
+            font-size: 14px;
+            color: var(--yt-light-gray);
+            margin: 0;
+        }
+
+        /* Video Player View */
+        .player-view {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            margin-bottom: 16px;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .back-btn {
+            background-color: #f2f2f2;
+            color: var(--yt-white);
+            border: 1px solid var(--yt-border);
+            padding: 8px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background-color: #e5e5e5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container" onclick="showHome()">
+            <img class="logo-img" src="https://i.postimg.cc/90TDQsmt/You-Tube-logo-(2017)-png-utm-source-commons-wikimedia.png" alt="YouTube Logo">
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search">
+            <button class="search-btn" onclick="searchVideos()">🔍</button>
+        </div>
+        <div id="activeInstanceBadge" class="status-badge">Connecting...</div>
+    </header>
+
+    <main>
+        <!-- Home / Search Results View -->
+        <div id="homeView">
+            <div class="video-grid" id="videoGrid">
+                <!-- Dynamically populated video cards render here -->
+            </div>
+        </div>
+
+        <!-- Video Player View -->
+        <div id="playerView" class="player-view">
+            <button class="back-btn" onclick="showHome()">← Back to home</button>
+            <div class="iframe-container">
+                <iframe id="videoPlayer" allowfullscreen></iframe>
+            </div>
+            <h2 id="playerTitle" style="margin-top: 12px; font-weight: 500;"></h2>
+            <p id="playerChannel" style="color: var(--yt-light-gray);"></p>
+        </div>
+    </main>
+
+    <script>
+        // Array tier of fallback public invidious nodes for robust failover
+        const INVIDIOUS_INSTANCES = [
+            "https://puffyan.us",
+            "https://nerdvpn.de",
+            "https://yewtu.be",
+            "https://tux.pizza",
+            "https://privacydev.net",
+            "https://melmac.space"
+        ];
+        
+        let currentInstanceIndex = 0;
+
+        window.onload = function() {
+            updateInstanceBadge();
+            fetchTrending();
+        };
+
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchVideos();
+            }
+        });
+
+        function getActiveInstance() {
+            return INVIDIOUS_INSTANCES[currentInstanceIndex];
+        }
+
+        function updateInstanceBadge() {
+            const urlObj = new URL(getActiveInstance());
+            document.getElementById('activeInstanceBadge').innerText = `Server: ${urlObj.hostname}`;
+        }
+
+        function fallbackToNextInstance() {
+            currentInstanceIndex = (currentInstanceIndex + 1) % INVIDIOUS_INSTANCES.length;
+            console.warn(`Current node failed. Rolling configuration over to backup host: ${getActiveInstance()}`);
+            updateInstanceBadge();
+        }
+
+        async function fetchWithFailover(endpointPath) {
+            let attempts = 0;
+            while (attempts < INVIDIOUS_INSTANCES.length) {
+                try {
+                    const currentBase = getActiveInstance();
+                    const response = await fetch(`${currentBase}${endpointPath}`, { signal: AbortSignal.timeout(5000) });
+                    if (!response.ok) throw new Error(`HTTP error status code: ${response.status}`);
+                    return await response.json();
+                } catch (err) {
+                    console.error(`Request to target instance index ${currentInstanceIndex} failed layout delivery.`, err);
+                    fallbackToNextInstance();
+                    attempts++;
+                }
+            }
+            throw new Error("All active public backup server configurations have failed response tests.");
+        }
+
+        async function fetchTrending() {
+            try {
+                const data = await fetchWithFailover("/api/v1/trending");
+                renderVideos(data);
+            } catch (err) {
+                document.getElementById('videoGrid').innerHTML = "<p style='color: red;'>Failed to load trending videos from backup server farm.</p>";
+            }
+        }
+
+        async function searchVideos() {
+            const query = document.getElementById('searchInput').value;
+            if (!query) return;
+
+            showHome();
+            document.getElementById('videoGrid').innerHTML = "<p>Loading search results...</p>";
+
+            try {
+                const data = await fetchWithFailover(`/api/v1/search?q=${encodeURIComponent(query)}`);
+                const videos = data.filter(item => item.type === 'video');
+                renderVideos(videos);
+            } catch (err) {
+                document.getElementById('videoGrid').innerHTML = "<p style='color: red;'>Search timed out across all redundancy endpoints.</p>";
+            }
+        }
+
+        function renderVideos(videos) {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = "";
+
+            if (!videos || videos.length === 0) {
+                grid.innerHTML = "<p>No videos found.</p>";
+Use code with caution.
+return;
+}
+videos.forEach(video => {
+const thumbnail = video.videoThumbnails ? video.videoThumbnails.find(t => t.quality === 'high') || video.videoThumbnails : null;
+const thumbUrl = thumbnail ? (Array.isArray(thumbnail) ? thumbnail.url : thumbnail.url) : 'placeholder.com';
+const card = document.createElement('div');
+card.className = 'video-card';
+card.onclick = () => playVideo(video.videoId, video.title, video.author);
+card.innerHTML = <div class="thumbnail-container"> <img class="thumbnail-img" src="${thumbUrl}" alt="Thumbnail" loading="lazy"> </div> <div class="video-info"> <div class="video-details"> <h3>${video.title}</h3> <p class="channel-name">${video.author}</p> <p class="video-meta">${video.viewCountText || ''}</p> </div> </div>;
+grid.appendChild(card);
+});
+}
+function playVideo(id, title, author) {
+document.getElementById('homeView').style.display = 'none';
+document.getElementById('playerView').style.display = 'block';
+document.getElementById('videoPlayer').src = ${getActiveInstance()}/embed/${id}?autoplay=1;
+document.getElementById('playerTitle').innerText = title;
+document.getElementById('playerChannel').innerText = author;
+window.scrollTo(0, 0);
+}
+function showHome() {
+document.getElementById('playerView').style.display = 'none';
+document.getElementById('homeView').style.display = 'block';
+document.getElementById('videoPlayer').src = "";
+}
+
+

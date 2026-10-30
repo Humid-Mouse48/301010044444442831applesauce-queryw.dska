@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geeked</title>
+<link rel="icon" href="https://i.postimg.cc/Bv879tqb/Screenshot-2026-10-29-201630-removebg-preview.png">
+
+<script src=cloaking.obf.js></script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1740887682850526"
+     crossorigin="anonymous"></script>
+
+<style>
+:root {
+  --bg: #010206;
+  --text: #f4fff9;
+  --muted: #8ca99f;
+  --accent: #00ff99;
+  --accent2: #00cfff;
+  --glass: rgba(5, 17, 16, .86);
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+.topbar {
+  position: fixed;
+  z-index: 100;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 28px);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 11px 8px 15px;
+  border: 1px solid rgba(190, 220, 230, .15);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(7, 25, 19, .94), rgba(3, 11, 17, .91));
+  box-shadow: 0 12px 38px rgba(0,0,0,.42), 0 0 24px rgba(0,255,153,.055), inset 0 1px 0 rgba(0,255,153,.13);
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  backdrop-filter: blur(24px) saturate(155%);
+}
+.brand {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  flex: 0 0 auto; text-decoration: none; min-width: 0;
+  padding: 0 7px 0 1px;
+}
+.brand img { width: 44px; height: 44px; object-fit: contain; }
+.brand-name { font-size: 13px; font-weight: 800; letter-spacing: -.35px; color: var(--text); }
+.brand-dot { color: var(--accent); }
+.nav {
+  display: flex; align-items: center; gap: 3px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,.11);
+}
+.nav-btn {
+  appearance: none; border: 1px solid transparent; color: #b5c9c2;
+  background: transparent; border-radius: 999px; padding: 10px 13px;
+  font: inherit; font-size: 12.5px; font-weight: 650; cursor: pointer;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  white-space: nowrap;
+}
+.nav-btn:hover {
+  color: #fff; background: rgba(255,255,255,.07);
+  transform: translateY(-1px);
+}
+.nav-btn.active {
+  color: #00ff99;
+  background: linear-gradient(110deg, rgba(0,255,153,.14), rgba(0,207,255,.08));
+  border-color: rgba(0,255,153,.28);
+  box-shadow: inset 0 0 14px rgba(0,255,153,.045), 0 0 12px rgba(0,255,153,.035);
+}
+.nav-btn .icon-svg { margin-right: 7px; }
+.page-wrap {
+  position: relative; width: 100%; height: 100%; isolation: isolate;
+  background:
+    radial-gradient(ellipse at 18% -5%, rgba(0,255,153,.075), transparent 34%),
+    radial-gradient(ellipse at 90% 0%, rgba(0,207,255,.065), transparent 28%),
+    var(--bg);
+}
+.page-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--bg); }
+@media (max-width: 680px) {
+  .topbar {
+    top: 10px; width: calc(100vw - 20px); max-width: 520px;
+    min-height: 54px; padding: 7px 8px; gap: 7px;
+  }
+  .brand { gap: 5px; padding-right: 5px; }
+  .brand img { width: 38px; height: 38px; }
+  .brand-name { display: none; }
+  .nav { gap: 1px; padding-left: 6px; min-width: 0; }
+  .nav-btn { padding: 9px 8px; font-size: 11px; }
+  .nav-btn .icon-svg { margin-right: 4px; }
+}
+@media (max-width: 430px) {
+  .topbar { gap: 4px; }
+  .brand img { width: 34px; height: 34px; }
+  .nav-btn { padding: 9px 7px; font-size: 10.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+.icon-svg {
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+  vertical-align: -3px;
+  margin-right: 6px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+.nav-btn.active .icon-svg { filter: drop-shadow(0 0 4px rgba(0,255,153,.25)); }
+@media (max-width: 680px) { .icon-svg { width: 15px; height: 15px; margin-right: 3px; } }
+@media (max-width: 430px) { .icon-svg { display: none; } }
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Geeked Sites home" data-section="proxy"><img src="https://i.postimg.cc/Bv879tqb/Screenshot-2026-10-29-201630-removebg-preview.png" alt="Geeked Sites"></a>
+  <nav class="nav" aria-label="Main sections">
+    <button class="nav-btn" type="button" data-section="games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8h9a4.5 4.5 0 0 1 4.4 5.5l-.7 2.8a2 2 0 0 1-3.3 1l-2.1-1.8H9.2l-2.1 1.8a2 2 0 0 1-3.3-1l-.7-2.8A4.5 4.5 0 0 1 7.5 8Z"/><path d="M7.5 10.5v4M5.5 12.5h4M15.5 11.5h.01M18 14h.01"/></svg>Games</button>
+    <button class="nav-btn active" type="button" data-section="proxy" aria-current="page"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3c2.3 2.4 3.4 5.4 3.4 9s-1.1 6.6-3.4 9M12 3C9.7 5.4 8.6 8.4 8.6 12s1.1 6.6 3.4 9"/></svg>Proxy</button>
+    <button class="nav-btn" type="button" data-section="movies"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 20l3-3M16 20l-3-3"/></svg>Movies</button>
+    <button class="nav-btn" type="button" data-section="online-games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18.5a4.5 4.5 0 0 1 .3-9A6 6 0 0 1 18 8a4.2 4.2 0 1 1 .5 10.5Z"/></svg>Online Games</button>
+  </nav>
+</header>
+<main class="page-wrap">
+  <iframe class="page-frame" id="sectionFrame" title="Proxy" src="reading.html" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
+</main>
+<script>
+(() => {
+  const destinations = {
+    games: 'math.html',
+    proxy: 'reading.html',
+    movies: 'movies.html',
+    'online-games': 'science.html'
+  };
+  const labels = {
+    games: 'Games',
+    proxy: 'Proxy',
+    movies: 'Movies',
+    'online-games': 'Online Games'
+  };
+  const frame = document.getElementById('sectionFrame');
+  const buttons = [...document.querySelectorAll('[data-section]')];
+  function showSection(section) {
+    if (!destinations[section]) section = 'proxy';
+    frame.src = destinations[section];
+    frame.title = labels[section];
+    buttons.forEach(button => {
+      const active = button.dataset.section === section;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    try { history.replaceState(null, '', '#' + section); } catch (_) {}
+  }
+  buttons.forEach(button => button.addEventListener('click', event => {
+    event.preventDefault();
+    showSection(button.dataset.section);
+  }));
+  const initial = location.hash.slice(1);
+  if (initial && destinations[initial]) showSection(initial);
+})();
+</script>
+
+<script>window.addEventListener("beforeunload", (event) => {
+  event.preventDefault();
+  event.returnValue = true;
+});</script>
+
+</body>
+</html>
