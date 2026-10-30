@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Centered Flash Player</title>
+    
+    <!-- Ruffle CDN Script -->
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    
+    <style>
+        /* Centers the container horizontally and vertically on the screen */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center; /* Horizontal centering */
+            align-items: center;     /* Vertical centering */
+            min-height: 100vh;       /* Takes up full viewport height */
+            background-color: #1a1a1a; /* Dark background (optional) */
+        }
+
+        /* Your fixed-size container */
+        #flash-container {
+            width: 800px;  
+            height: 600px; 
+            background-color: #000000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Optional: Gives a nice depth effect */
+        }
+
+        /* Forces Ruffle to fill the container size */
+        #flash-container ruffle-player {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Centered Flash Container -->
+    <div id="flash-container"></div>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const ruffle = window.RufflePlayer.newest();
+            const player = ruffle.createPlayer();
+            
+            const container = document.getElementById("flash-container");
+            container.appendChild(player);
+            
+            // Load your target SWF file
+            player.load("https://cdn.jsdelivr.net/gh/Humid-Mouse48/Humid-Mouse48.github.io@0d6bac85e3c741d5baf3f1866a94f430cb541f81/boss-slayer-133243467.swf");
+        });
+    </script>
+
+</body>
+</html>
