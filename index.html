@@ -57,13 +57,13 @@ body {
 .brand-name { font-size: 13px; font-weight: 800; letter-spacing: -.35px; color: var(--text); }
 .brand-dot { color: var(--accent); }
 .nav {
-  display: flex; align-items: center; gap: 3px;
-  padding-left: 10px;
+  display: flex; align-items: center; gap: 0;
+  padding-left: 7px;
   border-left: 1px solid rgba(255,255,255,.11);
 }
 .nav-btn {
   appearance: none; border: 1px solid transparent; color: #b5c9c2;
-  background: transparent; border-radius: 999px; padding: 10px 13px;
+  background: transparent; border-radius: 999px; padding: 10px 10px;
   font: inherit; font-size: 12.5px; font-weight: 650; cursor: pointer;
   transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
   white-space: nowrap;
@@ -79,6 +79,8 @@ body {
   box-shadow: inset 0 0 14px rgba(0,255,153,.045), 0 0 12px rgba(0,255,153,.035);
 }
 .nav-btn .icon-svg { margin-right: 7px; }
+/* Tighten only the space between Online Games and AI. */
+.nav-btn[data-section="ai"] { margin-left: -4px; }
 .page-wrap {
   position: relative; width: 100%; height: 100%; isolation: isolate;
   background:
@@ -121,7 +123,19 @@ body {
   stroke-linejoin: round;
   flex: 0 0 auto;
 }
+.games-icon { width: 22px; height: 22px; vertical-align: -5px; margin-right: 7px; stroke-width: 1.4; }
 .nav-btn.active .icon-svg { filter: drop-shadow(0 0 4px rgba(0,255,153,.25)); }
+.ai-robot-icon {
+  stroke-width: 1.2;
+  width: 26px;
+  height: 26px;
+  vertical-align: -7px;
+  margin-right: 7px;
+}
+@media (max-width: 680px) {
+  .games-icon { width: 19px; height: 19px; margin-right: 4px; }
+  .ai-robot-icon { width: 23px; height: 23px; margin-right: 4px; }
+}
 @media (max-width: 680px) { .icon-svg { width: 15px; height: 15px; margin-right: 3px; } }
 @media (max-width: 430px) { .icon-svg { display: none; } }
 
@@ -131,10 +145,11 @@ body {
 <header class="topbar">
   <a class="brand" href="#" aria-label="Geeked Sites home" data-section="proxy"><img src="https://i.postimg.cc/Bv879tqb/Screenshot-2026-10-29-201630-removebg-preview.png" alt="Geeked Sites"></a>
   <nav class="nav" aria-label="Main sections">
-    <button class="nav-btn" type="button" data-section="games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8h9a4.5 4.5 0 0 1 4.4 5.5l-.7 2.8a2 2 0 0 1-3.3 1l-2.1-1.8H9.2l-2.1 1.8a2 2 0 0 1-3.3-1l-.7-2.8A4.5 4.5 0 0 1 7.5 8Z"/><path d="M7.5 10.5v4M5.5 12.5h4M15.5 11.5h.01M18 14h.01"/></svg>Games</button>
+    <button class="nav-btn" type="button" data-section="games"><svg class="icon-svg games-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8h9a4.5 4.5 0 0 1 4.4 5.5l-.7 2.8a2 2 0 0 1-3.3 1l-2.1-1.8H9.2l-2.1 1.8a2 2 0 0 1-3.3-1l-.7-2.8A4.5 4.5 0 0 1 7.5 8Z"/><path d="M7.5 10.5v4M5.5 12.5h4M15.5 11.5h.01M18 14h.01"/></svg>Games</button>
     <button class="nav-btn active" type="button" data-section="proxy" aria-current="page"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3c2.3 2.4 3.4 5.4 3.4 9s-1.1 6.6-3.4 9M12 3C9.7 5.4 8.6 8.4 8.6 12s1.1 6.6 3.4 9"/></svg>Proxy</button>
     <button class="nav-btn" type="button" data-section="movies"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 20l3-3M16 20l-3-3"/></svg>Movies</button>
     <button class="nav-btn" type="button" data-section="online-games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18.5a4.5 4.5 0 0 1 .3-9A6 6 0 0 1 18 8a4.2 4.2 0 1 1 .5 10.5Z"/></svg>Online Games</button>
+    <button class="nav-btn" type="button" data-section="ai"><svg class="icon-svg ai-robot-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5V3.2" stroke-width="1.2"/><circle cx="12" cy="2" r="1.25"/><rect x="5" y="6.5" width="14" height="13" rx="4"/><circle cx="9" cy="12" r=".8" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r=".8" fill="currentColor" stroke="none"/><path d="M9 16h6"/></svg>AI</button>
   </nav>
 </header>
 <main class="page-wrap">
@@ -146,13 +161,15 @@ body {
     games: 'math.html',
     proxy: 'reading.html',
     movies: 'movies.html',
-    'online-games': 'science.html'
+    'online-games': 'science.html',
+    ai: 'ai.html'
   };
   const labels = {
     games: 'Games',
     proxy: 'Proxy',
     movies: 'Movies',
-    'online-games': 'Online Games'
+    'online-games': 'Online Games',
+    ai: 'AI'
   };
   const frame = document.getElementById('sectionFrame');
   const buttons = [...document.querySelectorAll('[data-section]')];
