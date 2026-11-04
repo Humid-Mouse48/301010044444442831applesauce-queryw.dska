@@ -14,35 +14,6 @@
 
 
 <meta name="description" content="IXL is the world's most popular subscription-based learning site for K–12. Used by over 18 million students, IXL provides personalized learning in more than 20,000 topics, covering math, language arts, science, social studies, and Spanish. Interactive questions, awards, and certificates keep kids motivated as they master skills.">
-  
-
-<!-- 1. The full-page image -->
-<img id="timed-image" src="/ixlfaker.png" alt="dummyimage" class="fullscreen-img">
-
-<!-- 2. The CSS styling to force it to fill the entire screen -->
-<style>
-  .fullscreen-img {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;       /* Spans 100% of the screen width */
-    height: 100vh;      /* Spans 100% of the screen height */
-    object-fit: cover;  /* Prevents distortion by scaling the image cleanly */
-    z-index: 9999;      /* Forces it to sit on top of all text and elements */
-    margin: 0;
-    padding: 0;
-  }
-</style>
-
-<!-- 3. The JavaScript to hide it after 2 seconds -->
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      const img = document.getElementById('timed-image');
-      if (img) img.style.display = 'none';
-    }, 2000); // 4000 milliseconds = 4 seconds
-  });
-</script>
 
   <style>
     :root {
@@ -716,6 +687,83 @@
     }
 
   </style>
+<style id="seasonal-theme">
+html[data-season="october"] { --season-bg:#100904; --season-bg-glow:rgba(255,125,30,.16); --season-panel:#291508; --season-panel-2:#351b0b; --season-panel-hover:#48230d; --season-card:#241308; --season-text:#fff4e8; --season-muted:#d0a17b; --season-accent:#ff922e; --season-accent-rgb:255,146,46; --season-border:rgba(255,146,46,.38); --season-border-soft:rgba(255,194,137,.22); --season-shadow:rgba(255,112,24,.20); --season-overlay:rgba(18,8,2,.88); }
+html[data-season="november-brown"] { --season-bg:#100b07; --season-bg-glow:rgba(174,126,82,.16); --season-panel:#261a11; --season-panel-2:#342317; --season-panel-hover:#49301e; --season-card:#21170f; --season-text:#fff5e9; --season-muted:#c5a487; --season-accent:#c18a59; --season-accent-rgb:193,138,89; --season-border:rgba(193,138,89,.38); --season-border-soft:rgba(218,190,160,.20); --season-shadow:rgba(170,112,62,.18); --season-overlay:rgba(14,9,5,.89); }
+html[data-season="winter-blue"] { --season-bg:#06101a; --season-bg-glow:rgba(113,195,255,.16); --season-panel:#0b2030; --season-panel-2:#102b40; --season-panel-hover:#183b54; --season-card:#0c1d2b; --season-text:#eff9ff; --season-muted:#a8c9df; --season-accent:#9bdcff; --season-accent-rgb:155,220,255; --season-border:rgba(155,220,255,.38); --season-border-soft:rgba(190,226,248,.22); --season-shadow:rgba(93,185,255,.18); --season-overlay:rgba(3,10,18,.88); }
+html[data-season="february-pink"] { --season-bg:#150a12; --season-bg-glow:rgba(255,142,190,.16); --season-panel:#2b1424; --season-panel-2:#3a1b30; --season-panel-hover:#512640; --season-card:#251321; --season-text:#fff2f8; --season-muted:#d8a9c0; --season-accent:#ffb6d5; --season-accent-rgb:255,182,213; --season-border:rgba(255,182,213,.40); --season-border-soft:rgba(255,211,231,.22); --season-shadow:rgba(255,120,178,.19); --season-overlay:rgba(18,6,14,.89); }
+html[data-season="iconic"] { --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.30); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.14); --season-overlay:rgba(0,8,7,.84); }
+
+html[data-season] {
+  --bg-tabs: var(--season-bg);
+  --bg-toolbar: var(--season-panel);
+  --bg-omnibox: var(--season-panel-2);
+  --border-color: var(--season-border-soft);
+  --text-main: var(--season-text);
+  --text-muted: var(--season-muted);
+  --accent: var(--season-accent);
+  --hover-bg: rgba(var(--season-accent-rgb), .13);
+  --tab-hover: rgba(var(--season-accent-rgb), .07);
+}
+/* ambient glow follows the theme */
+html[data-season] {
+  background-color: var(--season-bg);
+  background-image:
+    radial-gradient(ellipse 60% 45% at 10% 0%, rgba(var(--season-accent-rgb), .22), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 92% 8%, rgba(var(--season-accent-rgb), .14), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 50% 105%, rgba(var(--season-accent-rgb), .12), transparent 70%);
+  background-attachment: fixed;
+}
+html[data-season] body { background: transparent; }
+html[data-season] .browser-header {
+  background-color: var(--season-bg);
+  box-shadow: 0 8px 30px -12px rgba(var(--season-accent-rgb), .35);
+}
+html[data-season] .omnibox-container:focus-within {
+  border-color: var(--season-accent);
+  box-shadow: 0 0 0 2px rgba(var(--season-accent-rgb), .18);
+}
+html[data-season] .wisp-pool-panel { background: color-mix(in srgb, var(--season-bg) 55%, transparent); }
+html[data-season] .wisp-pool-input:focus { box-shadow: 0 0 0 2px rgba(var(--season-accent-rgb), .12); }
+html[data-season] .start-search { box-shadow: 0 10px 30px rgba(0,0,0,.3), 0 0 44px rgba(var(--season-accent-rgb), .12); }
+html[data-season] .start-search input {
+  background-color: color-mix(in srgb, var(--season-panel-2) 85%, transparent);
+}
+html[data-season] .start-search input:focus {
+  border-color: var(--season-accent);
+  box-shadow: 0 0 22px rgba(var(--season-accent-rgb), .25);
+}
+html[data-season] .discord-btn { background-color: color-mix(in srgb, var(--season-panel-2) 85%, transparent); }
+html[data-season] .dropdown-menu,
+html[data-season] #options_div {
+  box-shadow: 0 10px 25px rgba(0,0,0,.5), 0 0 24px rgba(var(--season-accent-rgb), .10);
+}
+html[data-season] :focus-visible { outline: 2px solid var(--season-accent); outline-offset: 2px; }
+html[data-season="october"] .engine-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d0a17b'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="october"] .engine-select:focus, html[data-season="october"] .engine-select:hover { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff922e'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="november-brown"] .engine-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c5a487'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="november-brown"] .engine-select:focus, html[data-season="november-brown"] .engine-select:hover { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c18a59'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="winter-blue"] .engine-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a8c9df'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="winter-blue"] .engine-select:focus, html[data-season="winter-blue"] .engine-select:hover { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239bdcff'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="february-pink"] .engine-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d8a9c0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="february-pink"] .engine-select:focus, html[data-season="february-pink"] .engine-select:hover { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffb6d5'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="iconic"] .engine-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239bb8ad'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+html[data-season="iconic"] .engine-select:focus, html[data-season="iconic"] .engine-select:hover { background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ff99'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); }
+</style>
+<script>
+/* pick the seasonal theme (same rules as the main page) */
+(() => {
+  const now = new Date(), month = now.getMonth(), day = now.getDate();
+  let season = 'iconic';
+  if (month === 9) season = 'october';
+  else if (month === 10 && day <= 7) season = 'november-brown';
+  else if (month === 10 || month === 11 || month === 0) season = 'winter-blue';
+  else if (month === 1) season = 'february-pink';
+  document.documentElement.setAttribute('data-season', season);
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--season-accent-rgb').trim();
+  window.__accentRgb = rgb || '0, 255, 153';
+})();
+</script>
 </head>
 
 <body>
@@ -1391,7 +1439,7 @@ function animateDots() {
     if (dot.y < 0 || dot.y > height) dot.vy *= -1;
     ctx.beginPath();
     ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 255, 153, ${dot.opacity})`;
+    ctx.fillStyle = `rgba(${window.__accentRgb || "0, 255, 153"}, ${dot.opacity})`;
     ctx.fill();
   });
   requestAnimationFrame(animateDots);

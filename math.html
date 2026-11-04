@@ -407,7 +407,7 @@
     .announcement-btn:hover {
       border-color: var(--secondary-color);
       color: var(--secondary-color);
-      box-shadow: 0 0 10px rgba(0, 255, 153, 0.2);
+      box-shadow: 0 0 10px rgba(var(--season-accent-rgb, 0,255,153), 0.2);
     }
 
     .top-header {
@@ -470,7 +470,7 @@
     #game-search:focus {
       outline: none;
       border-color: var(--secondary-color);
-      box-shadow: 0 0 0 4px rgba(0, 255, 153, 0.15);
+      box-shadow: 0 0 0 4px rgba(var(--season-accent-rgb, 0,255,153), 0.15);
     }
 
     #clear-search {
@@ -602,7 +602,7 @@
     .game-card:hover {
       transform: translateY(-4px);
       border-color: var(--secondary-color);
-      box-shadow: 0 8px 22px -4px rgba(0, 255, 153, 0.35);
+      box-shadow: 0 8px 22px -4px rgba(var(--season-accent-rgb, 0,255,153), 0.35);
     }
 
     .game-card:hover .card-bg-image {
@@ -652,14 +652,14 @@
     }
 
     #game-controls.corner-top-left {
-      top: 20px;
+      top: 75px;
       left: 20px;
       right: auto;
       bottom: auto;
     }
 
     #game-controls.corner-top-right {
-      top: 20px;
+      top: 75px;
       right: 20px;
       left: auto;
       bottom: auto;
@@ -706,7 +706,7 @@
 
 body {
   background:
-    radial-gradient(circle at 12% 8%, rgba(0,255,153,0.045), transparent 28%),
+    radial-gradient(circle at 12% 8%, rgba(var(--season-accent-rgb, 0,255,153),0.045), transparent 28%),
     radial-gradient(circle at 88% 18%, rgba(148,163,184,0.05), transparent 30%),
     #010206 !important;
 }
@@ -801,10 +801,10 @@ body {
 .category-chip.active {
   background: linear-gradient(
     135deg,
-    rgba(0,255,153,0.17),
-    rgba(0,255,153,0.045)
+    rgba(var(--season-accent-rgb, 0,255,153),0.17),
+    rgba(var(--season-accent-rgb, 0,255,153),0.045)
   ) !important;
-  border-color: rgba(0,255,153,0.36) !important;
+  border-color: rgba(var(--season-accent-rgb, 0,255,153),0.36) !important;
 }
 
 .settings-overlay,
@@ -818,9 +818,9 @@ body {
 <style id="darker-glass-background">
 html, body {
   background:
-    radial-gradient(circle at 10% 5%, rgba(0,255,153,0.018), transparent 25%),
+    radial-gradient(circle at 10% 5%, rgba(var(--season-accent-rgb, 0,255,153),0.018), transparent 25%),
     radial-gradient(circle at 90% 15%, rgba(30,41,59,0.025), transparent 28%),
-    radial-gradient(circle at 50% 100%, rgba(0,255,153,0.012), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(var(--season-accent-rgb, 0,255,153),0.012), transparent 35%),
     #000103 !important;
 }
 
@@ -895,9 +895,9 @@ body::before {
   border-color: var(--secondary-color) !important;
   color: var(--text-main) !important;
   box-shadow:
-    0 0 0 1px rgba(0, 255, 153, 0.12),
-    0 5px 16px rgba(0, 255, 153, 0.18),
-    inset 0 0 16px rgba(0, 255, 153, 0.05);
+    0 0 0 1px rgba(var(--season-accent-rgb, 0,255,153), 0.12),
+    0 5px 16px rgba(var(--season-accent-rgb, 0,255,153), 0.18),
+    inset 0 0 16px rgba(var(--season-accent-rgb, 0,255,153), 0.05);
 }
 
 .category-chip.active {
@@ -913,9 +913,9 @@ body::before {
   transform: translateY(-2px) scale(1.03);
   border-color: var(--secondary-color) !important;
   box-shadow:
-    0 0 0 1px rgba(0, 255, 153, 0.18),
-    0 5px 18px rgba(0, 255, 153, 0.24),
-    inset 0 0 18px rgba(0, 255, 153, 0.08);
+    0 0 0 1px rgba(var(--season-accent-rgb, 0,255,153), 0.18),
+    0 5px 18px rgba(var(--season-accent-rgb, 0,255,153), 0.24),
+    inset 0 0 18px rgba(var(--season-accent-rgb, 0,255,153), 0.08);
 }
 
 .category-chip:active {
@@ -956,13 +956,13 @@ body::before {
 
 .category-chip:hover {
   background: rgba(30, 41, 59, 0.88) !important;
-  border-color: rgba(0, 255, 153, 0.48) !important;
+  border-color: rgba(var(--season-accent-rgb, 0,255,153), 0.48) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.09),
     0 6px 18px rgba(0, 0, 0, 0.18),
-    0 0 12px rgba(0, 255, 153, 0.10);
+    0 0 12px rgba(var(--season-accent-rgb, 0,255,153), 0.10);
 }
 
 .category-chip:active {
@@ -970,12 +970,12 @@ body::before {
 }
 
 .category-chip.active {
-  background: rgba(0, 255, 153, 0.18) !important;
+  background: rgba(var(--season-accent-rgb, 0,255,153), 0.18) !important;
   color: #ffffff !important;
-  border-color: rgba(0, 255, 153, 0.65) !important;
+  border-color: rgba(var(--season-accent-rgb, 0,255,153), 0.65) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 0 14px rgba(0, 255, 153, 0.14);
+    0 0 14px rgba(var(--season-accent-rgb, 0,255,153), 0.14);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1008,11 +1008,11 @@ body::before {
 #game-search:hover,
 #game-search:focus {
   background: rgba(30, 41, 59, 0.88) !important;
-  border-color: rgba(0, 255, 153, 0.48) !important;
+  border-color: rgba(var(--season-accent-rgb, 0,255,153), 0.48) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.09),
     0 6px 18px rgba(0, 0, 0, 0.18),
-    0 0 12px rgba(0, 255, 153, 0.10);
+    0 0 12px rgba(var(--season-accent-rgb, 0,255,153), 0.10);
 }
 
 .announcement-btn:hover {
@@ -1059,12 +1059,12 @@ body::before {
 
 .menu-item-btn:hover {
   background: rgba(30, 41, 59, 0.88) !important;
-  border-color: rgba(0, 255, 153, 0.48) !important;
+  border-color: rgba(var(--season-accent-rgb, 0,255,153), 0.48) !important;
   color: #ffffff !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.09),
     0 6px 18px rgba(0, 0, 0, 0.18),
-    0 0 12px rgba(0, 255, 153, 0.10) !important;
+    0 0 12px rgba(var(--season-accent-rgb, 0,255,153), 0.10) !important;
 }
 </style>
 
@@ -1174,31 +1174,435 @@ body::before {
   .menu-toggle-btn {
     background: linear-gradient(
       135deg,
-      rgba(0, 255, 153, 0.18),
+      rgba(var(--season-accent-rgb, 0,255,153), 0.18),
       rgba(30, 41, 59, 0.78) 60%,
       rgba(1, 2, 6, 0.85)
     ) !important;
-    border: 1px solid rgba(0, 255, 153, 0.4) !important;
+    border: 1px solid rgba(var(--season-accent-rgb, 0,255,153), 0.4) !important;
     color: #ffffff !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 4px 16px rgba(0, 255, 153, 0.15) !important;
+      0 4px 16px rgba(var(--season-accent-rgb, 0,255,153), 0.15) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
   }
   .menu-toggle-btn:hover {
     background: linear-gradient(
       135deg,
-      rgba(0, 255, 153, 0.28),
+      rgba(var(--season-accent-rgb, 0,255,153), 0.28),
       rgba(30, 41, 59, 0.88) 60%,
       rgba(1, 2, 6, 0.95)
     ) !important;
-    border-color: rgba(0, 255, 153, 0.7) !important;
+    border-color: rgba(var(--season-accent-rgb, 0,255,153), 0.7) !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 6px 20px rgba(0, 255, 153, 0.25),
-      0 0 15px rgba(0, 255, 153, 0.2) !important;
+      0 6px 20px rgba(var(--season-accent-rgb, 0,255,153), 0.25),
+      0 0 15px rgba(var(--season-accent-rgb, 0,255,153), 0.2) !important;
   }
+</style>
+<style id="geeked-seasonal-glass-theme">
+:root {
+  --secondary-color: #c18a59;
+  --season-accent: #c18a59;
+  --season-accent-rgb: 193,138,89;
+  --season-accent-soft: rgba(170,112,62,.18);
+  --season-accent-border: rgba(193,138,89,.48);
+  --bg-dark: #100b07;
+  --text-main: #fff5e9;
+  --text-muted: #c5a487;
+  --nav-bg: linear-gradient(135deg, #342317, #261a11);
+  --panel-bg: linear-gradient(135deg, #342317, #261a11 58%, #100b07);
+  --card-bg: #21170f;
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(var(--season-accent-rgb, 193,138,89),.09), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(218,190,160,.045), transparent 30%),
+    var(--bg-dark) !important;
+  color: var(--text-main) !important;
+}
+
+body[data-season="october"] {
+  --secondary-color: #ff922e;
+  --season-accent: #ff922e;
+  --season-accent-rgb: 255,146,46;
+  --season-accent-soft: rgba(255,112,24,.20);
+  --season-accent-border: rgba(255,146,46,.48);
+  --bg-dark: #0a0705;
+  --text-main: #fff3ec;
+  --text-muted: #d4a382;
+  --nav-bg: linear-gradient(135deg, #2b180d, #1a0f08);
+  --panel-bg: linear-gradient(135deg, #2b180d, #1a0f08 58%, #0a0705);
+  --card-bg: #1f120a;
+}
+
+body[data-season="november-brown"] {
+  --secondary-color: #c18a59;
+  --season-accent: #c18a59;
+  --season-accent-rgb: 193,138,89;
+  --season-accent-soft: rgba(170,112,62,.18);
+  --season-accent-border: rgba(193,138,89,.48);
+  --bg-dark: #100b07;
+  --text-main: #fff5e9;
+  --text-muted: #c5a487;
+  --nav-bg: linear-gradient(135deg, #342317, #261a11);
+  --panel-bg: linear-gradient(135deg, #342317, #261a11 58%, #100b07);
+  --card-bg: #21170f;
+}
+
+body[data-season="winter-blue"] {
+  --secondary-color: #9bdcff;
+  --season-accent: #9bdcff;
+  --season-accent-rgb: 155,220,255;
+  --season-accent-soft: rgba(93,185,255,.18);
+  --season-accent-border: rgba(155,220,255,.48);
+  --bg-dark: #070a10;
+  --text-main: #eef6ff;
+  --text-muted: #94b2d2;
+  --nav-bg: linear-gradient(135deg, #101c2e, #0a111b);
+  --panel-bg: linear-gradient(135deg, #101c2e, #0a111b 58%, #070a10);
+  --card-bg: #0d1522;
+}
+
+body[data-season="february-pink"] {
+  --secondary-color: #ffb6d5;
+  --season-accent: #ffb6d5;
+  --season-accent-rgb: 255,182,213;
+  --season-accent-soft: rgba(255,120,178,.19);
+  --season-accent-border: rgba(255,182,213,.5);
+  --bg-dark: #10070c;
+  --text-main: #fff0f6;
+  --text-muted: #d49db6;
+  --nav-bg: linear-gradient(135deg, #2b111e, #1a0a12);
+  --panel-bg: linear-gradient(135deg, #2b111e, #1a0a12 58%, #10070c);
+  --card-bg: #211019;
+}
+
+body[data-season="iconic"] {
+  --secondary-color: #00ff99;
+  --season-accent: #00ff99;
+  --season-accent-rgb: 0,255,153;
+  --season-accent-soft: rgba(0,255,153,.16);
+  --season-accent-border: rgba(0,255,153,.42);
+  --bg-dark: #000000;
+  --text-main: #ffffff;
+  --text-muted: #64748b;
+  --nav-bg: rgba(5, 11, 10, 0.95);
+  --panel-bg: rgba(5, 11, 10, 0.95);
+  --card-bg: rgba(5, 11, 10, 0.92);
+}
+</style>
+
+<style id="index-menu-opaque-theme-fix">
+/* Match the actual Index menu: deep green-to-blue, visibly opaque glass. */
+:root { --index-menu-bg: linear-gradient(135deg, rgba(7,25,19,.97), rgba(3,11,17,.96)); }
+.side-menu,
+.settings-modal,
+.suggestions-modal,
+.announcement-modal,
+#game-search,
+.category-chip,
+.game-card,
+.close-game-btn,
+.announcement-btn,
+.setting-input,
+.side-menu .setting-input,
+.side-menu .setting-group input,
+.side-menu .setting-group select,
+.side-menu .setting-group textarea {
+  background: var(--index-menu-bg) !important;
+  background-color: #071912 !important;
+  border: 1px solid rgba(190,220,230,.15) !important;
+  box-shadow: 0 12px 38px rgba(0,0,0,.42), 0 0 24px rgba(var(--season-accent-rgb, 0,255,153),.055), inset 0 1px 0 rgba(var(--season-accent-rgb, 0,255,153),.13) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(155%) !important;
+  backdrop-filter: blur(24px) saturate(155%) !important;
+}
+.menu-item-btn {
+  background: linear-gradient(135deg, rgba(7,25,19,.94), rgba(3,11,17,.92)) !important;
+  border: 1px solid rgba(190,220,230,.15) !important;
+  box-shadow: inset 0 1px 0 rgba(var(--season-accent-rgb, 0,255,153),.08) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(155%) !important;
+  backdrop-filter: blur(24px) saturate(155%) !important;
+}
+.menu-item-btn:hover,
+.category-chip:hover,
+.game-card:hover,
+.close-game-btn:hover,
+.announcement-btn:hover {
+  background: linear-gradient(135deg, rgba(10,37,28,.98), rgba(4,16,24,.97)) !important;
+  border-color: var(--season-accent-border) !important;
+}
+.category-chip.active {
+  background: linear-gradient(110deg, color-mix(in srgb, var(--season-accent) 18%, #071912), rgba(3,11,17,.96)) !important;
+  border-color: var(--season-accent-border) !important;
+}
+.settings-overlay,.suggestions-overlay,.announcement-overlay {
+  background: rgba(0,0,0,.72) !important;
+}
+</style>
+
+<style id="full-seasonal-palette">
+/* Each season changes the complete interface palette, not just the highlight color. */
+:root {
+  --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.24); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.12); --season-overlay:rgba(0,8,7,.84);
+}
+body[data-season="october"] {
+  --season-bg:#100904; --season-bg-glow:rgba(255,125,30,.16); --season-panel:#291508; --season-panel-2:#351b0b; --season-panel-hover:#48230d; --season-card:#241308; --season-text:#fff4e8; --season-muted:#d0a17b; --season-accent:#ff922e; --season-accent-rgb:255,146,46; --season-border:rgba(255,146,46,.38); --season-border-soft:rgba(255,194,137,.22); --season-shadow:rgba(255,112,24,.20); --season-overlay:rgba(18,8,2,.88);
+}
+body[data-season="november-brown"] {
+  --season-bg:#100b07; --season-bg-glow:rgba(174,126,82,.16); --season-panel:#261a11; --season-panel-2:#342317; --season-panel-hover:#49301e; --season-card:#21170f; --season-text:#fff5e9; --season-muted:#c5a487; --season-accent:#c18a59; --season-accent-rgb:193,138,89; --season-border:rgba(193,138,89,.38); --season-border-soft:rgba(218,190,160,.20); --season-shadow:rgba(170,112,62,.18); --season-overlay:rgba(14,9,5,.89);
+}
+body[data-season="winter-blue"] {
+  --season-bg:#06101a; --season-bg-glow:rgba(113,195,255,.16); --season-panel:#0b2030; --season-panel-2:#102b40; --season-panel-hover:#183b54; --season-card:#0c1d2b; --season-text:#eff9ff; --season-muted:#a8c9df; --season-accent:#9bdcff; --season-accent-rgb:155,220,255; --season-border:rgba(155,220,255,.38); --season-border-soft:rgba(190,226,248,.22); --season-shadow:rgba(93,185,255,.18); --season-overlay:rgba(3,10,18,.88);
+}
+body[data-season="february-pink"] {
+  --season-bg:#150a12; --season-bg-glow:rgba(255,142,190,.16); --season-panel:#2b1424; --season-panel-2:#3a1b30; --season-panel-hover:#512640; --season-card:#251321; --season-text:#fff2f8; --season-muted:#d8a9c0; --season-accent:#ffb6d5; --season-accent-rgb:255,182,213; --season-border:rgba(255,182,213,.40); --season-border-soft:rgba(255,211,231,.22); --season-shadow:rgba(255,120,178,.19); --season-overlay:rgba(18,6,14,.89);
+}
+body[data-season="iconic"] {
+  --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.30); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.14); --season-overlay:rgba(0,8,7,.84);
+}
+html,body { background:radial-gradient(ellipse at 14% 0%,var(--season-bg-glow),transparent 38%),radial-gradient(ellipse at 92% 10%,rgba(var(--season-accent-rgb),.07),transparent 32%),var(--season-bg)!important; color:var(--season-text)!important; }
+body::before { background:radial-gradient(ellipse at 50% 0%,var(--season-bg-glow),transparent 68%)!important; }
+a,.hero-meta,.card-meta,.menu-item-btn:hover,.menu-item-btn:hover .icon-svg,.announcement-btn:hover { color:var(--season-accent)!important; }
+.side-menu,.settings-modal,.suggestions-modal,.announcement-modal,.nav-controls,.hero-content,#box,#setup,#game-search,.category-chip,.game-card,.close-game-btn,.announcement-btn,.setting-input,.menu-item-btn,input,select,button,.card,.hero-btn { background-color:var(--season-panel)!important; border-color:var(--season-border-soft)!important; color:var(--season-text); }
+.side-menu,.settings-modal,.suggestions-modal,.announcement-modal,.nav-controls,.hero-content,#box,#setup { background:linear-gradient(135deg,var(--season-panel-2),var(--season-panel) 58%,var(--season-bg))!important; box-shadow:0 16px 48px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08)!important; }
+.menu-item-btn,.category-chip,#game-search,.setting-input,input,select,button,.announcement-btn,.close-game-btn,.hero-btn { background:linear-gradient(135deg,var(--season-panel-2),var(--season-panel))!important; }
+.game-card,.card { background:var(--season-card)!important; border-color:var(--season-border-soft)!important; }
+.menu-item-btn:hover,.category-chip:hover,.game-card:hover,.card:hover,.close-game-btn:hover,.announcement-btn:hover,.hero-btn:hover,button:hover,input:focus,select:focus,#game-search:focus { background:linear-gradient(135deg,var(--season-panel-hover),var(--season-panel-2))!important; border-color:var(--season-border)!important; box-shadow:0 8px 24px var(--season-shadow),inset 0 1px 0 rgba(255,255,255,.09)!important; }
+.category-chip.active { background:var(--season-accent)!important; border-color:var(--season-accent)!important; color:var(--season-bg)!important; box-shadow:0 0 18px var(--season-shadow)!important; }
+.menu-toggle-btn { background:linear-gradient(135deg,rgba(var(--season-accent-rgb),.24),var(--season-panel-2) 60%,var(--season-bg))!important; border-color:var(--season-border)!important; box-shadow:0 4px 18px var(--season-shadow)!important; }
+.menu-header { color:var(--season-text)!important; border-bottom-color:var(--season-border-soft)!important; }
+p,.hero-desc,.card-title,.setting-group label { color:var(--season-text); }
+.card-meta,.hero-desc { color:var(--season-muted); }
+.settings-overlay,.suggestions-overlay,.announcement-overlay,.side-menu-overlay,#modal { background:var(--season-overlay)!important; }
+select option { background:var(--season-panel)!important; color:var(--season-text)!important; }
+:focus-visible { outline:2px solid var(--season-accent)!important; outline-offset:3px; }
+</style>
+
+
+<style id="seasonal-complete-overrides">
+/* Full-page seasonal skin: cover every major surface and nested component. */
+body {
+  background-color:var(--season-bg) !important;
+  background-image:
+    radial-gradient(ellipse at 8% 0%,var(--season-bg-glow),transparent 42%),
+    radial-gradient(ellipse at 100% 18%,rgba(var(--season-accent-rgb),.08),transparent 38%) !important;
+  color:var(--season-text) !important;
+}
+body, body * { scrollbar-color:var(--season-accent) var(--season-panel); }
+header, .top-header, #top-header, .nav-controls, #nav-controls,
+#hero, .hero-content, #setup, #app, #box, #modal,
+.side-menu, #sideMenu, .settings-modal, #settingsOverlay,
+.suggestions-modal, #suggestionsOverlay, .announcement-modal,
+#announcementOverlay, .game-screen-wrapper, .full-screen-wrapper,
+#game-frame-container, .player-wrapper {
+  color:var(--season-text) !important;
+}
+header, .top-header, #top-header, .nav-controls, #nav-controls,
+#hero, .hero-content, #setup, #app, #box, #modal,
+.side-menu, #sideMenu, .settings-modal, #settingsOverlay,
+.suggestions-modal, #suggestionsOverlay, .announcement-modal,
+#announcementOverlay, .game-screen-wrapper, .full-screen-wrapper,
+#game-frame-container {
+  background-color:var(--season-panel) !important;
+  border-color:var(--season-border) !important;
+}
+#hero, .hero-content, #setup, #box, .side-menu, #sideMenu,
+.settings-modal, #settingsOverlay, .suggestions-modal,
+#suggestionsOverlay, .announcement-modal, #announcementOverlay {
+  background-image:linear-gradient(145deg,var(--season-panel-2),var(--season-panel) 58%,var(--season-bg)) !important;
+  box-shadow:0 18px 52px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+#top-header, .top-header, header, .nav-controls {
+  background:linear-gradient(120deg,var(--season-panel-2),var(--season-panel),var(--season-bg)) !important;
+  border:1px solid var(--season-border) !important;
+}
+#search-container, .search-container, .search-wrapper, #search-wrapper,
+#game-search, #q, #cat, input, select, textarea,
+.setting-input, .panic-key-input, .panic-url-input, .controls-corner-input {
+  background:var(--season-panel-2) !important;
+  color:var(--season-text) !important;
+  border:1px solid var(--season-border-soft) !important;
+}
+input::placeholder, textarea::placeholder { color:var(--season-muted) !important; opacity:1; }
+button, .nav-btn, .menu-item-btn, .close-menu-btn, .announcement-btn,
+.hero-btn, .close-btn, .close-game-btn, .category-chip,
+#clear-search, .clear-search, .fullscreen-game-btn {
+  color:var(--season-text) !important;
+  background:linear-gradient(135deg,var(--season-panel-2),var(--season-panel)) !important;
+  border-color:var(--season-border-soft) !important;
+}
+button:hover, .nav-btn:hover, .menu-item-btn:hover, .close-menu-btn:hover,
+.announcement-btn:hover, .hero-btn:hover, .close-btn:hover,
+.close-game-btn:hover, .category-chip:hover, #clear-search:hover,
+.clear-search:hover, .fullscreen-game-btn:hover {
+  color:var(--season-accent) !important;
+  background:var(--season-panel-hover) !important;
+  border-color:var(--season-border) !important;
+  box-shadow:0 8px 25px var(--season-shadow) !important;
+}
+.category-chip.active, .nav-btn.active, .menu-item-btn.active,
+button.active, .hero-btn.primary {
+  background:var(--season-accent) !important;
+  color:var(--season-bg) !important;
+  border-color:var(--season-accent) !important;
+}
+.game-card, .card, .card-content, .card-info, .game-overlay,
+#grid .card, #game-grid .game-card {
+  background-color:var(--season-card) !important;
+  color:var(--season-text) !important;
+  border-color:var(--season-border-soft) !important;
+}
+.game-card::before, .game-card::after, .card::before, .card::after {
+  border-color:var(--season-border-soft) !important;
+}
+.game-card .game-overlay, .game-overlay {
+  background:linear-gradient(0deg,var(--season-overlay),transparent 85%) !important;
+}
+.card-title, .game-card .card-title, .hero-title, .section-title,
+.menu-header, .settings-header, .suggestions-header, .announcement-header {
+  color:var(--season-text) !important;
+}
+.hero-meta, .card-meta, .section-label, .hero-btn:hover,
+a, a:hover, .accent, .search-icon, .clear-search,
+.menu-item-btn:hover, .menu-item-btn:hover .icon-svg {
+  color:var(--season-accent) !important;
+}
+.hero-desc, .setting-group, .setting-group label, .no-results,
+.no-results-msg, .card-meta, .text-muted {
+  color:var(--season-muted) !important;
+}
+.settings-overlay, .suggestions-overlay, .announcement-overlay,
+.side-menu-overlay, #modal {
+  background:var(--season-overlay) !important;
+}
+#modal { backdrop-filter:blur(8px) !important; }
+#box { border:1px solid var(--season-border) !important; }
+#box h2, #box h3, #box p, #box span, #box label, #box div {
+  border-color:var(--season-border-soft);
+}
+#box h2, #box h3 { color:var(--season-text) !important; }
+#box p { color:var(--season-muted) !important; }
+#box iframe, .player-wrapper iframe, #game-frame-container iframe {
+  border:1px solid var(--season-border) !important;
+}
+.menu-header, .settings-header, .suggestions-header, .announcement-header,
+.settings-body, .suggestions-body, .announcement-body,
+.categories-wrapper, .categories-container, .game-container,
+#game-grid, #grid, .section-title {
+  border-color:var(--season-border-soft) !important;
+}
+*:focus-visible { outline:2px solid var(--season-accent) !important; outline-offset:2px; }
+select option { background:var(--season-panel) !important; color:var(--season-text) !important; }
+</style>
+
+<style id="no-title-bars">
+.game-card .card-content,
+.game-card .card-title,
+#grid .card .card-content,
+#game-grid .game-card .card-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.game-card .card-title { text-shadow: 0 1px 4px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8); }
+</style>
+<style id="no-boxy-outline">
+header, .top-header, #top-header,
+.search-container, #search-container, .search-wrapper, #search-wrapper {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+</style>
+<style id="theme-hover-and-glow">
+/* Ambient page glow follows the active theme */
+body {
+  background-color: var(--season-bg) !important;
+  background-image:
+    radial-gradient(ellipse 60% 45% at 10% 0%, rgba(var(--season-accent-rgb), .22), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 92% 8%, rgba(var(--season-accent-rgb), .14), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 50% 105%, rgba(var(--season-accent-rgb), .12), transparent 70%) !important;
+  background-attachment: fixed !important;
+}
+body::before {
+  opacity: 1 !important;
+  background: radial-gradient(ellipse at 50% 0%, rgba(var(--season-accent-rgb), .10), transparent 65%) !important;
+}
+
+/* Card hover */
+.game-card:hover {
+  border-color: rgba(var(--season-accent-rgb), .75) !important;
+  background: var(--season-card) !important;
+  box-shadow:
+    0 10px 28px -6px rgba(var(--season-accent-rgb), .45),
+    0 0 22px rgba(var(--season-accent-rgb), .22),
+    inset 0 0 0 1px rgba(var(--season-accent-rgb), .18) !important;
+}
+.game-card:hover .card-title { color: var(--season-accent) !important; }
+
+/* Search bar hover / focus */
+#game-search:hover,
+#game-search:focus {
+  background: linear-gradient(135deg, var(--season-panel-hover), var(--season-panel-2)) !important;
+  border-color: rgba(var(--season-accent-rgb), .75) !important;
+  box-shadow:
+    0 0 0 3px rgba(var(--season-accent-rgb), .16),
+    0 0 20px rgba(var(--season-accent-rgb), .22) !important;
+}
+
+/* Menu / buttons hover */
+.menu-item-btn:hover,
+.announcement-btn:hover,
+.close-game-btn:hover,
+.menu-toggle-btn:hover {
+  background: linear-gradient(135deg, var(--season-panel-hover), var(--season-panel-2)) !important;
+  border-color: rgba(var(--season-accent-rgb), .7) !important;
+  color: var(--season-accent) !important;
+  box-shadow: 0 6px 20px rgba(var(--season-accent-rgb), .25), 0 0 14px rgba(var(--season-accent-rgb), .18) !important;
+}
+</style>
+<style id="search-bar-no-flicker">
+/* One constant background in every state; only border + glow animate. */
+#game-search,
+#game-search:hover,
+#game-search:focus,
+#game-search:focus-visible,
+#game-search:active {
+  background: var(--season-panel-2) !important;
+  background-color: var(--season-panel-2) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  outline: none !important;
+  transition: border-color .2s ease, box-shadow .2s ease !important;
+}
+#game-search {
+  border: 1px solid var(--season-border-soft) !important;
+  box-shadow: none !important;
+}
+#game-search:hover,
+#game-search:focus {
+  border-color: rgba(var(--season-accent-rgb), .75) !important;
+  box-shadow:
+    0 0 0 3px rgba(var(--season-accent-rgb), .16),
+    0 0 20px rgba(var(--season-accent-rgb), .22) !important;
+}
+</style>
+<style id="announcement-overlay-transparent">
+.announcement-overlay,
+#announcementOverlay {
+  background: rgba(0, 0, 0, 0.85) !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
 </style>
 </head>
 <body>
@@ -1290,7 +1694,7 @@ body::before {
         <h2>Announcement</h2>
       </div>
       <div class="announcement-body">
-        <p style="margin: 0; color: var(--text-main); line-height: 1.5; text-align: center;">ㅤAdded: Polytrack, Academytale, Lightners Live, Full Roaring Knight Remake. </p>
+        <p style="margin: 0; color: var(--text-main); line-height: 1.5; text-align: center;">ㅤFixed: Lightner's Live. Added: SUPERHOT. </p>
         <button class="announcement-btn" onclick="closeAnnouncement()">Got it!</button>
       </div>
     </div>
@@ -1314,8 +1718,6 @@ body::before {
         </button>
       </div>
     </div>
-
-    <div id="categories-wrapper" class="categories-container"></div>
   </header>
 
  <main id="game-container" class="game-grid">
@@ -1924,7 +2326,7 @@ body::before {
       </div>
     </button>
     
-       <button class="game-card" onclick="loadGame('/pages/lightnerslive/index.html')">
+       <button class="game-card" onclick="loadGame('https://lighterslive.com')">
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ89WrKads1_0Hc15SDuHVtKEXPYU7hfRUhwo3Bv2_viw&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Lightner's Live</span>
@@ -2157,10 +2559,17 @@ body::before {
       </div>
     </button>
 
-    <button class="game-card" onclick="loadGame('/pages/subwaysurfers')">
+    <button class="game-card" onclick="loadGame('/pages/subwaysurfers.html')">
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE3DLoerj8_xDBOq1hlOtO0lYuTCxMaQy1xqWw-aiULQ&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Subway Surfers</span>
+      </div>
+    </button>
+
+      <button class="game-card" onclick="loadGame('/pages/superhot.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScZiDzezzR2pIThPNA8UsJkID1aUVWeUMryZJkqWGbNg&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">SUPERHOT</span>
       </div>
     </button>
 
@@ -2448,22 +2857,6 @@ body::before {
         categoriesSet.add(category);
       }
 
-      const wrapper = document.getElementById('categories-wrapper');
-      wrapper.innerHTML = '';
-
-      const orderedCategories = Array.from(categoriesSet).sort((a, b) => {
-        if (a === 'All') return -1;
-        if (b === 'All') return 1;
-        return a.localeCompare(b);
-      });
-
-      orderedCategories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = 'category-chip' + (cat === 'All' ? ' active' : '');
-        btn.innerText = cat;
-        btn.onclick = () => filterByCategory(cat, btn);
-        wrapper.appendChild(btn);
-      });
     }
 
     function filterByCategory(category, clickedBtn) {
@@ -2478,12 +2871,12 @@ body::before {
 
     function filterGames() {
       const searchInput = document.getElementById('game-search');
-      const filter = searchInput.value.toLowerCase();
+      const filter = searchInput ? searchInput.value.toLowerCase() : '';
       const cards = document.getElementsByClassName('game-card');
       const clearBtn = document.getElementById('clear-search');
       let matchCount = 0;
 
-      clearBtn.style.display = filter.length > 0 ? 'flex' : 'none';
+      if (clearBtn) clearBtn.style.display = filter.length > 0 ? 'flex' : 'none';
 
       for (let i = 0; i < cards.length; i++) {
         const title = cards[i].querySelector('.card-title').innerText;
@@ -2505,9 +2898,8 @@ body::before {
 
     function clearSearch() {
       const searchInput = document.getElementById('game-search');
-      searchInput.value = '';
+      if (searchInput) { searchInput.value = ''; searchInput.focus(); }
       filterGames();
-      searchInput.focus();
     }
 
     function loadGame(url) {
@@ -2624,5 +3016,16 @@ body::before {
   });
 </script>
 
+<script>
+(() => {
+ const now = new Date(), month = now.getMonth(), day = now.getDate();
+ let season = 'iconic';
+ if (month === 9) season = 'october';
+ else if (month === 10 && day <= 7) season = 'november-brown';
+ else if (month === 10 || month === 11 || month === 0) season = 'winter-blue';
+ else if (month === 1) season = 'february-pink';
+ document.body.dataset.season = season;
+})();
+</script>
 </body>
 </html>
