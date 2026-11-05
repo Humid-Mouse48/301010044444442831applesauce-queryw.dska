@@ -140,6 +140,48 @@ body {
 @media (max-width: 430px) { .icon-svg { display: none; } }
 
 </style>
+
+<style id="geeked-index-seasonal-theme">
+:root {
+  --bg:#010b0a;
+  --text:#f4fff9;
+  --muted:#9bb8ad;
+  --accent:#00ff99;
+  --accent2:#00cfff;
+  --season-bg:#010b0a;
+  --season-bg-glow:rgba(0,255,153,.12);
+  --season-panel:#071912;
+  --season-panel-2:#0a211b;
+  --season-panel-hover:#103126;
+  --season-card:#0a1b17;
+  --season-text:#f4fff9;
+  --season-muted:#9bb8ad;
+  --season-accent:#00ff99;
+  --season-accent-rgb:0,255,153;
+  --season-border:rgba(0,255,153,.30);
+  --season-border-soft:rgba(190,220,230,.15);
+  --season-shadow:rgba(0,255,153,.14);
+}
+body[data-season="october"] { --season-bg:#100904; --season-bg-glow:rgba(255,125,30,.16); --season-panel:#291508; --season-panel-2:#351b0b; --season-panel-hover:#48230d; --season-card:#241308; --season-text:#fff4e8; --season-muted:#d0a17b; --season-accent:#ff922e; --season-accent-rgb:255,146,46; --season-border:rgba(255,146,46,.38); --season-border-soft:rgba(255,194,137,.22); --season-shadow:rgba(255,112,24,.20); }
+body[data-season="november-brown"] { --season-bg:#100b07; --season-bg-glow:rgba(174,126,82,.16); --season-panel:#261a11; --season-panel-2:#342317; --season-panel-hover:#49301e; --season-card:#21170f; --season-text:#fff5e9; --season-muted:#c5a487; --season-accent:#c18a59; --season-accent-rgb:193,138,89; --season-border:rgba(193,138,89,.38); --season-border-soft:rgba(218,190,160,.20); --season-shadow:rgba(170,112,62,.18); }
+body[data-season="winter-blue"] { --season-bg:#06101a; --season-bg-glow:rgba(113,195,255,.16); --season-panel:#0b2030; --season-panel-2:#102b40; --season-panel-hover:#183b54; --season-card:#0c1d2b; --season-text:#eff9ff; --season-muted:#a8c9df; --season-accent:#9bdcff; --season-accent-rgb:155,220,255; --season-border:rgba(155,220,255,.38); --season-border-soft:rgba(190,226,248,.22); --season-shadow:rgba(93,185,255,.18); }
+body[data-season="february-pink"] { --season-bg:#150a12; --season-bg-glow:rgba(255,142,190,.16); --season-panel:#2b1424; --season-panel-2:#3a1b30; --season-panel-hover:#512640; --season-card:#251321; --season-text:#fff2f8; --season-muted:#d8a9c0; --season-accent:#ffb6d5; --season-accent-rgb:255,182,213; --season-border:rgba(255,182,213,.40); --season-border-soft:rgba(255,211,231,.22); --season-shadow:rgba(255,120,178,.19); }
+body[data-season="iconic"] { --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.30); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.14); }
+html, body, .page-wrap, .page-frame { background:var(--season-bg) !important; color:var(--season-text); }
+body { background-image:radial-gradient(ellipse at 18% -5%,var(--season-bg-glow),transparent 34%),radial-gradient(ellipse at 90% 0%,rgba(var(--season-accent-rgb),.07),transparent 30%) !important; }
+.topbar { background:linear-gradient(135deg,var(--season-panel-2),var(--season-panel) 58%,var(--season-bg)) !important; border-color:var(--season-border-soft) !important; box-shadow:0 12px 38px rgba(0,0,0,.42),0 0 24px var(--season-shadow),inset 0 1px 0 rgba(255,255,255,.08) !important; }
+.brand-name { color:var(--season-text) !important; }
+.brand-dot { color:var(--season-accent) !important; }
+.nav { border-left-color:var(--season-border-soft) !important; }
+.nav-btn { color:var(--season-muted) !important; }
+.nav-btn:hover { color:var(--season-text) !important; background:var(--season-panel-hover) !important; }
+.nav-btn.active { color:var(--season-accent) !important; background:linear-gradient(110deg,rgba(var(--season-accent-rgb),.16),rgba(0,207,255,.07)) !important; border-color:var(--season-border) !important; box-shadow:inset 0 0 14px rgba(var(--season-accent-rgb),.05),0 0 12px var(--season-shadow) !important; }
+.icon-svg { color:inherit; }
+.page-frame { border:0 !important; }
+* { scrollbar-color:var(--season-accent) var(--season-panel); }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; } }
+</style>
+
 </head>
 <body>
 <header class="topbar">
@@ -198,6 +240,19 @@ body {
   event.preventDefault();
   event.returnValue = true;
 });</script>
+
+
+<script>
+(() => {
+  const now = new Date(), month = now.getMonth(), day = now.getDate();
+  let season = 'iconic';
+  if (month === 9) season = 'october';
+  else if (month === 10 && day <= 7) season = 'november-brown';
+  else if (month === 10 || month === 11 || month === 0) season = 'winter-blue';
+  else if (month === 1) season = 'february-pink';
+  document.body.dataset.season = season;
+})();
+</script>
 
 </body>
 </html>
