@@ -17,6 +17,10 @@
   function trusted(u) { return typeof u === "string" && (u.indexOf(CDN) === 0 || u.indexOf(PROXY) === 0); }
   var NFETCH = window.fetch.bind(window);   // pristine copy, used for all loader requests
   var SITE_ROOT = REPO + "/";   // becomes the folder that index.html was found in
+  // Folder the SVG itself is hosted in (e.g. /geekededucation/ on ImageKit); it is never part of a repo path.
+  var HOST_DIR = "/";
+  try { HOST_DIR = new URL(".", location.href).pathname || "/"; } catch (err) {}
+  function hostPathToRepo(p) { return (HOST_DIR !== "/" && p.indexOf(HOST_DIR) === 0) ? p.slice(HOST_DIR.length) : p.replace(/^\//, ""); }
 
   // Runs inside every loaded page: routes links, buttons, iframes and fetches to the loader,
   // and reports load errors so a blank page can be diagnosed.
@@ -37,6 +41,41 @@
       } catch (err) {}
     }
     window.__ubgGo = go;
+    // Anything a page's own JS aims at the hosting site (Vercel etc.) or at "/x" is redirected into the repo.
+    var ROOT = window.__UBG_ROOT || "", HOSTDIR = window.__UBG_HOSTDIR || "/";
+    function fix(u) {
+      if (typeof u !== "string" || !ROOT) return u;
+      var t = u.trim();
+      if (!t || t.charAt(0) === "#" || /^(data|blob|javascript|about|mailto|tel):/i.test(t)) return u;
+      if (t.charAt(0) === "/" && t.charAt(1) !== "/") return ROOT + t.slice(1);
+      var r;
+      try { r = new URL(t, document.baseURI); } catch (err) { return u; }
+      if (location.origin && location.origin !== "null" && r.origin === location.origin)
+        return ROOT + ((HOSTDIR !== "/" && r.pathname.indexOf(HOSTDIR) === 0) ? r.pathname.slice(HOSTDIR.length) : r.pathname.replace(/^\//, "")) + r.search + r.hash;
+      return u;
+    }
+    var FIXTAGS = { IMG: 1, SCRIPT: 1, SOURCE: 1, VIDEO: 1, AUDIO: 1, TRACK: 1, EMBED: 1, LINK: 1, OBJECT: 1 };
+    var FIXATTRS = { src: 1, href: 1, poster: 1, data: 1 };
+    try {
+      [[HTMLImageElement, "src"], [HTMLScriptElement, "src"], [HTMLSourceElement, "src"], [HTMLMediaElement, "src"],
+       [HTMLTrackElement, "src"], [HTMLEmbedElement, "src"], [HTMLLinkElement, "href"], [HTMLVideoElement, "poster"],
+       [HTMLObjectElement, "data"]].forEach(function (p) {
+        var d = Object.getOwnPropertyDescriptor(p[0].prototype, p[1]);
+        if (!d || !d.set) return;
+        Object.defineProperty(p[0].prototype, p[1], {
+          configurable: true, enumerable: d.enumerable, get: d.get,
+          set: function (v) { d.set.call(this, typeof v === "string" ? fix(v) : v); }
+        });
+      });
+    } catch (err) {}
+    try {
+      var xhrOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (m, u) {
+        var a = Array.prototype.slice.call(arguments);
+        if (typeof u === "string" || (u && typeof u.toString === "function")) a[1] = fix(String(u));
+        return xhrOpen.apply(this, a);
+      };
+    } catch (err) {}
     function ubgFrame(path, cb, kind) {
       var id = ++reqId; pending[id] = cb;
       post({ ubgFrame: String(path), id: id, kind: kind || "" });
@@ -78,6 +117,9 @@
       var origSetAttr = Element.prototype.setAttribute;
       Element.prototype.setAttribute = function (n, v) {
         if (this instanceof HTMLIFrameElement && String(n).toLowerCase() === "src") { this.src = v; return; }
+        if (typeof v === "string" && FIXTAGS[this.tagName] && FIXATTRS[String(n).toLowerCase()]) {
+          return origSetAttr.call(this, n, fix(v));
+        }
         return origSetAttr.apply(this, arguments);
       };
     } catch (err) {}
@@ -147,6 +189,11 @@
     try {
       var origFetch = window.fetch;
       window.fetch = function (input, init) {
+        if (typeof input === "string") input = fix(input);
+        else if (input && typeof input.url === "string" && typeof Request !== "undefined" && input instanceof Request) {
+          var fu = fix(input.url);
+          if (fu !== input.url) input = new Request(fu, input);
+        } else if (input && typeof input.href === "string") input = fix(String(input.href));
         var u = (typeof input === "string") ? input : (input && input.url) || "";
         if (u && !/^(data|blob|javascript):/i.test(u) && /\.html?(?:[?#]|$)|\/$/i.test(u)) {
           return new Promise(function (res) {
@@ -156,7 +203,7 @@
             }, "fetch");
           });
         }
-        return origFetch.apply(window, arguments);
+        return origFetch.call(window, input, init);
       };
     } catch (err) {}
     try {
@@ -191,7 +238,13 @@
     }, true);
     try {
       var origOpen = window.open;
-      window.open = function (u) { return origOpen.apply(window, arguments); };
+      window.open = function (u) {
+        var s = (u === undefined || u === null) ? "" : String(u);
+        if (s && /\.html?(?:[?#]|$)|\/(?:[?#]|$)/i.test(s.split("#")[0] + (s.indexOf("#") > -1 ? "#" : ""))) { go(s); return null; }
+        var a = Array.prototype.slice.call(arguments);
+        if (s) a[0] = fix(s);
+        return origOpen.apply(window, a);
+      };
     } catch (err) {}
     // Bubble phase on window = runs after the page's own click handlers.
     window.addEventListener("click", function (e) {
@@ -217,7 +270,9 @@
       });
     }
   }
-  var BRIDGE_TAG = "<scr" + "ipt>(" + bridgeMain.toString() + ")();</scr" + "ipt>";
+  function bridgeTag() {
+    return "<scr" + "ipt>window.__UBG_ROOT=" + JSON.stringify(SITE_ROOT) + ";window.__UBG_HOSTDIR=" + JSON.stringify(HOST_DIR) + ";(" + bridgeMain.toString() + ")();</scr" + "ipt>";
+  }
 
   // ---------- layout: the page frame ----------
   var wrap = document.createElementNS(XHTML, "div");
@@ -263,7 +318,17 @@
     if (!r || !/^https?:/i.test(r)) {
       try { r = new URL(path, SITE_ROOT).href; } catch (e) { r = null; }
     }
-    return r;
+    return intoRepo(r);
+  }
+
+  // The hosting site (Vercel etc.) never serves pages: anything aimed at it is moved into the repo folder.
+  function intoRepo(u) {
+    try {
+      var x = new URL(u);
+      if (location.origin && location.origin !== "null" && x.origin === location.origin)
+        return SITE_ROOT + hostPathToRepo(x.pathname) + x.search + x.hash;
+    } catch (err) {}
+    return u;
   }
 
   // Fetch a page from the repo, point its base at the repo, fix root-relative
@@ -289,13 +354,15 @@
     html = html.replace(/(\b(?:src|href|poster|action|data-src)\s*=\s*)(["'])\/(?!\/)([^"']*)\2/gi,
       function (m, pre, q, rest) { return pre + q + SITE_ROOT + rest + q; });
 
+    html = html.replace(/url\(\s*(["']?)\/(?!\/)/gi, function (m, q) { return "url(" + q + SITE_ROOT; });
+
     var CSP = "default-src data: blob: 'unsafe-inline' 'unsafe-eval' " + CDN + " " + PROXY +
       "; script-src data: blob: 'unsafe-inline' 'unsafe-eval' " + CDN + " " + PROXY + " https:" +     // ad / third-party scripts
       "; frame-src data: blob: " + CDN + " " + PROXY + " https:" +                                    // embeds from other sites
       "; img-src data: blob: " + CDN + " " + PROXY + " https:" +                                      // pixels/banners ads load
       "; connect-src data: blob: " + CDN + " " + PROXY + " https:" +                                  // requests ads make
       "; base-uri " + CDN + "; form-action 'none'";
-    var inject = '<meta http-equiv="Content-Security-Policy" content="' + CSP + '"><base href="' + base + '">' + BRIDGE_TAG;
+    var inject = '<meta http-equiv="Content-Security-Policy" content="' + CSP + '"><base href="' + base + '">' + bridgeTag();
     if (/<head[^>]*>/i.test(html)) return html.replace(/(<head[^>]*>)/i, function (m) { return m + inject; });
     if (/<html[^>]*>/i.test(html)) return html.replace(/(<html[^>]*>)/i, function (m) { return m + "<head>" + inject + "</head>"; });
     return inject + html;
