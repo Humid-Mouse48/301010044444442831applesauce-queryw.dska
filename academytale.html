@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ACADEMYTALE</title>
+
+    <style>
+        html, body, #canvas {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        body {
+            color: white;
+            background: #000;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        #canvas:focus {
+            outline: none;
+        }
+
+        #status, #status-splash, #status-progress {
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+
+        #status, #status-splash {
+            top: 0;
+            bottom: 0;
+        }
+
+        #status {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            background: #000;
+        }
+
+        #status-splash {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            margin: auto;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        #status-progress {
+            bottom: 10%;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        #status-notice {
+            display: none;
+            position: relative;
+            z-index: 1;
+            margin: 0 2rem;
+            padding: 1rem;
+            color: #e0e0e0;
+            background: #5b3943;
+            border: 1px solid #9b3943;
+            border-radius: 0.5rem;
+            font: 14px/1.4 Arial, sans-serif;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas">
+        Your browser does not support the canvas tag.
+    </canvas>
+
+    <noscript>
+        Your browser does not support JavaScript.
+    </noscript>
+
+    <div id="status">
+        <img
+            id="status-splash"
+            src="https://quizizz.com/_media/uploadedFiles/6183bc29-8baf-4d63-8351-e34201ae824e-v2"
+            alt=""
+        >
+        <progress id="status-progress"></progress>
+        <div id="status-notice"></div>
+    </div>
+
+    <script src="https://quizizz.com/_media/uploadedFiles/932ca022-16af-4828-a607-8491a4e37b69-v2"></script>
+
+    <script>
+        const BASE = "https://quizizz.com/_media/uploadedFiles/";
+
+        const PACK = BASE + "26dfaed7-0164-45df-a69d-bdab5e336d00-v2";
+        const WASM = BASE + "c8007359-2929-49e4-a0ed-db879201def3-v2";
+        const AUDIO = BASE + "5219aa9f-e2ce-43a8-96f6-43267d1185fb-v2";
+        const AUDIO_POSITION = BASE + "adabf531-f048-413b-905f-98ebe9b3c9a5-v2";
+
+        const canvas = document.getElementById("canvas");
+        const status = document.getElementById("status");
+        const progress = document.getElementById("status-progress");
+        const notice = document.getElementById("status-notice");
+
+        function showError(error) {
+            console.error(error);
+            notice.textContent = error?.message || String(error);
+            notice.style.display = "block";
+            progress.style.display = "none";
+            status.style.visibility = "visible";
+        }
+
+        const originalFetch = window.fetch.bind(window);
+
+        const fileMap = {
+            "index.wasm": WASM,
+            "index.pck": PACK
+        };
+
+        window.fetch = function (resource, options) {
+            const url = resource instanceof Request
+                ? resource.url
+                : String(resource);
+
+            const file = Object.keys(fileMap).find(name => url.endsWith(name));
+            if (!file) return originalFetch(resource, options);
+
+            const replacement = fileMap[file];
+
+            return originalFetch(
+                resource instanceof Request
+                    ? new Request(replacement, resource)
+                    : replacement,
+                options
+            );
+        };
+
+        if (window.AudioWorklet?.prototype.addModule) {
+            const originalAddModule = AudioWorklet.prototype.addModule;
+
+            const workletMap = {
+                "index.audio.worklet.js": AUDIO,
+                "godot.audio.worklet.js": AUDIO,
+                "index.audio.position.worklet.js": AUDIO_POSITION,
+                "godot.audio.position.worklet.js": AUDIO_POSITION
+            };
+
+            AudioWorklet.prototype.addModule = async function (moduleURL, options) {
+                const url = typeof moduleURL === "string"
+                    ? moduleURL
+                    : moduleURL.href || String(moduleURL);
+
+                const file = Object.keys(workletMap).find(name => url.endsWith(name));
+                if (!file) return originalAddModule.call(this, moduleURL, options);
+
+                const response = await originalFetch(workletMap[file], {
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Failed to load audio worklet: ${response.status} ${response.statusText}`
+                    );
+                }
+
+                const blobURL = URL.createObjectURL(
+                    new Blob([await response.text()], {
+                        type: "application/javascript"
+                    })
+                );
+
+                try {
+                    return await originalAddModule.call(this, blobURL, options);
+                } finally {
+                    setTimeout(() => URL.revokeObjectURL(blobURL), 30000);
+                }
+            };
+        }
+
+        if (typeof Engine === "undefined") {
+            showError("The Godot engine loader failed to load.");
+        } else {
+            status.style.visibility = "visible";
+
+            const engine = new Engine({
+                args: [],
+                canvasResizePolicy: 2,
+                ensureCrossOriginIsolationHeaders: true,
+                executable: "index",
+                experimentalVK: false,
+                focusCanvas: true,
+                mainPack: PACK,
+                fileSizes: {
+                    [PACK]: 46278464,
+                    [WASM]: 52126319
+                }
+            });
+
+            engine.startGame({
+                onProgress(current, total) {
+                    if (current > 0 && total > 0) {
+                        progress.value = current;
+                        progress.max = total;
+                    } else {
+                        progress.removeAttribute("value");
+                        progress.removeAttribute("max");
+                    }
+                }
+            }).then(() => {
+                status.remove();
+                canvas.focus();
+            }, showError);
+        }
+    </script>
+</body>
+</html>

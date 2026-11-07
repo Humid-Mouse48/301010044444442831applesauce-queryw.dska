@@ -652,14 +652,14 @@
     }
 
     #game-controls.corner-top-left {
-      top: 75px;
+      top: 15px;
       left: 20px;
       right: auto;
       bottom: auto;
     }
 
     #game-controls.corner-top-right {
-      top: 75px;
+      top: 15px;
       right: 20px;
       left: auto;
       bottom: auto;
@@ -682,7 +682,7 @@
 
 <style id="control-center-middle">
 #game-controls.corner-top-middle {
-  top: 20px !important;
+  top: 15px !important;
   left: 50% !important;
   right: auto !important;
   bottom: auto !important;
@@ -1170,7 +1170,7 @@ body::before {
 </style>
 
 <style id="menu-bar-green-gradient-match">
-  /* Applies the exact green-tinted gradient style to the menu button / bar items matching the index menu look */
+  
   .menu-toggle-btn {
     background: linear-gradient(
       135deg,
@@ -1295,7 +1295,7 @@ body[data-season="iconic"] {
 </style>
 
 <style id="index-menu-opaque-theme-fix">
-/* Match the actual Index menu: deep green-to-blue, visibly opaque glass. */
+
 :root { --index-menu-bg: linear-gradient(135deg, rgba(7,25,19,.97), rgba(3,11,17,.96)); }
 .side-menu,
 .settings-modal,
@@ -1382,7 +1382,7 @@ select option { background:var(--season-panel)!important; color:var(--season-tex
 
 
 <style id="seasonal-complete-overrides">
-/* Full-page seasonal skin: cover every major surface and nested component. */
+
 body {
   background-color:var(--season-bg) !important;
   background-image:
@@ -1521,7 +1521,7 @@ header, .top-header, #top-header,
 }
 </style>
 <style id="theme-hover-and-glow">
-/* Ambient page glow follows the active theme */
+
 body {
   background-color: var(--season-bg) !important;
   background-image:
@@ -1535,7 +1535,7 @@ body::before {
   background: radial-gradient(ellipse at 50% 0%, rgba(var(--season-accent-rgb), .10), transparent 65%) !important;
 }
 
-/* Card hover */
+
 .game-card:hover {
   border-color: rgba(var(--season-accent-rgb), .75) !important;
   background: var(--season-card) !important;
@@ -1546,7 +1546,7 @@ body::before {
 }
 .game-card:hover .card-title { color: var(--season-accent) !important; }
 
-/* Search bar hover / focus */
+
 #game-search:hover,
 #game-search:focus {
   background: linear-gradient(135deg, var(--season-panel-hover), var(--season-panel-2)) !important;
@@ -1556,7 +1556,7 @@ body::before {
     0 0 20px rgba(var(--season-accent-rgb), .22) !important;
 }
 
-/* Menu / buttons hover */
+
 .menu-item-btn:hover,
 .announcement-btn:hover,
 .close-game-btn:hover,
@@ -1568,7 +1568,7 @@ body::before {
 }
 </style>
 <style id="search-bar-no-flicker">
-/* One constant background in every state; only border + glow animate. */
+
 #game-search,
 #game-search:hover,
 #game-search:focus,
@@ -1604,6 +1604,63 @@ body::before {
   backdrop-filter: none !important;
 }
 </style>
+<style id="html-canvas-fix">
+html[data-season="october"] { --season-bg:#100904; --season-bg-glow:rgba(255,125,30,.16); --season-panel:#291508; --season-panel-2:#351b0b; --season-panel-hover:#48230d; --season-card:#241308; --season-text:#fff4e8; --season-muted:#d0a17b; --season-accent:#ff922e; --season-accent-rgb:255,146,46; --season-border:rgba(255,146,46,.38); --season-border-soft:rgba(255,194,137,.22); --season-shadow:rgba(255,112,24,.20); --season-overlay:rgba(18,8,2,.88); }
+html[data-season="november-brown"] { --season-bg:#100b07; --season-bg-glow:rgba(174,126,82,.16); --season-panel:#261a11; --season-panel-2:#342317; --season-panel-hover:#49301e; --season-card:#21170f; --season-text:#fff5e9; --season-muted:#c5a487; --season-accent:#c18a59; --season-accent-rgb:193,138,89; --season-border:rgba(193,138,89,.38); --season-border-soft:rgba(218,190,160,.20); --season-shadow:rgba(170,112,62,.18); --season-overlay:rgba(14,9,5,.89); }
+html[data-season="winter-blue"] { --season-bg:#06101a; --season-bg-glow:rgba(113,195,255,.16); --season-panel:#0b2030; --season-panel-2:#102b40; --season-panel-hover:#183b54; --season-card:#0c1d2b; --season-text:#eff9ff; --season-muted:#a8c9df; --season-accent:#9bdcff; --season-accent-rgb:155,220,255; --season-border:rgba(155,220,255,.38); --season-border-soft:rgba(190,226,248,.22); --season-shadow:rgba(93,185,255,.18); --season-overlay:rgba(3,10,18,.88); }
+html[data-season="february-pink"] { --season-bg:#150a12; --season-bg-glow:rgba(255,142,190,.16); --season-panel:#2b1424; --season-panel-2:#3a1b30; --season-panel-hover:#512640; --season-card:#251321; --season-text:#fff2f8; --season-muted:#d8a9c0; --season-accent:#ffb6d5; --season-accent-rgb:255,182,213; --season-border:rgba(255,182,213,.40); --season-border-soft:rgba(255,211,231,.22); --season-shadow:rgba(255,120,178,.19); --season-overlay:rgba(18,6,14,.89); }
+html[data-season="iconic"] { --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.30); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.14); --season-overlay:rgba(0,8,7,.84); }
+/* the page background lives on <html> so it fills the whole viewport (no tiled bands) */
+html[data-season] {
+  min-height: 100%;
+  background-color: var(--season-bg) !important;
+  background-image:
+    radial-gradient(ellipse 60% 45% at 10% 0%, rgba(var(--season-accent-rgb), .22), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 92% 8%, rgba(var(--season-accent-rgb), .14), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 50% 105%, rgba(var(--season-accent-rgb), .12), transparent 70%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+html[data-season] body {
+  background: transparent !important;
+  min-height: 100vh;
+}
+</style>
+<style id="light-mode-palette">
+html[data-mode="light"][data-season="iconic"], body[data-mode="light"][data-season="iconic"] { --season-bg:#eefaf4; --season-bg-glow:rgba(0,168,107,.16); --season-panel:#ffffff; --season-panel-2:#e4f6ed; --season-panel-hover:#d3efe2; --season-card:#f7fdfa; --season-text:#0b2a1f; --season-muted:#4a6a5c; --season-accent:#00a86b; --season-accent-rgb:0,168,107; --season-border:rgba(0,140,90,.40); --season-border-soft:rgba(20,70,50,.18); --season-shadow:rgba(0,140,90,.18); --season-overlay:rgba(230,245,238,.88); --season-accent-soft:rgba(0,168,107,.14); --season-accent-border:rgba(0,140,90,.48); color-scheme: light; }
+html[data-mode="light"][data-season="october"], body[data-mode="light"][data-season="october"] { --season-bg:#fff4e8; --season-bg-glow:rgba(255,125,30,.18); --season-panel:#fffaf4; --season-panel-2:#ffe8d0; --season-panel-hover:#ffd9b3; --season-card:#fffaf4; --season-text:#3a1d08; --season-muted:#8a5a35; --season-accent:#d9660a; --season-accent-rgb:217,102,10; --season-border:rgba(217,102,10,.42); --season-border-soft:rgba(120,70,30,.20); --season-shadow:rgba(217,102,10,.20); --season-overlay:rgba(255,240,225,.88); --season-accent-soft:rgba(217,102,10,.16); --season-accent-border:rgba(217,102,10,.50); color-scheme: light; }
+html[data-mode="light"][data-season="november-brown"], body[data-mode="light"][data-season="november-brown"] { --season-bg:#f6efe6; --season-bg-glow:rgba(174,126,82,.20); --season-panel:#fffaf3; --season-panel-2:#efe2d2; --season-panel-hover:#e3d0ba; --season-card:#faf4ec; --season-text:#2f2013; --season-muted:#7a6048; --season-accent:#9a6232; --season-accent-rgb:154,98,50; --season-border:rgba(154,98,50,.42); --season-border-soft:rgba(90,65,40,.20); --season-shadow:rgba(154,98,50,.20); --season-overlay:rgba(246,239,230,.88); --season-accent-soft:rgba(154,98,50,.16); --season-accent-border:rgba(154,98,50,.50); color-scheme: light; }
+html[data-mode="light"][data-season="winter-blue"], body[data-mode="light"][data-season="winter-blue"] { --season-bg:#eaf5fd; --season-bg-glow:rgba(70,160,230,.20); --season-panel:#fbfeff; --season-panel-2:#dcedf9; --season-panel-hover:#c9e3f5; --season-card:#f3faff; --season-text:#0c2335; --season-muted:#4a6c85; --season-accent:#1a78c2; --season-accent-rgb:26,120,194; --season-border:rgba(26,120,194,.42); --season-border-soft:rgba(30,70,110,.18); --season-shadow:rgba(26,120,194,.20); --season-overlay:rgba(234,245,253,.88); --season-accent-soft:rgba(26,120,194,.16); --season-accent-border:rgba(26,120,194,.50); color-scheme: light; }
+html[data-mode="light"][data-season="february-pink"], body[data-mode="light"][data-season="february-pink"] { --season-bg:#fdeef5; --season-bg-glow:rgba(255,120,178,.20); --season-panel:#fffafd; --season-panel-2:#fbdceb; --season-panel-hover:#f7c8de; --season-card:#fff5fa; --season-text:#3a1428; --season-muted:#8a5570; --season-accent:#d6407f; --season-accent-rgb:214,64,127; --season-border:rgba(214,64,127,.42); --season-border-soft:rgba(110,50,80,.18); --season-shadow:rgba(214,64,127,.20); --season-overlay:rgba(253,238,245,.88); --season-accent-soft:rgba(214,64,127,.16); --season-accent-border:rgba(214,64,127,.50); color-scheme: light; }
+html[data-mode="light"] .game-card .card-title { color:#fff !important; text-shadow:0 1px 4px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8) !important; }
+</style>
+<script id="theme-message-listener">
+(function () {
+  var THEMES = ['iconic','october','november-brown','winter-blue','february-pink'];
+  function apply(theme, mode) {
+    if (THEMES.indexOf(theme) < 0 || (mode !== 'dark' && mode !== 'light')) return;
+    var root = document.documentElement;
+    root.dataset.season = theme; root.dataset.mode = mode;
+    if (document.body) { document.body.dataset.season = theme; document.body.dataset.mode = mode; }
+    var rgb = getComputedStyle(root).getPropertyValue('--season-accent-rgb').trim();
+    if (rgb) window.__accentRgb = rgb;
+  }
+  function fromStorage() {
+    try { apply(localStorage.getItem('siteTheme'), localStorage.getItem('siteMode') || 'dark'); } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data && e.data.siteTheme;
+    if (d) apply(d.theme, d.mode);
+  });
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'siteTheme' || e.key === 'siteMode') fromStorage();
+  });
+  fromStorage();
+  document.addEventListener('DOMContentLoaded', fromStorage);
+  window.addEventListener('load', fromStorage);
+})();
+</script>
 </head>
 <body>
 
@@ -1650,6 +1707,17 @@ body::before {
         </div>
         
         <div class="setting-group">
+          <label for="theme-select">Theme</label>
+          <select id="theme-select" class="setting-input" onchange="setTheme(this.value)">
+            <option value="iconic">Iconic Green</option>
+            <option value="october">October Orange</option>
+            <option value="november-brown">November Brown</option>
+            <option value="winter-blue">Winter Blue</option>
+            <option value="february-pink">February Pink</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
           <label for="panic-key-input">Quick Switch Key</label>
           <input type="text" id="panic-key-input" class="setting-input" maxlength="1" value="'" placeholder="e.g. '">
         </div>
@@ -1662,11 +1730,11 @@ body::before {
         <div class="setting-group">
           <label for="controls-corner-input">In-Game Controls Corner</label>
           <select id="controls-corner-input" class="setting-input" onchange="setGameControlsCorner(this.value)">
-            <option value="top-right">Top Right (Default)</option>
+            <option value="top-right">Top Right</option>
             <option value="top-middle">Top Middle</option>
             <option value="top-left">Top Left</option>
             <option value="bottom-right">Bottom Right</option>
-            <option value="bottom-middle">Bottom Middle</option>
+            <option value="bottom-middle">Bottom Middle (Default)</option>
             <option value="bottom-left">Bottom Left</option>
           </select>
         </div>
@@ -1694,7 +1762,7 @@ body::before {
         <h2>Announcement</h2>
       </div>
       <div class="announcement-body">
-        <p style="margin: 0; color: var(--text-main); line-height: 1.5; text-align: center;">ㅤFixed: Lightner's Live. Added: SUPERHOT. </p>
+        <p style="margin: 0; color: var(--text-main); line-height: 1.5; text-align: center;">Added: Capuchin, Minecraft 26.3, Undertale Icebound, Noomicheems, Cookie Clicker. </p>
         <button class="announcement-btn" onclick="closeAnnouncement()">Got it!</button>
       </div>
     </div>
@@ -2003,6 +2071,13 @@ body::before {
       </div>
     </button>
     
+ <button class="game-card" onclick="loadGame('/pages/capuchin.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA22cF80G9wRTYxnjuQ4_WtSc86Xgs_E5LwVUtkLu2EA&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Capuchin</span>
+      </div>
+    </button>
+
     <button class="game-card" onclick="loadGame('/pages/clashofvikings.html')">
       <img class="card-bg-image" src="https://i.postimg.cc/hvH32kjH/image.png" alt="">
       <div class="card-content">
@@ -2014,6 +2089,13 @@ body::before {
       <img class="card-bg-image" src="https://i.postimg.cc/J4JSWdRz/Clover-Pit-Key-Art-1920x1080.jpg" alt="">
       <div class="card-content">
         <span class="card-title">CloverPit</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/cookieclicker.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrUUCxiiXHPOmXEp8bwSvxKgM9gJVLndp35RnvKK9LIg&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Cookie Clicker</span>
       </div>
     </button>
     
@@ -2326,7 +2408,7 @@ body::before {
       </div>
     </button>
     
-       <button class="game-card" onclick="loadGame('https://lighterslive.com')">
+       <button class="game-card" onclick="loadGame('https://lightnerslive.com')">
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ89WrKads1_0Hc15SDuHVtKEXPYU7hfRUhwo3Bv2_viw&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Lightner's Live</span>
@@ -2334,9 +2416,16 @@ body::before {
     </button>
 
     <button class="game-card" onclick="loadGame('/pages/minecraft.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXBvwPDf79vK_64k22v410KU90ahL_bd2jQJ2prVZ65w&s" alt="">
+      <img class="card-bg-image" src="https://i.postimg.cc/wBM2gv0W/XCe-BJU.png" alt="">
       <div class="card-content">
-        <span class="card-title">Minecraft</span>
+        <span class="card-title">Minecraft 1.8.8</span>
+      </div>
+    </button>
+
+     <button class="game-card" onclick="loadGame('/pages/dylanclient.html')">
+      <img class="card-bg-image" src="https://i.postimg.cc/tgJkpT2d/XCe-BJU2.png" alt="">
+      <div class="card-content">
+        <span class="card-title">Minecraft 26.3</span>
       </div>
     </button>
     
@@ -2358,6 +2447,13 @@ body::before {
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwCXQbE-ScXEHWQRjiXeYRsE5x6cnYGKWlh7UKMlvAnA&s=10" alt="">
       <div class="card-content">
         <span class="card-title">myTeardrop</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('https://geekedproxy.firebaseapp.com/classic/index.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZvCW10RMwHGphf1rnL3998t8OuVBaXXXCOEnuSlk54msgVMgcLRrJk3Y&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Noomicheems</span>
       </div>
     </button>
     
@@ -2386,6 +2482,13 @@ body::before {
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjYzMQs7W03rtnywfHz-vm3w8508Xxw3dm1AIvZgWKA&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Polytrack</span>
+      </div>
+    </button>
+
+    <button class="game-card" onclick="loadGame('/pages/qwop.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8NaFCV2EDypMk_wlTn2DO6TJA-2djFM50IwpUfQlclg&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">QWOP</span>
       </div>
     </button>
     
@@ -2559,17 +2662,10 @@ body::before {
       </div>
     </button>
 
-    <button class="game-card" onclick="loadGame('/pages/subwaysurfers.html')">
+    <button class="game-card" onclick="loadGame('/pages/subwaysurfers')">
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE3DLoerj8_xDBOq1hlOtO0lYuTCxMaQy1xqWw-aiULQ&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Subway Surfers</span>
-      </div>
-    </button>
-
-      <button class="game-card" onclick="loadGame('/pages/superhot.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScZiDzezzR2pIThPNA8UsJkID1aUVWeUMryZJkqWGbNg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">SUPERHOT</span>
       </div>
     </button>
 
@@ -2619,6 +2715,13 @@ body::before {
       <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXgY44UOvfNxbiqQ7Ebk3yqY6LSmhRRmIwd-rgn2amAQ&s=10" alt="">
       <div class="card-content">
         <span class="card-title">Undertale</span>
+      </div>
+    </button>
+
+        <button class="game-card" onclick="loadGame('/pages/undertaleicebound.html')">
+      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVNKpneBCnCr8V_dOvqQu25yB6p2ylZfJF4ph4Kvc1hw&s=10" alt="">
+      <div class="card-content">
+        <span class="card-title">Undertale Icebound</span>
       </div>
     </button>
    
@@ -2677,7 +2780,7 @@ body::before {
   </div>
 
   <section id="game-screen-wrapper" class="full-screen-wrapper">
-    <div id="game-controls" class="corner-top-right">
+    <div id="game-controls" class="corner-bottom-middle">
       <button id="close-game-btn" class="close-game-btn" style="position: static;" onclick="closeGame()">✕ Close</button>
       <button id="fullscreen-game-btn" class="close-game-btn" style="position: static; font-size: 1.2rem; padding: 10px 12px;" onclick="toggleFullScreenGame()">⛶</button>
     </div>
@@ -2744,7 +2847,7 @@ body::before {
       const select = document.getElementById('controls-corner-input');
 
       if (!CONTROL_CORNERS.includes(corner)) {
-        corner = 'top-right';
+        corner = 'bottom-middle';
       }
 
       CONTROL_CORNERS.forEach(c => controls.classList.remove('corner-' + c));
@@ -2758,11 +2861,11 @@ body::before {
     }
 
     function loadGameControlsCorner() {
-      let savedCorner = 'top-right';
+      let savedCorner = 'bottom-middle';
       try {
-        savedCorner = localStorage.getItem(CONTROLS_CORNER_KEY) || 'top-right';
+        savedCorner = localStorage.getItem(CONTROLS_CORNER_KEY) || 'bottom-middle';
       } catch (err) {
-        savedCorner = 'top-right';
+        savedCorner = 'bottom-middle';
       }
       setGameControlsCorner(savedCorner, false);
     }
@@ -3018,13 +3121,48 @@ body::before {
 
 <script>
 (() => {
- const now = new Date(), month = now.getMonth(), day = now.getDate();
- let season = 'iconic';
- if (month === 9) season = 'october';
- else if (month === 10 && day <= 7) season = 'november-brown';
- else if (month === 10 || month === 11 || month === 0) season = 'winter-blue';
- else if (month === 1) season = 'february-pink';
- document.body.dataset.season = season;
+  const THEMES = ['iconic', 'october', 'november-brown', 'winter-blue', 'february-pink'];
+  const KEY_THEME = 'siteTheme';
+  const KEY_LAST_AUTO = 'siteThemeLastAuto';
+
+  // Which seasonal theme the calendar says is current
+  function seasonForToday() {
+    const now = new Date(), month = now.getMonth(), day = now.getDate();
+    if (month === 9) return 'october';
+    if (month === 10 && day <= 7) return 'november-brown';
+    if (month === 10 || month === 11 || month === 0) return 'winter-blue';
+    if (month === 1) return 'february-pink';
+    return 'iconic';
+  }
+
+  function read(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function write(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
+
+  function applyTheme(name) {
+    document.body.dataset.season = name;
+    document.documentElement.dataset.season = name;
+    const select = document.getElementById('theme-select');
+    if (select) select.value = name;
+  }
+
+  // Called by the Theme dropdown in Settings
+  window.setTheme = function (name) {
+    if (!THEMES.includes(name)) return;
+    write(KEY_THEME, name);
+    applyTheme(name);
+  };
+
+  // On load: keep the user's choice, except switch automatically ONE time
+  // when a new seasonal period has started since the last automatic switch.
+  const today = seasonForToday();
+  let theme = read(KEY_THEME);
+  if (read(KEY_LAST_AUTO) !== today) {
+    theme = today;
+    write(KEY_LAST_AUTO, today);
+    write(KEY_THEME, today);
+  }
+  if (!THEMES.includes(theme)) theme = today;
+  applyTheme(theme);
 })();
 </script>
 </body>

@@ -1,0 +1,411 @@
+<html lang="en"><head>
+<base href="https://cdn.jsdelivr.net/gh/reeyuki/icebound2webport@main/">
+<script>
+(function() {
+  try {
+    const _rs = history.replaceState.bind(history);
+    const _ps = history.pushState.bind(history);
+    history.replaceState = function(s,t,u){ try{ return _rs(s,t,u);}catch(e){ if(String(e).includes("SecurityError")&&String(u||"").startsWith("blob:")) return; throw e; } };
+    history.pushState = function(s,t,u){ try{ return _ps(s,t,u);}catch(e){ if(String(e).includes("SecurityError")&&String(u||"").startsWith("blob:")) return; throw e; } };
+  } catch {}
+  try {
+    var _ImgSrcDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+    if (_ImgSrcDesc && _ImgSrcDesc.set) {
+      Object.defineProperty(HTMLImageElement.prototype, 'src', {
+        set: function(v) {
+          this.crossOrigin = 'anonymous';
+          _ImgSrcDesc.set.call(this, v);
+        },
+        get: function() { return _ImgSrcDesc.get ? _ImgSrcDesc.get.call(this) : undefined; },
+        configurable: true
+      });
+    }
+  } catch {}
+})();
+</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Icebound</title>
+
+    <style>
+        :root {
+            --bg: #111111;
+            --text: #f5f5f5;
+            --muted: #999999;
+            --border: #303030;
+            --bar: #eeeeee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+        }
+
+        #canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: var(--bg);
+            outline: none;
+        }
+
+        #status {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: var(--bg);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #status.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #status-card {
+            width: min(360px, 85vw);
+            text-align: center;
+        }
+
+        #status-title {
+            margin-bottom: 10px;
+            font-size: 25px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        #status-text {
+            margin-bottom: 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        #status-progress {
+            width: 100%;
+            height: 5px;
+            overflow: hidden;
+            border-radius: 3px;
+            background: #303030;
+        }
+
+        #status-progress-inner {
+            width: 0;
+            height: 100%;
+            background: var(--bar);
+            transition: width 0.2s ease;
+        }
+
+        #status-percent {
+            margin-top: 10px;
+            color: #aaaaaa;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #status-notice {
+            display: none;
+            max-width: 85vw;
+            padding: 12px;
+            border: 1px solid #773333;
+            border-radius: 5px;
+            color: #ffaaaa;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: center;
+            white-space: pre-wrap;
+        }
+
+
+        @media (max-width: 520px) {
+            #status-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas">
+        HTML5 canvas is not supported in this browser.
+        Please update your browser.
+    </canvas>
+
+    <div id="status">
+        <div id="status-card">
+            <div id="status-title">Icebound</div>
+            <div id="status-text">Loading assets...</div>
+
+            <div id="status-progress">
+                <div id="status-progress-inner" style="width: 5%;"></div>
+            </div>
+
+            <div id="status-percent">5%</div>
+        </div>
+
+        <div id="status-notice" role="alert"></div>
+    </div>
+
+
+    <script src="https://gcore.jsdelivr.net/gh/reeyuki/icebound2webport@main/index.js"></script>
+
+    <script>
+        (function () {
+            'use strict';
+
+            const GAME_NAME = 'Icebound';
+            const ASSET_BASE = 'https://cdn.jsdelivr.net/gh/Reeyuki/IceBound2Webport@main/';
+
+            const ASSET_DEFS = {
+                'index.pck': {
+                    parts: 16,
+                    size: 310494160,
+                    type: 'application/octet-stream'
+                },
+                'index.wasm': {
+                    parts: 1,
+                    size: 19793932,
+                    type: 'application/wasm'
+                }
+            };
+
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('status-text');
+            const statusProgressInner = document.getElementById('status-progress-inner');
+            const statusPercent = document.getElementById('status-percent');
+            const statusNotice = document.getElementById('status-notice');
+
+            const nativeFetch = window.fetch.bind(window);
+            const NativeXHR = window.XMLHttpRequest;
+
+            const assetBlobs = new Map();
+            const assetUrls = new Map();
+            const progressByUrl = new Map();
+
+            const totalBytes = Object.keys(ASSET_DEFS).reduce(
+                (sum, name) => sum + ASSET_DEFS[name].size, 0
+            );
+
+            let displayedPercent = 0;
+
+            document.title = GAME_NAME;
+
+            function fileName(url) {
+                try {
+                    return new URL(url, window.location.href)
+                        .pathname.split('/').pop();
+                } catch (error) {
+                    return String(url).split('?')[0]
+                        .split('#')[0].split('/').pop();
+                }
+            }
+
+            function partUrl(name, index) {
+                const def = ASSET_DEFS[name];
+
+                if (def.parts === 1) {
+                    return ASSET_BASE + name;
+                }
+
+                const width = String(def.parts - 1).length;
+
+                return ASSET_BASE + name +
+                    String(index).padStart(width, '0');
+            }
+
+            function setProgress(percent) {
+                const value = Math.max(0, Math.min(100, Math.floor(percent)));
+
+                displayedPercent = Math.max(displayedPercent, value);
+
+                statusProgressInner.style.width = displayedPercent + '%';
+                statusPercent.textContent = displayedPercent + '%';
+            }
+
+            function updatePrefetchProgress() {
+                let loaded = 0;
+
+                progressByUrl.forEach(function (value) {
+                    loaded += value;
+                });
+
+                setProgress(totalBytes > 0 ? loaded / totalBytes * 100 : 0);
+            }
+
+            function loadPart(url) {
+                return new Promise(function (resolve, reject) {
+                    const xhr = new NativeXHR();
+
+                    xhr.open('GET', url, true);
+                    xhr.responseType = 'arraybuffer';
+
+                    xhr.onprogress = function (event) {
+                        progressByUrl.set(url, event.loaded);
+                        updatePrefetchProgress();
+                    };
+
+                    xhr.onload = function () {
+                        if (xhr.status >= 200 && xhr.status < 300 && xhr.response) {
+                            progressByUrl.set(url, xhr.response.byteLength);
+                            updatePrefetchProgress();
+                            resolve(xhr.response);
+                        } else {
+                            reject(new Error(
+                                'Failed loading ' + url + ' (HTTP ' + xhr.status + ')'
+                            ));
+                        }
+                    };
+
+                    xhr.onerror = function () {
+                        reject(new Error('Network error while loading ' + url));
+                    };
+
+                    xhr.send(null);
+                });
+            }
+
+            function makeResponse(name) {
+                return new Response(assetBlobs.get(name), {
+                    status: 200,
+                    statusText: 'OK',
+                    headers: {
+                        'Content-Type': ASSET_DEFS[name].type
+                    }
+                });
+            }
+
+            window.fetch = function (input, init) {
+                const url = typeof input === 'string'
+                    ? input
+                    : (input && input.url) || String(input);
+
+                const name = fileName(url);
+
+                if (assetBlobs.has(name)) {
+                    return Promise.resolve(makeResponse(name));
+                }
+
+                return nativeFetch(input, init);
+            };
+
+            class PatchedXHR extends NativeXHR {
+                open(method, url, async, user, password) {
+                    const name = fileName(url);
+
+                    if (assetUrls.has(name)) {
+                        return super.open(
+                            method,
+                            assetUrls.get(name),
+                            async === undefined ? true : async,
+                            user,
+                            password
+                        );
+                    }
+
+                    return super.open(method, url, async, user, password);
+                }
+            }
+
+            window.XMLHttpRequest = PatchedXHR;
+
+            function prefetchAsset(name) {
+                const def = ASSET_DEFS[name];
+                const requests = [];
+
+                for (let index = 0; index < def.parts; index++) {
+                    requests.push(loadPart(partUrl(name, index)));
+                }
+
+                return Promise.all(requests).then(function (parts) {
+                    const blob = new Blob(parts, { type: def.type });
+
+                    assetBlobs.set(name, blob);
+                    assetUrls.set(name, URL.createObjectURL(blob));
+                });
+            }
+
+            function showFailure(error) {
+                status.classList.remove('is-hidden');
+
+                statusText.textContent = 'Unable to start ' + GAME_NAME;
+
+                statusNotice.textContent =
+                    error && error.message ? error.message : String(error);
+
+                statusNotice.style.display = 'block';
+            }
+
+
+            if (typeof Engine === 'undefined') {
+                showFailure(new Error('Game engine failed to load.'));
+                return;
+            }
+
+            if (!Engine.isWebGLAvailable()) {
+                showFailure(new Error('WebGL is not available in this browser.'));
+                return;
+            }
+
+            setProgress(0);
+            statusText.textContent = 'Loading assets...';
+
+            Promise.all(
+                Object.keys(ASSET_DEFS).map(prefetchAsset)
+            ).then(function () {
+                setProgress(100);
+                statusText.textContent = 'Starting game...';
+
+                const fileSizes = {};
+
+                Object.keys(ASSET_DEFS).forEach(function (name) {
+                    fileSizes[name] = ASSET_DEFS[name].size;
+                });
+
+                const config = {
+                    args: [],
+                    canvasResizePolicy: 2,
+                    executable: 'index',
+                    experimentalVK: false,
+                    fileSizes: fileSizes,
+                    focusCanvas: true,
+                    gdnativeLibs: []
+                };
+
+                const engine = new Engine(config);
+
+                return engine.startGame({
+                    onProgress: function (current, total) {
+                        if (total > 0) {
+                            setProgress(current / total * 100);
+                        }
+                    }
+                }).then(function () {
+                    status.classList.add('is-hidden');
+                });
+
+            }).catch(showFailure);
+
+        })();
+    </script>
+
+
+</body></html>
