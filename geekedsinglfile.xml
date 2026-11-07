@@ -1,0 +1,460 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1280 720">
+<foreignObject x="0" y="0" width="1280" height="720">
+</foreignObject>
+<script type="text/javascript">
+//<![CDATA[
+(function () {
+  // ===== SETTINGS =====
+  // Repo address on jsDelivr (no trailing slash). Change @main to a commit hash to bypass caching.
+  var REPO = "https://cdn.jsdelivr.net/gh/Humid-Mouse48/301010044444442831applesauce-queryw.dska@main";
+  // Where index.html lives inside the repo. The first one that loads is used.
+  var MAIN_CANDIDATES = ["index.html", "public/index.html"];
+  // =====================
+
+  var XHTML = "http://www.w3.org/1999/xhtml";
+  var CDN = REPO + "/";   // the repo
+  var PROXY = "https://geekedproxy.firebaseapp.com/";   // also treated as a trusted file source
+  function trusted(u) { return typeof u === "string" && (u.indexOf(CDN) === 0 || u.indexOf(PROXY) === 0); }
+  var NFETCH = window.fetch.bind(window);   // pristine copy, used for all loader requests
+  var SITE_ROOT = REPO + "/";   // becomes the folder that index.html was found in
+  // Folder the SVG itself is hosted in (e.g. /geekededucation/ on ImageKit); it is never part of a repo path.
+  var HOST_DIR = "/";
+  try { HOST_DIR = new URL(".", location.href).pathname || "/"; } catch (err) {}
+  function hostPathToRepo(p) { return (HOST_DIR !== "/" && p.indexOf(HOST_DIR) === 0) ? p.slice(HOST_DIR.length) : p.replace(/^\//, ""); }
+
+  // Runs inside every loaded page: routes links, buttons, iframes and fetches to the loader,
+  // and reports load errors so a blank page can be diagnosed.
+  function bridgeMain() {
+    var reqId = 0, pending = {};
+    function post(msg) { msg.base = document.baseURI; top.postMessage(msg, "*"); }
+    function go(u) { post({ ubgNav: String(u) }); }
+    function log(m) { post({ ubgLog: String(m).slice(0, 220) }); }
+    // Frames only go fullscreen if every frame in the chain allows it.
+    function ensureAllow(el) {
+      try {
+        var set = Element.prototype.setAttribute;
+        var a = el.getAttribute("allow") || "";
+        if (!/fullscreen/i.test(a)) {
+          set.call(el, "allow", (a ? a + "; " : "") + "fullscreen; autoplay; gamepad; clipboard-write; pointer-lock; keyboard-map");
+        }
+        set.call(el, "allowfullscreen", "true");
+      } catch (err) {}
+    }
+    window.__ubgGo = go;
+    // Anything a page's own JS aims at the hosting site (Vercel etc.) or at "/x" is redirected into the repo.
+    var ROOT = window.__UBG_ROOT || "", HOSTDIR = window.__UBG_HOSTDIR || "/";
+    function fix(u) {
+      if (typeof u !== "string" || !ROOT) return u;
+      var t = u.trim();
+      if (!t || t.charAt(0) === "#" || /^(data|blob|javascript|about|mailto|tel):/i.test(t)) return u;
+      if (t.charAt(0) === "/" && t.charAt(1) !== "/") return ROOT + t.slice(1);
+      var r;
+      try { r = new URL(t, document.baseURI); } catch (err) { return u; }
+      if (location.origin && location.origin !== "null" && r.origin === location.origin)
+        return ROOT + ((HOSTDIR !== "/" && r.pathname.indexOf(HOSTDIR) === 0) ? r.pathname.slice(HOSTDIR.length) : r.pathname.replace(/^\//, "")) + r.search + r.hash;
+      return u;
+    }
+    var FIXTAGS = { IMG: 1, SCRIPT: 1, SOURCE: 1, VIDEO: 1, AUDIO: 1, TRACK: 1, EMBED: 1, LINK: 1, OBJECT: 1 };
+    var FIXATTRS = { src: 1, href: 1, poster: 1, data: 1 };
+    try {
+      [[HTMLImageElement, "src"], [HTMLScriptElement, "src"], [HTMLSourceElement, "src"], [HTMLMediaElement, "src"],
+       [HTMLTrackElement, "src"], [HTMLEmbedElement, "src"], [HTMLLinkElement, "href"], [HTMLVideoElement, "poster"],
+       [HTMLObjectElement, "data"]].forEach(function (p) {
+        var d = Object.getOwnPropertyDescriptor(p[0].prototype, p[1]);
+        if (!d || !d.set) return;
+        Object.defineProperty(p[0].prototype, p[1], {
+          configurable: true, enumerable: d.enumerable, get: d.get,
+          set: function (v) { d.set.call(this, typeof v === "string" ? fix(v) : v); }
+        });
+      });
+    } catch (err) {}
+    try {
+      var xhrOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (m, u) {
+        var a = Array.prototype.slice.call(arguments);
+        if (typeof u === "string" || (u && typeof u.toString === "function")) a[1] = fix(String(u));
+        return xhrOpen.apply(this, a);
+      };
+    } catch (err) {}
+    function ubgFrame(path, cb, kind) {
+      var id = ++reqId; pending[id] = cb;
+      post({ ubgFrame: String(path), id: id, kind: kind || "" });
+    }
+    window.addEventListener("message", function (e) {
+      var d = e.data;
+      if (d && d.ubgHtml !== undefined && pending[d.id]) {
+        var cb = pending[d.id]; delete pending[d.id]; cb(d.ubgHtml);
+      }
+      if (d && d.ubgSet !== undefined) {
+        try { window.frameElement.srcdoc = d.ubgSet; }
+        catch (err) { document.open(); document.write(d.ubgSet); document.close(); }
+      }
+    });
+    window.addEventListener("error", function (e) {
+      var t = e.target;
+      if (t && t !== window && (t.src || t.href)) post({ ubgErr: "Failed to load " + (t.src || t.href) });
+      else post({ ubgErr: (e.message || "Script error") + (e.filename ? "  @ " + e.filename + ":" + e.lineno : "") });
+    }, true);
+    window.addEventListener("unhandledrejection", function (e) {
+      var r = e.reason;
+      post({ ubgErr: "Promise error: " + ((r && r.message) || r) });
+    });
+    try {
+      var srcDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, "src");
+      Object.defineProperty(HTMLIFrameElement.prototype, "src", {
+        configurable: true,
+        get: function () { return srcDesc.get.call(this); },
+        set: function (v) {
+          var el = this; v = String(v);
+          ensureAllow(el);
+          log("iframe.src = " + v);
+          if (!v || /^(about|data|blob|javascript):/i.test(v)) return srcDesc.set.call(el, v);
+          ubgFrame(v, function (html) {
+            if (html === null) srcDesc.set.call(el, v); else el.srcdoc = html;
+          }, "iframe");
+        }
+      });
+      var origSetAttr = Element.prototype.setAttribute;
+      Element.prototype.setAttribute = function (n, v) {
+        if (this instanceof HTMLIFrameElement && String(n).toLowerCase() === "src") { this.src = v; return; }
+        if (typeof v === "string" && FIXTAGS[this.tagName] && FIXATTRS[String(n).toLowerCase()]) {
+          return origSetAttr.call(this, n, fix(v));
+        }
+        return origSetAttr.apply(this, arguments);
+      };
+    } catch (err) {}
+    // Fullscreen: if the browser refuses (permissions policy), fall back to stretching
+    // the element over the whole window and asking the loader to fullscreen the window.
+    try {
+      var fsEl = null, fsStyle = null;
+      var nativeRFS = Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
+      var nativeExit = Document.prototype.exitFullscreen || Document.prototype.webkitExitFullscreen;
+      var fsDesc = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement");
+      var fsProps = ["position:fixed", "left:0", "top:0", "right:0", "bottom:0", "width:100vw", "height:100vh",
+        "max-width:none", "max-height:none", "margin:0", "border:0", "z-index:2147483647"];
+      var fakeExit = function (silent) {
+        if (!fsEl) return;
+        var el = fsEl; fsEl = null;
+        if (fsStyle === null) el.removeAttribute("style"); else el.setAttribute("style", fsStyle);
+        if (!silent) post({ ubgFs: 0 });
+        try { document.dispatchEvent(new Event("fullscreenchange")); } catch (err) {}
+      };
+      var fakeEnter = function (el) {
+        if (fsEl) fakeExit(true);
+        fsEl = el; fsStyle = el.getAttribute("style");
+        fsProps.forEach(function (p) {
+          var kv = p.split(":"); el.style.setProperty(kv[0], kv[1], "important");
+        });
+        post({ ubgFs: 1 });
+        try { document.dispatchEvent(new Event("fullscreenchange")); } catch (err) {}
+      };
+      var fakeRFS = function (o) {
+        var el = this, r;
+        try { r = nativeRFS ? nativeRFS.call(el, o) : Promise.reject(new TypeError("no fullscreen")); }
+        catch (err) { r = Promise.reject(err); }
+        return Promise.resolve(r).catch(function (err) {
+          log("fullscreen blocked (" + ((err && err.message) || err) + ") - using fallback");
+          fakeEnter(el);
+        });
+      };
+      Element.prototype.requestFullscreen = fakeRFS;
+      Element.prototype.webkitRequestFullscreen = fakeRFS;
+      Document.prototype.exitFullscreen = function () {
+        if (fsEl) { fakeExit(); return Promise.resolve(); }
+        return nativeExit ? nativeExit.call(this) : Promise.resolve();
+      };
+      if (fsDesc && fsDesc.get) {
+        Object.defineProperty(Document.prototype, "fullscreenElement", {
+          configurable: true, get: function () { return fsEl || fsDesc.get.call(this); }
+        });
+      }
+      window.addEventListener("message", function (e) {
+        if (e.data && e.data.ubgFsExit) {
+          fakeExit(true);
+          var fr = document.querySelectorAll("iframe");
+          for (var i = 0; i < fr.length; i++) {
+            try { fr[i].contentWindow.postMessage({ ubgFsExit: 1 }, "*"); } catch (err) {}
+          }
+        }
+      });
+    } catch (err) {}
+    try {
+      var origCreate = document.createElement;
+      document.createElement = function (t) {
+        var el = origCreate.apply(document, arguments);
+        if (String(t).toLowerCase() === "iframe") ensureAllow(el);
+        return el;
+      };
+    } catch (err) {}
+    try {
+      var origFetch = window.fetch;
+      window.fetch = function (input, init) {
+        if (typeof input === "string") input = fix(input);
+        else if (input && typeof input.url === "string" && typeof Request !== "undefined" && input instanceof Request) {
+          var fu = fix(input.url);
+          if (fu !== input.url) input = new Request(fu, input);
+        } else if (input && typeof input.href === "string") input = fix(String(input.href));
+        var u = (typeof input === "string") ? input : (input && input.url) || "";
+        if (u && !/^(data|blob|javascript):/i.test(u) && /\.html?(?:[?#]|$)|\/$/i.test(u)) {
+          return new Promise(function (res) {
+            ubgFrame(u, function (html) {
+              if (html === null) res(origFetch.call(window, input, init));
+              else res(new Response(html, { status: 200, headers: { "Content-Type": "text/html" } }));
+            }, "fetch");
+          });
+        }
+        return origFetch.call(window, input, init);
+      };
+    } catch (err) {}
+    try {
+      var mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          Array.prototype.forEach.call(m.addedNodes, function (n) {
+            if (n.nodeType !== 1) return;
+            var frames = (n.tagName === "IFRAME") ? [n]
+              : Array.prototype.slice.call(n.querySelectorAll ? n.querySelectorAll("iframe[src]") : []);
+            if (n.tagName === "IFRAME") ensureAllow(n);
+            frames.forEach(function (f) {
+              ensureAllow(f);
+              var v = f.getAttribute("src");
+              if (v && !f.__ubg && !f.hasAttribute("srcdoc") && !/^(about|data|blob|javascript):/i.test(v)) {
+                f.__ubg = 1; f.src = v;
+              }
+            });
+          });
+        });
+      });
+      mo.observe(document, { childList: true, subtree: true });
+    } catch (err) {}
+    window.addEventListener("click", function (e) {
+      var t = e.target, el = (t && t.closest) ? (t.closest("a,button,[onclick],[data-page],[data-src],[data-url]") || t) : t;
+      if (!el || !el.tagName) return;
+      var info = el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") +
+        (el.className && typeof el.className === "string" ? "." + el.className.split(" ").join(".") : "");
+      var extra = ["href", "onclick", "data-page", "data-src", "data-url", "target"].map(function (n) {
+        var v = el.getAttribute && el.getAttribute(n); return v ? n + "=" + v : "";
+      }).filter(Boolean).join(" ");
+      log("click " + info + " " + extra);
+    }, true);
+    try {
+      var origOpen = window.open;
+      window.open = function (u) {
+        var s = (u === undefined || u === null) ? "" : String(u);
+        if (s && /\.html?(?:[?#]|$)|\/(?:[?#]|$)/i.test(s.split("#")[0] + (s.indexOf("#") > -1 ? "#" : ""))) { go(s); return null; }
+        var a = Array.prototype.slice.call(arguments);
+        if (s) a[0] = fix(s);
+        return origOpen.apply(window, a);
+      };
+    } catch (err) {}
+    // Bubble phase on window = runs after the page's own click handlers.
+    window.addEventListener("click", function (e) {
+      if (e.defaultPrevented) return;
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.hasAttribute("download")) return;
+      var h = a.getAttribute("href");
+      if (!h || h.charAt(0) === "#" || /^(javascript|mailto|tel|data|blob):/i.test(h)) return;
+      var t = a.getAttribute("target");
+      if (t && !/^_(self|blank|top|parent)$/i.test(t)) {
+        var f = document.querySelector('iframe[name="' + t + '"]') || document.getElementById(t);
+        if (f) { e.preventDefault(); f.src = h; return; }
+      }
+      e.preventDefault(); go(h);
+    });
+    if (window.navigation) {
+      navigation.addEventListener("navigate", function (e) {
+        if (!e.cancelable || e.hashChange || e.downloadRequest) return;
+        var u = e.destination.url;
+        if (u.indexOf("about:") === 0 || u.indexOf("blob:") === 0 || u.indexOf("data:") === 0) return;
+        log("navigate -> " + u);
+        e.preventDefault(); go(u);
+      });
+    }
+  }
+  function bridgeTag() {
+    return "<scr" + "ipt>window.__UBG_ROOT=" + JSON.stringify(SITE_ROOT) + ";window.__UBG_HOSTDIR=" + JSON.stringify(HOST_DIR) + ";(" + bridgeMain.toString() + ")();</scr" + "ipt>";
+  }
+
+  // ---------- layout: the page frame ----------
+  var wrap = document.createElementNS(XHTML, "div");
+  wrap.setAttribute("style", "position:relative;width:100%;height:100%;");
+  var frame = document.createElementNS(XHTML, "iframe");
+  frame.setAttribute("style", "position:absolute;left:0;top:0;width:100%;height:100%;border:0;background:#fff;");
+  frame.setAttribute("allow", "fullscreen; autoplay; gamepad; clipboard-write; pointer-lock; keyboard-map");
+  frame.setAttribute("allowfullscreen", "true");
+  wrap.appendChild(frame);
+  document.querySelector("foreignObject").appendChild(wrap);
+
+  function note() {}
+
+  // ---------- url helpers ----------
+  function cleanUrl(u) { return u.split("#")[0].split("?")[0]; }
+  function dirOf(u) { return cleanUrl(u).replace(/[^\/]*$/, ""); }
+  function isHtmlLike(u) { return /\.html?$|\/$/i.test(cleanUrl(u)); }
+  function candidates(u) {
+    var c = cleanUrl(u), last = c.split("/").pop();
+    if (/\/$/.test(c)) return [c + "index.html"];
+    if (/\.html?$/i.test(c)) return [u];
+    if (last.indexOf(".") === -1) return [c + ".html", c + "/index.html"];
+    return [];
+  }
+  async function fetchFirst(cands) {
+    var lastErr = null;
+    for (var i = 0; i < cands.length; i++) {
+      try { return { url: cands[i], html: await fetchPage(cands[i]) }; }
+      catch (err) { lastErr = err; }
+    }
+    throw lastErr || new Error("not found");
+  }
+  function withIndex(u) { return /\/$/.test(cleanUrl(u)) ? cleanUrl(u) + "index.html" : u; }
+
+  // Resolve a path the way the original site would: "/x" means "x" at the site's root folder.
+  function toUrl(path, base) {
+    path = String(path).trim();
+    if (path.charAt(0) === "/" && path.charAt(1) !== "/") path = SITE_ROOT + path.slice(1);
+    var r = null;
+    try { r = new URL(path, base).href; } catch (e) {}
+    // Some pages lose their <base> and report file:/// or about: as their base.
+    // In that case resolve against the site's folder in the repo instead.
+    if (!r || !/^https?:/i.test(r)) {
+      try { r = new URL(path, SITE_ROOT).href; } catch (e) { r = null; }
+    }
+    return intoRepo(r);
+  }
+
+  // The hosting site (Vercel etc.) never serves pages: anything aimed at it is moved into the repo folder.
+  function intoRepo(u) {
+    try {
+      var x = new URL(u);
+      if (location.origin && location.origin !== "null" && x.origin === location.origin)
+        return SITE_ROOT + hostPathToRepo(x.pathname) + x.search + x.hash;
+    } catch (err) {}
+    return u;
+  }
+
+  // Fetch a page from the repo, point its base at the repo, fix root-relative
+  // links, and add the bridge.
+  async function fetchPage(url) {
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 20000);
+    var r;
+    try { r = await NFETCH(url, { signal: ctl.signal }); }
+    catch (err) { throw new Error(err && err.name === "AbortError" ? "timed out after 20s" : (err && err.message) || "network error"); }
+    finally { clearTimeout(timer); }
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    var html = await r.text();
+    var pageDir = dirOf(url);
+
+    var base = pageDir;
+    var bm = html.match(/<base\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/i);
+    if (bm) {
+      base = toUrl(bm[1], pageDir) || pageDir;
+      html = html.replace(/<base\b[^>]*>/gi, "");
+    }
+
+    html = html.replace(/(\b(?:src|href|poster|action|data-src)\s*=\s*)(["'])\/(?!\/)([^"']*)\2/gi,
+      function (m, pre, q, rest) { return pre + q + SITE_ROOT + rest + q; });
+
+    html = html.replace(/url\(\s*(["']?)\/(?!\/)/gi, function (m, q) { return "url(" + q + SITE_ROOT; });
+
+    var CSP = "default-src data: blob: 'unsafe-inline' 'unsafe-eval' " + CDN + " " + PROXY +
+      "; script-src data: blob: 'unsafe-inline' 'unsafe-eval' " + CDN + " " + PROXY + " https:" +     // ad / third-party scripts
+      "; frame-src data: blob: " + CDN + " " + PROXY + " https:" +                                    // embeds from other sites
+      "; img-src data: blob: " + CDN + " " + PROXY + " https:" +                                      // pixels/banners ads load
+      "; connect-src data: blob: " + CDN + " " + PROXY + " https:" +                                  // requests ads make
+      "; base-uri " + CDN + "; form-action 'none'";
+    var inject = '<meta http-equiv="Content-Security-Policy" content="' + CSP + '"><base href="' + base + '">' + bridgeTag();
+    if (/<head[^>]*>/i.test(html)) return html.replace(/(<head[^>]*>)/i, function (m) { return m + inject; });
+    if (/<html[^>]*>/i.test(html)) return html.replace(/(<html[^>]*>)/i, function (m) { return m + "<head>" + inject + "</head>"; });
+    return inject + html;
+  }
+
+  function showError(lines) {
+    frame.srcdoc = "<body style='font-family:sans-serif;padding:24px'><h3>Could not load the page</h3><pre>" +
+      lines.join("\n").replace(/</g, "&lt;") + "</pre></body>";
+  }
+
+  async function show(url, target) {
+    try {
+      var r = await fetchFirst(candidates(url));
+      if (target) target.postMessage({ ubgSet: r.html }, "*"); else frame.srcdoc = r.html;
+      note("Loaded " + r.url, false);
+    } catch (err) {
+      if (!target) showError([url + "  (" + err.message + ")"]);
+      note("Failed " + url + " (" + err.message + ")", true);
+    }
+  }
+
+  window.addEventListener("message", function (e) {
+    try { handleMessage(e); }
+    catch (err) { note("Loader error: " + ((err && err.message) || err), true, true); }
+  });
+
+  function handleMessage(e) {
+    var d = e.data;
+    if (!d || typeof d !== "object") return;
+
+    if (d.ubgErr !== undefined) { note(String(d.ubgErr), true); return; }
+    if (d.ubgLog !== undefined) { note(String(d.ubgLog), false, true); return; }
+
+    if (d.ubgFs !== undefined) {
+      if (d.ubgFs) {
+        var de = document.documentElement, p;
+        try { p = (de.requestFullscreen || de.webkitRequestFullscreen).call(de); } catch (err) { p = Promise.reject(err); }
+        Promise.resolve(p).catch(function (err) { note("Real fullscreen failed: " + ((err && err.message) || err), true, true); });
+      } else if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      return;
+    }
+
+    if (d.ubgFrame !== undefined) {
+      var src = e.source, id = d.id;
+      var u = toUrl(d.ubgFrame, d.base);
+      var cands = trusted(u) ? candidates(u) : [];
+      note("request " + d.ubgFrame + "  ->  " + (cands.length ? cands.join(" | ") : "not bundled (passed through): " + u), false, true);
+      if (!cands.length) { src.postMessage({ ubgHtml: null, id: id }, "*"); return; }
+      fetchFirst(cands).then(function (r) {
+        note("Loaded " + r.url, false);
+        src.postMessage({ ubgHtml: r.html, id: id }, "*");
+      }).catch(function (err) {
+        note("Failed " + u + " (" + err.message + ")", true);
+        if (d.kind === "iframe") alert("Could not load: " + u + "\n" + err.message);
+        src.postMessage({ ubgHtml: null, id: id }, "*");
+      });
+      return;
+    }
+
+    if (d.ubgNav !== undefined) {
+      var nu = toUrl(d.ubgNav, d.base);
+      if (!nu) return;
+      if (trusted(nu) && candidates(nu).length) {
+        show(nu, e.source === frame.contentWindow ? null : e.source);
+      } else window.open(nu, "_blank");
+    }
+  }
+
+  document.addEventListener("fullscreenchange", function () {
+    if (!document.fullscreenElement) {
+      try { frame.contentWindow.postMessage({ ubgFsExit: 1 }, "*"); } catch (err) {}
+    }
+  });
+
+  (async function boot() {
+    var errs = [];
+    for (var i = 0; i < MAIN_CANDIDATES.length; i++) {
+      var u = REPO + "/" + MAIN_CANDIDATES[i];
+      try {
+        SITE_ROOT = dirOf(u);
+        frame.srcdoc = await fetchPage(u);
+        note("Loaded " + u, false);
+        return;
+      } catch (err) { errs.push(u + "  (" + err.message + ")"); }
+    }
+    SITE_ROOT = REPO + "/";
+    showError(errs);
+    note("Could not load index.html from the repo", true);
+  })();
+})();
+//]]>
+</script>
+</svg>
