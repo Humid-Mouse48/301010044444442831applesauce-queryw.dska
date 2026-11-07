@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>NoomiCheems Classic Web Beta | Noomicheems.com</title>
+  <meta name="description" content="Play the Classic single-map offline Web beta. Arch, tuck, release, regrab and reset with keyboard or on-screen controls. An unofficial restoration.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://noomicheems.com/classic/index.html">
+  <link rel="icon" href="data:,">
+  <script>if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+  <style>
+    *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;min-height:100%;background:#15171c;color:#eee;font:14px/1.5 system-ui,sans-serif}
+    main{max-width:1280px;margin:auto;padding:12px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}h1{font-size:18px;margin:0}header p{margin:0;color:#aab3c4;font-size:12px}
+    a{color:#b0e8d9}button,summary{font:inherit;color:inherit;background:#303747;border:1px solid #4e596e;border-radius:8px;padding:10px 16px;min-height:44px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+    button{touch-action:manipulation}button[aria-pressed=true]{background:#367160;border-color:#b0e8d9}button:disabled{opacity:.45;cursor:wait}button:focus-visible,summary:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #b0e8d9;outline-offset:3px}
+    .game-shell{background:#20232b;border:1px solid #39404e;border-radius:12px;overflow:hidden;isolation:isolate}.game-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px}.toolbar-actions{display:flex;gap:6px}.toolbar-actions button{padding:8px 12px}.game-label{margin:0;color:#b7c4da;font-size:12px;font-variant-numeric:tabular-nums}
+    .stage-viewport{position:relative;min-height:0;display:grid;place-items:center;background:#181a20}.player{position:relative;width:100%;aspect-ratio:16/9;background:#292b30}canvas{width:100%;height:100%;display:block;outline:none;touch-action:none}#loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;background:#20232b;z-index:1}
+    progress{width:240px;max-width:70vw;accent-color:#83c4b3}#error{display:none;white-space:pre-wrap;color:#ffbdab;max-width:800px;padding:20px}
+    .touch-controls{padding:10px;touch-action:none}.main-controls{display:flex;justify-content:center;gap:12px}.shape-controls{display:flex;gap:12px}.hold-button{touch-action:none;min-width:120px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.25;font-weight:650}.hold-button small{font-weight:400;font-size:11px;color:#b7c4da}.release-button{background:#31584e;border-color:#649d8d}
+    .touch-controls.large .hold-button{min-height:78px;min-width:140px;font-size:17px}.touch-controls.left-handed .main-controls{flex-direction:row-reverse}.touch-controls.left-handed .shape-controls{flex-direction:row-reverse}details{margin:8px auto 0;text-align:center;max-width:740px}summary{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px}#extra-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}#extra-controls .hold-button{min-width:0;min-height:48px;font-size:13px;padding:8px 4px}
+    .rotate-note{text-align:center;color:#b7c4da;font-size:12px;margin:8px 4px 0;display:none}#status{font-variant-numeric:tabular-nums;text-align:center;color:#aab3c4;margin:10px 0 0}#notice{font-size:12px;min-height:18px;margin:4px 0;text-align:center;color:#b0e8d9}.keyboard-note{font-size:12px;color:#b7c4da;text-align:center;margin:8px 0}footer{color:#8e99ab;font-size:12px;text-align:center;margin:12px 0}
+    dialog{color:#eee;background:#20242d;border:1px solid #505c70;border-radius:12px;width:680px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:20px;overscroll-behavior:contain;touch-action:pan-y}dialog::backdrop{background:#000b}dialog header{position:sticky;top:-20px;background:#20242d;padding:10px 0;z-index:1}dialog h2{font-size:19px;margin:0}dialog p{color:#b7c4da}#menu-dialog{width:440px}.menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.primary{background:#367160;border-color:#83c4b3}.menu-spawn{display:grid;gap:6px;margin:14px 0}.assist-options{border:1px solid #4e596e;border-radius:8px;padding:10px 12px;margin:14px 0}.assist-options legend{color:#b7c4da;padding:0 5px}.assist-options label{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}.menu-link{display:block;text-align:center;padding:10px}.menu-note,.settings-note{font-size:12px}
+    .setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;margin:12px 0 22px}.setting-grid label{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:44px}select,input{font:inherit;color:inherit;background:#303747;border:1px solid #526077;border-radius:5px;padding:8px;min-height:36px}input[type=checkbox]{width:22px;height:22px;min-height:22px;accent-color:#83c4b3}input[type=range]{width:110px;accent-color:#83c4b3}table{width:100%;border-collapse:collapse}th,td{padding:7px 3px;border-bottom:1px solid #39404e;text-align:left}td button{padding:6px 10px;min-width:75px;font-size:13px}.binding-button[data-listening=true]{background:#367160}.help-list{padding-left:22px}.help-list li{margin:12px 0}.help-list strong{color:#b0e8d9}
+    html.game-expanded,html.game-expanded body{overflow:hidden;overscroll-behavior:none}.game-shell.expanded{position:fixed;inset:0;z-index:100;width:100%;height:100vh;height:100dvh;border:0;border-radius:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overscroll-behavior:none}.expanded .stage-viewport{flex:1}.expanded .player{position:absolute;inset:0;height:100%;aspect-ratio:auto}.expanded .touch-controls{flex:none}.expanded:fullscreen{background:#20232b}.game-shell:fullscreen{width:100%;height:100%}
+    @media(max-width:600px){main{padding:8px}header{align-items:flex-start;flex-direction:column;gap:2px}h1{font-size:16px}.game-toolbar{gap:4px}.toolbar-actions{gap:4px}.toolbar-actions button{padding:7px 9px;font-size:12px}.game-label{max-width:85px;line-height:1.3}.main-controls,.shape-controls{gap:7px}.shape-controls{flex:2}.main-controls>.release-button{flex:1}.shape-controls>.hold-button{flex:1}.hold-button{min-width:0;padding:10px 8px;min-height:64px}.touch-controls.large .hold-button{min-width:0;min-height:82px;font-size:16px}.setting-grid{grid-template-columns:1fr}dialog{padding:14px}dialog header{flex-direction:row;align-items:center;top:-14px}td button{min-width:64px;padding:6px;font-size:12px}#status{font-size:12px}.keyboard-note{display:none}}
+    @media(pointer:coarse) and (orientation:portrait){.rotate-note{display:block}}
+    @media(orientation:landscape) and (max-height:600px){.expanded .touch-controls{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));padding:0;pointer-events:none}.expanded .main-controls{justify-content:space-between;gap:12px}.expanded .shape-controls{flex:0 1 auto;gap:10px}.expanded .hold-button{pointer-events:auto;min-width:82px;min-height:58px}.expanded .main-controls .hold-button,.expanded summary{background:rgba(32,36,45,.2);border-color:rgba(176,200,220,.22);color:#fff;text-shadow:0 1px 3px #000c}.expanded .main-controls .hold-button small{color:#e5eaf1}.expanded .main-controls .release-button{background:rgba(49,88,78,.22)}.expanded .main-controls .hold-button[aria-pressed=true]{background:rgba(54,113,96,.68);border-color:rgba(176,232,217,.85)}.expanded .touch-controls.large .hold-button{min-width:100px;min-height:76px}.expanded details{position:absolute;bottom:0;left:50%;transform:translateX(-50%);margin:0;width:min(400px,calc(100vw - 32px));pointer-events:none}.expanded summary{pointer-events:auto;min-height:38px;padding:6px 10px}.expanded #extra-controls{position:absolute;bottom:48px;width:100%;padding:8px;background:#20242df5;border:1px solid #505c70;border-radius:8px}.expanded #extra-controls .hold-button{min-width:0;min-height:48px;opacity:1}.expanded .rotate-note{display:none}.expanded .toolbar-actions button{min-height:38px}.expanded .game-toolbar{padding-top:4px;padding-bottom:4px}}
+    .toolbar-actions{flex-wrap:wrap;justify-content:flex-end}.game-shell[data-view="menu"] .rotate-note{display:none}.game-shell:not([data-view="game"]) :is(#main-menu,#pause,#reset,#settings){display:none}.game-shell[data-view="menu"] .game-label{max-width:none}@media(max-width:600px) and (orientation:portrait){.game-shell[data-view="menu"] .player{aspect-ratio:1/1}}
+    html.embedded,html.embedded body{height:100%;min-height:0;overflow:hidden}.embedded main{width:100%;max-width:none;height:100%;padding:0;display:flex;flex-direction:column}.embedded main>header,.embedded main>footer,.embedded #status,.embedded .keyboard-note,.embedded #expand,.embedded [data-expand]{display:none}.embedded .game-shell{flex:1;min-height:0;display:flex;flex-direction:column;border:0;border-radius:0}.embedded .stage-viewport{flex:1;min-height:0}.embedded .player{position:absolute;inset:0;height:100%;aspect-ratio:auto}.embedded .touch-controls{flex:none}.embedded #notice{flex:none;min-height:0;margin:0}.embedded #notice:empty{display:none}
+    @media(prefers-reduced-motion:no-preference){.hold-button{transition:background-color .08s,border-color .08s}}
+  .game-shell[data-scene="UI Designer"] :is(#pause,#reset,#settings){display:none}</style>
+</head>
+<body>
+  <main>
+    <header><h1>NoomiCheems · Classic</h1><p>18 original maps · offline Web beta · <a href="/">Back to Noomicheems.com</a></p></header>
+    <section id="game-shell" class="game-shell" data-view="loading" aria-label="Classic player">
+      <div class="game-toolbar">
+        <p id="game-label" class="game-label">NoomiCheems · Loading</p>
+        <div class="toolbar-actions"><button id="main-menu" disabled>Main menu</button>
+          <button id="pause" aria-haspopup="dialog" disabled>Menu</button><button id="reset" disabled>Reset</button><button id="settings" aria-haspopup="dialog" disabled>Settings</button><button id="expand" aria-pressed="false" disabled>Expand</button>
+        </div>
+      </div>
+      <div class="stage-viewport"><div class="player">
+        <canvas id="unity-canvas" width="1280" height="720" tabindex="0" aria-label="Classic game canvas"></canvas>
+        <div id="loading"><p id="load-label">Loading Classic…</p><progress id="progress" value="0" max="1"></progress><p id="error"></p></div>
+      </div></div>
+      <div id="touch-controls" class="touch-controls" role="group" aria-label="On-screen game controls">
+        <div class="main-controls"><div class="shape-controls">
+          <button class="hold-button" data-action="Arch" aria-pressed="false" disabled><span>Arch</span><small data-key="Arch">W</small></button>
+          <button class="hold-button" data-action="Tuck" aria-pressed="false" disabled><span>Tuck</span><small data-key="Tuck">Space</small></button>
+        </div><button class="hold-button release-button" data-action="LetGoTwist" aria-pressed="false" disabled><span>Release / twist</span><small data-key="LetGoTwist">Shift</small></button></div>
+        <details id="extra-moves"><summary>More moves</summary><div id="extra-controls" role="group" aria-label="Other moves"></div></details>
+        <p class="rotate-note">Turn your phone sideways and tap Expand for more room. You can hold two buttons together.</p>
+      </div>
+      <dialog id="menu-dialog" aria-labelledby="menu-title">
+        <header><h2 id="menu-title">Classic paused</h2><button id="menu-resume" class="primary">Resume</button></header>
+        <div class="menu-actions"><button id="menu-reset">Reset from spawn</button><button data-panel="settings">Settings and keys</button><button data-panel="help">How to play</button><button data-expand>Expand game</button></div>
+        <label class="menu-spawn">Starting position <select id="menu-spawn" aria-label="Starting position"></select></label>
+        <fieldset class="assist-options"><legend>On-screen assistance</legend>
+          <label>Show touch buttons <input id="show-touch" type="checkbox" checked></label><label>Larger touch buttons <input id="large-touch" type="checkbox"></label><label>Left-handed layout <input id="left-handed" type="checkbox"></label>
+        </fieldset>
+        <p class="menu-note">These display options are saved in this browser. Choosing a starting position resets the character; Resume continues the game.</p><a class="menu-link" href="/">Back to Noomicheems.com</a>
+      </dialog>
+      <dialog id="settings-dialog" aria-labelledby="settings-title">
+        <header><h2 id="settings-title">Settings and keys</h2><button id="close-settings">Done</button></header>
+        <div class="setting-grid">
+          <label>Volume <input aria-label="Volume" data-setting="MASTER_VOLUME" type="range" min="0" max="1" step="0.05"></label>
+          <label>Camera zoom <select aria-label="Camera zoom" data-setting="CAMERA_ZOOM"><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+          <label>Alternate camera <input aria-label="Alternate camera" data-setting="USE_ALTERNATE_CAMERA" type="checkbox"></label>
+          <label>Hide foreground supports <input aria-label="Hide foreground supports" data-setting="HIDE_FOREGROUND_BAR_SUPPORTS" type="checkbox"></label>
+          <label>Show shadows <input aria-label="Show shadows" data-setting="SHOW_SHADOWS" type="checkbox"></label>
+          <label>Action keys unstick <input aria-label="Action keys unstick" data-setting="AUTOMATICALLY_UNSTICK_ON_BUTTON_PRESS" type="checkbox"></label>
+          <label>Game speed <select aria-label="Game speed" data-setting="SLOW_MOTION_SPEED"><option value="1">Normal</option><option value="2">0.75×</option><option value="3">0.5×</option></select></label>
+          <label>Gravity <select aria-label="Gravity" data-setting="GRAVITY_AMOUNT"><option value="1">-4.9</option><option value="2">-7.35</option><option value="3">-9.8 (default)</option><option value="4">-12.25</option><option value="5">0</option><option value="6">-0.5</option></select></label>
+          <label>Default twist direction <select aria-label="Default twist direction" data-setting="TWIST_DIRECTION"><option value="1">Direction 1</option><option value="2">Direction 2</option></select></label>
+          <label>Twist preset <select aria-label="Twist preset" data-setting="TWIST_MODE"><option value="1">Slow</option><option value="2">Standard</option><option value="3">Fast</option></select></label>
+          <label>Spawn <select id="spawn" aria-label="Spawn"></select></label>
+        </div>
+        <p class="settings-note">Game settings and regrab totals are saved in this browser. Select a key, then press a replacement; Delete clears it and Esc cancels. A duplicate key is removed from other actions.</p>
+        <table aria-label="Key bindings"><thead><tr><th>Action</th><th>Primary</th><th>Secondary</th></tr></thead><tbody id="bindings"></tbody></table><p><button id="reset-bindings">Restore default keys</button></p>
+      </dialog>
+      <dialog id="help-dialog" aria-labelledby="help-title">
+        <header><h2 id="help-title">How to play Classic</h2><button id="close-help">Back</button></header>
+        <ol class="help-list">
+          <li><strong>Arch and tuck.</strong> Hold Arch to shape your swing, or Tuck to pull in. You can hold multiple on-screen buttons together.</li>
+          <li><strong>Release and twist.</strong> Press Release / twist to let go of the bar. Press it again in the air to twist.</li>
+          <li><strong>Regrab.</strong> Let go of the Release / twist button. The original game logic grabs automatically when the hands meet its grip conditions; there is no separate catch button.</li>
+          <li><strong>Try again.</strong> Reset returns to the selected spawn. Menu lets you choose a different starting position without leaving Classic.</li>
+          <li><strong>On a phone.</strong> Use Expand, turn the phone sideways, and try the larger buttons or left-handed layout in Menu. Lifting your finger or opening a menu releases touch controls.</li>
+          <li><strong>On a keyboard.</strong> Click the game to focus it. Current keys appear below the touch buttons; change them in Settings and keys.</li>
+        </ol><p class="menu-note">This Web restoration includes 18 original maps. Choose Play, then Bars or Tumbling, and select a map. The browser menus provide access to existing game settings; the recovered NoomiCheems main menu and its core settings are available. The full store and cosmetics remain outside this beta; online services are unavailable.</p>
+      </dialog>
+    </section>
+    <p id="status" aria-live="off">Waiting for the game</p><p id="notice" role="status" aria-live="polite"></p><p class="keyboard-note">Click the game to use the keyboard. Current keys appear on the touch buttons; change them in Settings.</p>
+    <footer>Unofficial Web restoration: original NoomiClone by James West (jamesnorth); fan mod by Dogedadog. This beta is not an official release. Eighteen original maps are playable. Multiplayer, accounts, full cosmetics and full original-game restoration remain unfinished. Original Windows/Web physics equivalence has not been established.</footer>
+  </main>
+  <script src="/classic/20261028-m3/Web.loader.js"></script>
+  <script>
+    const canvas=document.getElementById('unity-canvas'),shell=document.getElementById('game-shell'),status=document.getElementById('status');
+    const panels={menu:document.getElementById('menu-dialog'),settings:document.getElementById('settings-dialog'),help:document.getElementById('help-dialog')};
+    const labels={Arch:'Arch',Tuck:'Tuck',Pike:'Pike',Squat:'Squat',Layout:'Layout',Flash:'Flash',LetGoTwist:'Release / twist',TwistLeft:'Twist left',TwistRight:'Twist right',Stick:'Stick',Unstick:'Unstick',Respawn:'Reset',Pause:'Pause'};
+    let unity,view="loading",gameReady=false,paused=false,listening=null,uiActive=false,activePanel=null,parentPanel=null,expanded=false,nativeFullscreenUsed=false,pageScroll=0;
+    const pointers=new Map(),touchControls=document.getElementById('touch-controls');
+    const prefsKey='classic-web-assistance-v1';let assistance={show:true,large:false,left:false};
+    try{const saved=JSON.parse(localStorage.getItem(prefsKey));for(const key of Object.keys(assistance))if(typeof saved?.[key]==='boolean')assistance[key]=saved[key]}catch{}
+    function call(method,value=''){if(unity&&view==='game'&&gameReady)unity.SendMessage('ClassicWebBridge',method,value)}
+    function send(command){if(!unity)return;call('InputCommand',command);call('Report')}
+    function notice(message){document.getElementById('notice').textContent=message}
+    // Offline host boundary: original Application.OpenURL calls cannot open external sites or chat groups.
+    // The page's Expand button owns fullscreen. Unity's automatic request can cancel a menu's first mobile tap.
+    for(const name of ['requestFullscreen','webkitRequestFullscreen','webkitRequestFullScreen','mozRequestFullScreen','msRequestFullscreen']){
+      const request=Element.prototype[name];if(typeof request!=='function')continue;
+      Element.prototype[name]=function(...args){if(this!==shell)return name==='requestFullscreen'?Promise.resolve():undefined;return request.apply(this,args)};
+    }
+    const browserOpen=window.open.bind(window);
+    window.open=(url,target,features)=>{try{const destination=new URL(url,location.href);if(destination.origin===location.origin&&['http:','https:','blob:'].includes(destination.protocol))return browserOpen(url,target,features)}catch{}notice('External links are unavailable in this offline Web beta.');return null};
+
+    function actionHeld(action){return [...pointers.values()].some(p=>p.action===action)}
+    function paintAction(action){document.querySelectorAll('[data-action="'+action+'"]').forEach(b=>b.setAttribute('aria-pressed',String(actionHeld(action))))}
+    function hold(id,action,button){if(!unity||view!=='game'||!gameReady||uiActive||pointers.has(id))return;const alreadyHeld=actionHeld(action);pointers.set(id,{action,button});paintAction(action);if(!alreadyHeld)call('TouchAction',action+':1')}
+    function release(id){const pointer=pointers.get(id);if(!pointer)return;pointers.delete(id);paintAction(pointer.action);if(!actionHeld(pointer.action))call('TouchAction',pointer.action+':0')}
+    function clearPointers(command='release-pointers'){
+      const held=[...pointers.entries()];pointers.clear();document.querySelectorAll('[data-action]').forEach(b=>b.setAttribute('aria-pressed','false'));
+      for(const [id,p]of held)if(typeof id==='number'&&p.button.hasPointerCapture(id))p.button.releasePointerCapture(id);
+      send(command);
+    }
+    function applyAssistance(){
+      clearPointers();touchControls.hidden=!assistance.show||view!=='game'||!gameReady||window.classicView?.scene==='UI Designer';touchControls.classList.toggle('large',assistance.large);touchControls.classList.toggle('left-handed',assistance.left);
+      document.getElementById('show-touch').checked=assistance.show;document.getElementById('large-touch').checked=assistance.large;document.getElementById('left-handed').checked=assistance.left;
+    }
+    for(const [id,key]of [['show-touch','show'],['large-touch','large'],['left-handed','left']])document.getElementById(id).addEventListener('change',e=>{assistance[key]=e.target.checked;applyAssistance();try{localStorage.setItem(prefsKey,JSON.stringify(assistance))}catch{notice('Display options could not be saved in this browser.')}});
+    applyAssistance();
+    function showPanel(name,parent=null){
+      if(!unity||view!=='game'||!gameReady)return;
+      if(!uiActive){uiActive=true;clearPointers();send('settings-open')}
+      const old=activePanel;activePanel=name;parentPanel=parent;listening=null;if(old&&old!==name)panels[old].close();
+      if(!panels[name].open)panels[name].showModal();
+      if(name==='settings'){document.getElementById('close-settings').textContent=parent==='menu'?'Back':'Done';call('ReportConfiguration')}
+    }
+    function finishPanel(resume=false){
+      if(!uiActive)return;if(parentPanel==='menu'&&!resume){showPanel('menu');return}
+      const old=activePanel;activePanel=null;parentPanel=null;listening=null;
+      // Finish the game transition before close's asynchronous event can run.
+      send('settings-close');if(resume||old==='menu')send('resume');uiActive=false;panels[old].close();canvas.focus({preventScroll:true});
+    }
+    for(const [name,panel]of Object.entries(panels)){
+      panel.addEventListener('cancel',e=>{e.preventDefault();finishPanel(name==='menu')});
+      panel.addEventListener('close',()=>{if(activePanel===name&&!panel.open)finishPanel(name==='menu')});
+    }
+    document.getElementById('main-menu').addEventListener('click',()=>{if(uiActive)finishPanel(true);clearPointers();if(unity&&view==='game'){canvas.focus({preventScroll:true});unity.SendMessage('ClassicWebShell','MainMenu')}});
+    document.getElementById('pause').addEventListener('click',()=>showPanel('menu'));document.getElementById('settings').addEventListener('click',()=>showPanel('settings'));
+    document.querySelectorAll('[data-panel]').forEach(b=>b.addEventListener('click',()=>showPanel(b.dataset.panel,'menu')));
+    document.getElementById('menu-resume').addEventListener('click',()=>finishPanel(true));document.getElementById('close-settings').addEventListener('click',()=>finishPanel());document.getElementById('close-help').addEventListener('click',()=>finishPanel());
+    function resetGame(){clearPointers('clear');send('reset');notice('Reset to the selected starting position.');if(!uiActive)canvas.focus({preventScroll:true})}
+    document.getElementById('reset').addEventListener('click',resetGame);document.getElementById('menu-reset').addEventListener('click',resetGame);
+    function setExpanded(value){
+      if(expanded===value)return;clearPointers();expanded=value;if(value)pageScroll=window.scrollY;
+      shell.classList.toggle('expanded',value);document.documentElement.classList.toggle('game-expanded',value);document.getElementById('expand').setAttribute('aria-pressed',String(value));document.getElementById('expand').textContent=value?'Back':'Expand';
+      document.querySelectorAll('[data-expand]').forEach(b=>b.textContent=value?'Back to page':'Expand game');if(!value)window.scrollTo(0,pageScroll);
+    }
+    async function toggleExpanded(){
+      if(expanded){setExpanded(false);if(document.fullscreenElement===shell)try{await document.exitFullscreen()}catch{};return}
+      setExpanded(true);
+      // Fixed-position expansion works even where the Fullscreen API is unavailable.
+      if(shell.requestFullscreen)try{await shell.requestFullscreen()}catch{}
+    }
+    document.getElementById('expand').addEventListener('click',toggleExpanded);document.querySelectorAll('[data-expand]').forEach(b=>b.addEventListener('click',toggleExpanded));
+    document.addEventListener('fullscreenchange',()=>{if(document.fullscreenElement===shell)nativeFullscreenUsed=true;else if(nativeFullscreenUsed){nativeFullscreenUsed=false;setExpanded(false)}refreshView()});
+    window.addEventListener('message',event=>{if(document.documentElement.classList.contains('embedded')&&event.origin===location.origin&&event.source===window.parent&&event.data?.type==='classic-host-expanded'&&typeof event.data.expanded==='boolean'){setExpanded(event.data.expanded);refreshView();if(!uiActive)canvas.focus({preventScroll:true})}});
+    function fail(message){document.getElementById('loading').style.display='grid';document.getElementById('load-label').textContent='The game could not load. Reload this page to try again.';document.getElementById('progress').hidden=true;const error=document.getElementById('error');error.style.display='block';error.textContent=String(message);console.error(message)}
+    const config={dataUrl:'/classic/20261028-m3/Web.data.br',frameworkUrl:'/classic/20261028-m3/Web.framework.js.br',codeUrl:'/classic/20261028-m3/Web.wasm.br',
+      streamingAssetsUrl:'/classic/20261028-m3/StreamingAssets',companyName:'LocalRecovery',productName:'NoomiCheems Classic Local Restoration',productVersion:'20261028-m3',autoSyncPersistentDataPath:true,
+      showBanner:(message,type)=>{if(type==='error')fail(message);else console.warn(message)}};
+    createUnityInstance(canvas,config,p=>document.getElementById('progress').value=p).then(instance=>{
+      unity=instance;window.classicUnity=instance;view=window.classicView?.phase||view;gameReady=view==='game'&&Boolean(window.classicState?.finite&&window.classicState.bodies===10);refreshView();canvas.focus({preventScroll:true});
+    }).catch(fail);
+    function refreshView(){
+      if(view==='menu'&&window.classicView?.mobile&&matchMedia('(orientation:portrait)').matches&&document.fullscreenElement&&document.fullscreenElement!==shell)document.exitFullscreen().catch(fail);
+      const ready=Boolean(unity&&view==='game'&&gameReady);shell.dataset.view=view;shell.dataset.scene=window.classicView?.scene||'';
+      if(document.documentElement.classList.contains('embedded'))window.parent.postMessage({type:'classic-player-view',phase:view,menuHeight:view==='menu'&&matchMedia('(max-width:600px) and (orientation:portrait)').matches?Math.ceil(shell.clientWidth+document.querySelector('.game-toolbar').offsetHeight):null},location.origin);
+      touchControls.hidden=!ready||!assistance.show||window.classicView?.scene==='UI Designer';
+      document.querySelectorAll('button').forEach(b=>b.disabled=!ready);document.getElementById('expand').disabled=!unity;
+      document.getElementById('game-label').textContent=view==='menu'?'NoomiCheems · Main menu':view==='game'?(window.classicView?.scene||'NoomiCheems')+' · '+(paused?'Paused':'Playing'):'NoomiCheems · Loading';
+      if(view==='menu')status.textContent='NoomiCheems main menu · Classic offline beta';
+      document.getElementById('loading').style.display=unity&&(view==='menu'||ready)?'none':'grid';
+    }
+    window.addEventListener('classic-view',({detail:s})=>{
+      if(s.phase!==view){view=s.phase;gameReady=false;paused=false;clearPointers();const old=activePanel;activePanel=null;parentPanel=null;uiActive=false;listening=null;if(old&&panels[old].open)panels[old].close()}
+      refreshView();
+    });
+    for(const action of ['Pike','Squat','Layout','Flash','TwistLeft','TwistRight','Stick','Unstick']){
+      const button=document.createElement('button');button.className='hold-button';button.dataset.action=action;button.setAttribute('aria-pressed','false');button.disabled=true;const label=document.createElement('span');label.textContent=labels[action];const key=document.createElement('small');key.dataset.key=action;button.append(label,key);document.getElementById('extra-controls').append(button);
+    }
+    document.querySelectorAll('[data-action]').forEach(button=>{
+      const action=button.dataset.action;
+      button.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();canvas.focus({preventScroll:true});hold(e.pointerId,action,button);if(pointers.has(e.pointerId))button.setPointerCapture(e.pointerId)});
+      for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,e=>release(e.pointerId));button.addEventListener('contextmenu',e=>e.preventDefault());
+    });
+    // A secondary touch can deliver pointerup without a browser click while
+    // another finger holds a movement button. Forward a real tap once through
+    // the existing button click handler; leave native game and hold inputs alone.
+    const secondaryButtonTouches=new Map(),secondaryButtonClicks=new Map();
+    document.addEventListener('pointerdown',e=>{
+      secondaryButtonClicks.delete(e.pointerId);
+      if(e.pointerType!=='touch'||e.isPrimary)return;
+      const button=e.target.closest?.('button:not([data-action])');
+      if(button&&!button.disabled)secondaryButtonTouches.set(e.pointerId,{button,x:e.clientX,y:e.clientY,moved:false});
+    },true);
+    document.addEventListener('pointermove',e=>{const touch=secondaryButtonTouches.get(e.pointerId);if(touch&&Math.hypot(e.clientX-touch.x,e.clientY-touch.y)>12)touch.moved=true},true);
+    for(const event of ['pointercancel','lostpointercapture'])document.addEventListener(event,e=>secondaryButtonTouches.delete(e.pointerId),true);
+    document.addEventListener('pointerup',e=>{
+      const touch=secondaryButtonTouches.get(e.pointerId);secondaryButtonTouches.delete(e.pointerId);
+      if(!touch||touch.moved||touch.button.disabled||!touch.button.isConnected)return;
+      const box=touch.button.getBoundingClientRect();if(e.clientX<box.left||e.clientX>box.right||e.clientY<box.top||e.clientY>box.bottom)return;
+      e.preventDefault();const activation={button:touch.button,time:performance.now()};secondaryButtonClicks.set(e.pointerId,activation);
+      touch.button.click();setTimeout(()=>{if(secondaryButtonClicks.get(e.pointerId)===activation)secondaryButtonClicks.delete(e.pointerId)},1100);
+    },true);
+    document.addEventListener('click',e=>{
+      const activation=secondaryButtonClicks.get(e.pointerId);
+      if(e.isTrusted&&e.pointerType==='touch'&&activation&&performance.now()-activation.time<1000&&e.target.closest?.('button')===activation.button){e.preventDefault();e.stopImmediatePropagation();secondaryButtonClicks.delete(e.pointerId)}
+    },true);
+    document.getElementById('extra-moves').addEventListener('toggle',()=>{if(!document.getElementById('extra-moves').open)clearPointers()});
+    window.addEventListener('blur',()=>clearPointers('clear'));document.addEventListener('visibilitychange',()=>{if(document.hidden){clearPointers('clear');if(unity&&!uiActive)showPanel('menu')}});
+    window.addEventListener('resize',()=>clearPointers());window.addEventListener('orientationchange',()=>clearPointers());
+    window.addEventListener('classic-state',({detail:s})=>{
+      if(view!=='game')return;if(!gameReady&&s.finite&&s.bodies===10){gameReady=true;refreshView()}
+      paused=s.paused;const description=(s.onBar?'On the bar':'Air / ground')+' · Regrabs '+s.regrabs+' · '+(s.paused?'Paused':'Playing');if(status.textContent!==description)status.textContent=description;document.getElementById('game-label').textContent=(window.classicView?.scene||'NoomiCheems')+' · '+(s.paused?'Paused':'Playing');
+      if(s.paused&&!uiActive&&unity)queueMicrotask(()=>{if(paused&&!uiActive)showPanel('menu')});if(!s.finite)fail('The game encountered a physics error. Reset the game or reload this page.');
+    });
+    for(const input of document.querySelectorAll('[data-setting]'))input.addEventListener('change',()=>call('SetSetting',JSON.stringify({setting:input.dataset.setting,value:input.type==='checkbox'?(input.checked?1:0):Number(input.value)})));
+    for(const id of ['spawn','menu-spawn'])document.getElementById(id).addEventListener('change',e=>{call('SelectSpawn',e.target.value);notice('Starting position changed. Resume when you are ready.')});
+    document.getElementById('reset-bindings').addEventListener('click',()=>{listening=null;call('ResetBindings')});
+    const keyNames={None:'Unbound',LeftShift:'Left Shift',RightShift:'Right Shift',LeftArrow:'←',RightArrow:'→',UpArrow:'↑',DownArrow:'↓',Escape:'Esc'};function keyLabel(key){return keyNames[key]||key}
+    window.addEventListener('classic-config',({detail:c})=>{
+      for(const setting of c.settings){const input=document.querySelector('[data-setting="'+setting.setting+'"]');if(!input)continue;if(input.type==='checkbox')input.checked=setting.value===1;else input.value=setting.value}
+      for(const id of ['spawn','menu-spawn']){const spawn=document.getElementById(id);if(spawn.options.length!==c.spawnCount){spawn.replaceChildren();for(let i=0;i<c.spawnCount;i++){const option=document.createElement('option');option.value=i;option.textContent='Bar '+(Math.floor(i/2)+1)+' · '+(i%2?'Reverse':'Forward');spawn.append(option)}}spawn.value=c.spawn}
+      const tbody=document.getElementById('bindings');tbody.replaceChildren();
+      for(const binding of c.bindings){
+        const row=document.createElement('tr'),name=document.createElement('th');name.scope='row';name.textContent=labels[binding.action];row.append(name);
+        for(const [slot,key]of [binding.primary,binding.secondary].entries()){
+          const cell=document.createElement('td'),button=document.createElement('button');button.className='binding-button';button.dataset.bind=binding.action;button.dataset.slot=slot;button.textContent=keyLabel(key);
+          button.addEventListener('click',()=>{for(const b of tbody.querySelectorAll('button')){b.dataset.listening='false';b.textContent=b.dataset.saved}listening={action:binding.action,slot};button.dataset.listening='true';button.textContent='Press a key…'});button.dataset.saved=button.textContent;cell.append(button);row.append(cell);
+        }tbody.append(row);document.querySelectorAll('[data-key="'+binding.action+'"]').forEach(k=>k.textContent=keyLabel(binding.primary==='None'?binding.secondary:binding.primary));
+      }
+    });
+    window.addEventListener('keydown',e=>{
+      if(uiActive){
+        e.stopImmediatePropagation();if(e.code==='Escape'){e.preventDefault();if(listening){listening=null;call('ReportConfiguration')}else finishPanel(activePanel==='menu');return}if(!listening)return;e.preventDefault();
+        const mapped={Space:'Space',ShiftLeft:'LeftShift',ShiftRight:'RightShift',ControlLeft:'LeftControl',ControlRight:'RightControl',AltLeft:'LeftAlt',AltRight:'RightAlt',ArrowLeft:'LeftArrow',ArrowRight:'RightArrow',ArrowUp:'UpArrow',ArrowDown:'DownArrow',Enter:'Return',Tab:'Tab',Delete:'None',Backspace:'None',Minus:'Minus',Equal:'Equals'};
+        const key=mapped[e.code]||(e.code.startsWith('Key')?e.code.slice(3):e.code.startsWith('Digit')?'Alpha'+e.code.slice(5):/^F\d+$/.test(e.code)?e.code:null);if(key){const change={...listening,key};listening=null;call('SetBinding',JSON.stringify(change))}return;
+      }
+      const button=e.target.closest?.('[data-action]');if(button&&(e.code==='Space'||e.code==='Enter')){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)hold('key:'+e.code,button.dataset.action,button)}
+    },true);
+    window.addEventListener('keyup',e=>{if(uiActive)return;if(pointers.has('key:'+e.code)){e.preventDefault();e.stopImmediatePropagation();release('key:'+e.code)}},true);
+  </script>
+</body>
+</html>

@@ -57,13 +57,13 @@ body {
 .brand-name { font-size: 13px; font-weight: 800; letter-spacing: -.35px; color: var(--text); }
 .brand-dot { color: var(--accent); }
 .nav {
-  display: flex; align-items: center; gap: 3px;
-  padding-left: 10px;
+  display: flex; align-items: center; gap: 0;
+  padding-left: 7px;
   border-left: 1px solid rgba(255,255,255,.11);
 }
 .nav-btn {
   appearance: none; border: 1px solid transparent; color: #b5c9c2;
-  background: transparent; border-radius: 999px; padding: 10px 13px;
+  background: transparent; border-radius: 999px; padding: 10px 10px;
   font: inherit; font-size: 12.5px; font-weight: 650; cursor: pointer;
   transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
   white-space: nowrap;
@@ -79,6 +79,8 @@ body {
   box-shadow: inset 0 0 14px rgba(0,255,153,.045), 0 0 12px rgba(0,255,153,.035);
 }
 .nav-btn .icon-svg { margin-right: 7px; }
+/* Tighten only the space between Online Games and AI. */
+.nav-btn[data-section="ai"] { margin-left: -4px; }
 .page-wrap {
   position: relative; width: 100%; height: 100%; isolation: isolate;
   background:
@@ -121,21 +123,180 @@ body {
   stroke-linejoin: round;
   flex: 0 0 auto;
 }
+.games-icon { width: 22px; height: 22px; vertical-align: -5px; margin-right: 7px; stroke-width: 1.4; }
 .nav-btn.active .icon-svg { filter: drop-shadow(0 0 4px rgba(0,255,153,.25)); }
+.ai-robot-icon {
+  stroke-width: 1.2;
+  width: 26px;
+  height: 26px;
+  vertical-align: -7px;
+  margin-right: 7px;
+}
+@media (max-width: 680px) {
+  .games-icon { width: 19px; height: 19px; margin-right: 4px; }
+  .ai-robot-icon { width: 23px; height: 23px; margin-right: 4px; }
+}
 @media (max-width: 680px) { .icon-svg { width: 15px; height: 15px; margin-right: 3px; } }
 @media (max-width: 430px) { .icon-svg { display: none; } }
 
+</style>
+
+<style id="geeked-index-seasonal-theme">
+:root {
+  --bg:#010b0a;
+  --text:#f4fff9;
+  --muted:#9bb8ad;
+  --accent:#00ff99;
+  --accent2:#00cfff;
+  --season-bg:#010b0a;
+  --season-bg-glow:rgba(0,255,153,.12);
+  --season-panel:#071912;
+  --season-panel-2:#0a211b;
+  --season-panel-hover:#103126;
+  --season-card:#0a1b17;
+  --season-text:#f4fff9;
+  --season-muted:#9bb8ad;
+  --season-accent:#00ff99;
+  --season-accent-rgb:0,255,153;
+  --season-border:rgba(0,255,153,.30);
+  --season-border-soft:rgba(190,220,230,.15);
+  --season-shadow:rgba(0,255,153,.14);
+}
+body[data-season="october"] { --season-bg:#100904; --season-bg-glow:rgba(255,125,30,.16); --season-panel:#291508; --season-panel-2:#351b0b; --season-panel-hover:#48230d; --season-card:#241308; --season-text:#fff4e8; --season-muted:#d0a17b; --season-accent:#ff922e; --season-accent-rgb:255,146,46; --season-border:rgba(255,146,46,.38); --season-border-soft:rgba(255,194,137,.22); --season-shadow:rgba(255,112,24,.20); }
+body[data-season="november-brown"] { --season-bg:#100b07; --season-bg-glow:rgba(174,126,82,.16); --season-panel:#261a11; --season-panel-2:#342317; --season-panel-hover:#49301e; --season-card:#21170f; --season-text:#fff5e9; --season-muted:#c5a487; --season-accent:#c18a59; --season-accent-rgb:193,138,89; --season-border:rgba(193,138,89,.38); --season-border-soft:rgba(218,190,160,.20); --season-shadow:rgba(170,112,62,.18); }
+body[data-season="winter-blue"] { --season-bg:#06101a; --season-bg-glow:rgba(113,195,255,.16); --season-panel:#0b2030; --season-panel-2:#102b40; --season-panel-hover:#183b54; --season-card:#0c1d2b; --season-text:#eff9ff; --season-muted:#a8c9df; --season-accent:#9bdcff; --season-accent-rgb:155,220,255; --season-border:rgba(155,220,255,.38); --season-border-soft:rgba(190,226,248,.22); --season-shadow:rgba(93,185,255,.18); }
+body[data-season="february-pink"] { --season-bg:#150a12; --season-bg-glow:rgba(255,142,190,.16); --season-panel:#2b1424; --season-panel-2:#3a1b30; --season-panel-hover:#512640; --season-card:#251321; --season-text:#fff2f8; --season-muted:#d8a9c0; --season-accent:#ffb6d5; --season-accent-rgb:255,182,213; --season-border:rgba(255,182,213,.40); --season-border-soft:rgba(255,211,231,.22); --season-shadow:rgba(255,120,178,.19); }
+body[data-season="iconic"] { --season-bg:#010b0a; --season-bg-glow:rgba(0,255,153,.12); --season-panel:#071912; --season-panel-2:#0a211b; --season-panel-hover:#103126; --season-card:#0a1b17; --season-text:#f4fff9; --season-muted:#9bb8ad; --season-accent:#00ff99; --season-accent-rgb:0,255,153; --season-border:rgba(0,255,153,.30); --season-border-soft:rgba(190,220,230,.15); --season-shadow:rgba(0,255,153,.14); }
+html, body, .page-wrap, .page-frame { background:var(--season-bg) !important; color:var(--season-text); }
+body { background-image:radial-gradient(ellipse at 18% -5%,var(--season-bg-glow),transparent 34%),radial-gradient(ellipse at 90% 0%,rgba(var(--season-accent-rgb),.07),transparent 30%) !important; }
+.topbar { background:linear-gradient(135deg,var(--season-panel-2),var(--season-panel) 58%,var(--season-bg)) !important; border-color:var(--season-border-soft) !important; box-shadow:0 12px 38px rgba(0,0,0,.42),0 0 24px var(--season-shadow),inset 0 1px 0 rgba(255,255,255,.08) !important; }
+.brand-name { color:var(--season-text) !important; }
+.brand-dot { color:var(--season-accent) !important; }
+.nav { border-left-color:var(--season-border-soft) !important; }
+.nav-btn { color:var(--season-muted) !important; }
+.nav-btn:hover { color:var(--season-text) !important; background:var(--season-panel-hover) !important; }
+.nav-btn.active { color:var(--season-accent) !important; background:linear-gradient(110deg,rgba(var(--season-accent-rgb),.16),rgba(0,207,255,.07)) !important; border-color:var(--season-border) !important; box-shadow:inset 0 0 14px rgba(var(--season-accent-rgb),.05),0 0 12px var(--season-shadow) !important; }
+.icon-svg { color:inherit; }
+.page-frame { border:0 !important; }
+* { scrollbar-color:var(--season-accent) var(--season-panel); }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; } }
+</style>
+
+<style id="light-mode-palette">
+html[data-mode="light"][data-season="iconic"], body[data-mode="light"][data-season="iconic"] { --season-bg:#eefaf4; --season-bg-glow:rgba(0,168,107,.16); --season-panel:#ffffff; --season-panel-2:#e4f6ed; --season-panel-hover:#d3efe2; --season-card:#f7fdfa; --season-text:#0b2a1f; --season-muted:#4a6a5c; --season-accent:#00a86b; --season-accent-rgb:0,168,107; --season-border:rgba(0,140,90,.40); --season-border-soft:rgba(20,70,50,.18); --season-shadow:rgba(0,140,90,.18); --season-overlay:rgba(230,245,238,.88); --season-accent-soft:rgba(0,168,107,.14); --season-accent-border:rgba(0,140,90,.48); color-scheme: light; }
+html[data-mode="light"][data-season="october"], body[data-mode="light"][data-season="october"] { --season-bg:#fff4e8; --season-bg-glow:rgba(255,125,30,.18); --season-panel:#fffaf4; --season-panel-2:#ffe8d0; --season-panel-hover:#ffd9b3; --season-card:#fffaf4; --season-text:#3a1d08; --season-muted:#8a5a35; --season-accent:#d9660a; --season-accent-rgb:217,102,10; --season-border:rgba(217,102,10,.42); --season-border-soft:rgba(120,70,30,.20); --season-shadow:rgba(217,102,10,.20); --season-overlay:rgba(255,240,225,.88); --season-accent-soft:rgba(217,102,10,.16); --season-accent-border:rgba(217,102,10,.50); color-scheme: light; }
+html[data-mode="light"][data-season="november-brown"], body[data-mode="light"][data-season="november-brown"] { --season-bg:#f6efe6; --season-bg-glow:rgba(174,126,82,.20); --season-panel:#fffaf3; --season-panel-2:#efe2d2; --season-panel-hover:#e3d0ba; --season-card:#faf4ec; --season-text:#2f2013; --season-muted:#7a6048; --season-accent:#9a6232; --season-accent-rgb:154,98,50; --season-border:rgba(154,98,50,.42); --season-border-soft:rgba(90,65,40,.20); --season-shadow:rgba(154,98,50,.20); --season-overlay:rgba(246,239,230,.88); --season-accent-soft:rgba(154,98,50,.16); --season-accent-border:rgba(154,98,50,.50); color-scheme: light; }
+html[data-mode="light"][data-season="winter-blue"], body[data-mode="light"][data-season="winter-blue"] { --season-bg:#eaf5fd; --season-bg-glow:rgba(70,160,230,.20); --season-panel:#fbfeff; --season-panel-2:#dcedf9; --season-panel-hover:#c9e3f5; --season-card:#f3faff; --season-text:#0c2335; --season-muted:#4a6c85; --season-accent:#1a78c2; --season-accent-rgb:26,120,194; --season-border:rgba(26,120,194,.42); --season-border-soft:rgba(30,70,110,.18); --season-shadow:rgba(26,120,194,.20); --season-overlay:rgba(234,245,253,.88); --season-accent-soft:rgba(26,120,194,.16); --season-accent-border:rgba(26,120,194,.50); color-scheme: light; }
+html[data-mode="light"][data-season="february-pink"], body[data-mode="light"][data-season="february-pink"] { --season-bg:#fdeef5; --season-bg-glow:rgba(255,120,178,.20); --season-panel:#fffafd; --season-panel-2:#fbdceb; --season-panel-hover:#f7c8de; --season-card:#fff5fa; --season-text:#3a1428; --season-muted:#8a5570; --season-accent:#d6407f; --season-accent-rgb:214,64,127; --season-border:rgba(214,64,127,.42); --season-border-soft:rgba(110,50,80,.18); --season-shadow:rgba(214,64,127,.20); --season-overlay:rgba(253,238,245,.88); --season-accent-soft:rgba(214,64,127,.16); --season-accent-border:rgba(214,64,127,.50); color-scheme: light; }
+</style>
+<style id="theme-menu-styles">
+.theme-wrap { position: relative; flex: 0 0 auto; padding-left: 7px; border-left: 1px solid var(--season-border-soft); }
+.theme-btn { display: inline-flex; align-items: center; justify-content: center; padding: 9px 12px; }
+.waffle-icon { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; display: block; }
+.theme-btn[aria-expanded="true"] {
+  color: var(--season-accent) !important;
+  background: linear-gradient(110deg, rgba(var(--season-accent-rgb), .16), rgba(0,207,255,.07)) !important;
+  border-color: var(--season-border) !important;
+}
+.theme-menu {
+  position: absolute; right: 0; top: calc(100% + 20px);
+  width: 268px; padding: 10px;
+  display: none; flex-direction: column; gap: 10px;
+  background: linear-gradient(135deg, var(--season-panel-2), var(--season-panel));
+  border: 1px solid var(--season-border-soft);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.45), 0 0 26px var(--season-shadow);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+}
+.theme-menu.open { display: flex; }
+
+/* light / dark switch */
+.mode-row { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--season-bg); border: 1px solid var(--season-border-soft); }
+.mode-btn {
+  appearance: none; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; background: transparent;
+  color: var(--season-muted); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.mode-btn:hover { color: var(--season-text); }
+.mode-btn.active { color: var(--season-accent); background: rgba(var(--season-accent-rgb), .14); border-color: var(--season-border); }
+.mode-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+
+/* each category is tinted with its own theme colors */
+.theme-block { border-radius: 16px; padding: 10px 10px 12px; border: 1px solid var(--blk-border); background: var(--blk-bg); }
+.cat-default { --blk-bg: linear-gradient(135deg, #0a211b, #071912); --blk-border: rgba(0,255,153,.30); }
+.cat-fall    { --blk-bg: linear-gradient(135deg, #351b0b, #342317); --blk-border: rgba(255,146,46,.38); }
+.cat-winter  { --blk-bg: linear-gradient(135deg, #102b40, #3a1b30); --blk-border: rgba(155,220,255,.38); }
+html[data-mode="light"] .cat-default { --blk-bg: linear-gradient(135deg, #e4f6ed, #ffffff); --blk-border: rgba(0,140,90,.35); }
+html[data-mode="light"] .cat-fall    { --blk-bg: linear-gradient(135deg, #ffe8d0, #efe2d2); --blk-border: rgba(217,102,10,.38); }
+html[data-mode="light"] .cat-winter  { --blk-bg: linear-gradient(135deg, #dcedf9, #fbdceb); --blk-border: rgba(26,120,194,.38); }
+.theme-cat { font-size: 10.5px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--blk-label, #cfe3da); margin: 0 2px 10px; }
+.cat-default { --blk-label: #9fd8bf; } .cat-fall { --blk-label: #e0b48c; } .cat-winter { --blk-label: #b8d9ef; }
+html[data-mode="light"] .cat-default { --blk-label: #2f6b53; } html[data-mode="light"] .cat-fall { --blk-label: #8a5a35; } html[data-mode="light"] .cat-winter { --blk-label: #4a6c85; }
+.theme-chips { display: flex; gap: 14px; flex-wrap: wrap; }
+.theme-chip {
+  appearance: none; border: 0; background: transparent; padding: 2px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; font: inherit;
+  color: var(--blk-label);
+}
+.theme-chip[data-theme="iconic"]         { --d1:#0a211b; --d2:#00ff99; --l1:#e4f6ed; --l2:#00a86b; }
+.theme-chip[data-theme="october"]        { --d1:#351b0b; --d2:#ff922e; --l1:#ffe8d0; --l2:#d9660a; }
+.theme-chip[data-theme="november-brown"] { --d1:#342317; --d2:#c18a59; --l1:#efe2d2; --l2:#9a6232; }
+.theme-chip[data-theme="winter-blue"]    { --d1:#102b40; --d2:#9bdcff; --l1:#dcedf9; --l2:#1a78c2; }
+.theme-chip[data-theme="february-pink"]  { --d1:#3a1b30; --d2:#ffb6d5; --l1:#fbdceb; --l2:#d6407f; }
+.chip-orb {
+  position: relative; width: 38px; height: 38px; border-radius: 50%;
+  background: var(--d2);
+  border: 2px solid rgba(255,255,255,.22);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+html[data-mode="light"] .chip-orb { background: var(--l2); border-color: rgba(0,0,0,.14); }
+.theme-chip:hover .chip-orb { transform: scale(1.08); }
+.theme-chip.active .chip-orb { box-shadow: 0 0 0 2px var(--season-panel), 0 0 0 4px var(--d2); }
+html[data-mode="light"] .theme-chip.active .chip-orb { box-shadow: 0 0 0 2px var(--season-panel), 0 0 0 4px var(--l2); }
+.chip-name { font-size: 11px; font-weight: 700; }
+@media (max-width: 680px) { .waffle-icon { width: 24px; height: 24px; } .theme-btn { padding: 8px 9px; } .theme-wrap { padding-left: 4px; } .theme-menu { width: 250px; } }
 </style>
 </head>
 <body>
 <header class="topbar">
   <a class="brand" href="#" aria-label="Geeked Sites home" data-section="proxy"><img src="https://i.postimg.cc/Bv879tqb/Screenshot-2026-10-29-201630-removebg-preview.png" alt="Geeked Sites"></a>
   <nav class="nav" aria-label="Main sections">
-    <button class="nav-btn" type="button" data-section="games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8h9a4.5 4.5 0 0 1 4.4 5.5l-.7 2.8a2 2 0 0 1-3.3 1l-2.1-1.8H9.2l-2.1 1.8a2 2 0 0 1-3.3-1l-.7-2.8A4.5 4.5 0 0 1 7.5 8Z"/><path d="M7.5 10.5v4M5.5 12.5h4M15.5 11.5h.01M18 14h.01"/></svg>Games</button>
+    <button class="nav-btn" type="button" data-section="games"><svg class="icon-svg games-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8h9a4.5 4.5 0 0 1 4.4 5.5l-.7 2.8a2 2 0 0 1-3.3 1l-2.1-1.8H9.2l-2.1 1.8a2 2 0 0 1-3.3-1l-.7-2.8A4.5 4.5 0 0 1 7.5 8Z"/><path d="M7.5 10.5v4M5.5 12.5h4M15.5 11.5h.01M18 14h.01"/></svg>Games</button>
     <button class="nav-btn active" type="button" data-section="proxy" aria-current="page"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3c2.3 2.4 3.4 5.4 3.4 9s-1.1 6.6-3.4 9M12 3C9.7 5.4 8.6 8.4 8.6 12s1.1 6.6 3.4 9"/></svg>Proxy</button>
     <button class="nav-btn" type="button" data-section="movies"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 20l3-3M16 20l-3-3"/></svg>Movies</button>
     <button class="nav-btn" type="button" data-section="online-games"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18.5a4.5 4.5 0 0 1 .3-9A6 6 0 0 1 18 8a4.2 4.2 0 1 1 .5 10.5Z"/></svg>Online Games</button>
+    <button class="nav-btn" type="button" data-section="ai"><svg class="icon-svg ai-robot-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5V3.2" stroke-width="1.2"/><circle cx="12" cy="2" r="1.25"/><rect x="5" y="6.5" width="14" height="13" rx="4"/><circle cx="9" cy="12" r=".8" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r=".8" fill="currentColor" stroke="none"/><path d="M9 16h6"/></svg>AI</button>
   </nav>
+  <div class="theme-wrap">
+    <button class="nav-btn theme-btn" id="themeBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="themeMenu" aria-label="Change theme" title="Themes"><svg class="waffle-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button>
+    <div class="theme-menu" id="themeMenu" role="menu" aria-label="Appearance">
+      <div class="mode-row" role="group" aria-label="Mode">
+        <button class="mode-btn" type="button" data-mode="dark" aria-pressed="true"><svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"/></svg>Dark</button>
+        <button class="mode-btn" type="button" data-mode="light" aria-pressed="false"><svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Light</button>
+      </div>
+      <section class="theme-block cat-default">
+        <div class="theme-cat">Default</div>
+        <div class="theme-chips">
+          <button class="theme-chip" type="button" role="menuitemradio" data-theme="iconic" aria-label="Iconic Green" title="Iconic Green"><span class="chip-orb"></span><span class="chip-name">Green</span></button>
+        </div>
+      </section>
+      <section class="theme-block cat-fall">
+        <div class="theme-cat">Fall</div>
+        <div class="theme-chips">
+          <button class="theme-chip" type="button" role="menuitemradio" data-theme="october" aria-label="October Orange" title="October Orange"><span class="chip-orb"></span><span class="chip-name">Orange</span></button>
+          <button class="theme-chip" type="button" role="menuitemradio" data-theme="november-brown" aria-label="November Brown" title="November Brown"><span class="chip-orb"></span><span class="chip-name">Brown</span></button>
+        </div>
+      </section>
+      <section class="theme-block cat-winter">
+        <div class="theme-cat">Winter</div>
+        <div class="theme-chips">
+          <button class="theme-chip" type="button" role="menuitemradio" data-theme="winter-blue" aria-label="Winter Blue" title="Winter Blue"><span class="chip-orb"></span><span class="chip-name">Blue</span></button>
+          <button class="theme-chip" type="button" role="menuitemradio" data-theme="february-pink" aria-label="February Pink" title="February Pink"><span class="chip-orb"></span><span class="chip-name">Pink</span></button>
+        </div>
+      </section>
+    </div>
+  </div>
 </header>
 <main class="page-wrap">
   <iframe class="page-frame" id="sectionFrame" title="Proxy" src="reading.html" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
@@ -146,13 +307,15 @@ body {
     games: 'math.html',
     proxy: 'reading.html',
     movies: 'movies.html',
-    'online-games': 'science.html'
+    'online-games': 'science.html',
+    ai: 'ai.html'
   };
   const labels = {
     games: 'Games',
     proxy: 'Proxy',
     movies: 'Movies',
-    'online-games': 'Online Games'
+    'online-games': 'Online Games',
+    ai: 'AI'
   };
   const frame = document.getElementById('sectionFrame');
   const buttons = [...document.querySelectorAll('[data-section]')];
@@ -181,6 +344,121 @@ body {
   event.preventDefault();
   event.returnValue = true;
 });</script>
+
+
+<script>
+(() => {
+  const THEMES = ['iconic', 'october', 'november-brown', 'winter-blue', 'february-pink'];
+  const MODES = ['dark', 'light'];
+  const KEY_THEME = 'siteTheme';
+  const KEY_MODE = 'siteMode';
+  const KEY_LAST_AUTO = 'siteThemeLastAuto';
+  const frame = document.getElementById('sectionFrame');
+  const btn = document.getElementById('themeBtn');
+  const menu = document.getElementById('themeMenu');
+  let currentTheme = 'iconic';
+  let currentMode = 'dark';
+
+  // Which seasonal theme the calendar says is current
+  function seasonForToday() {
+    const now = new Date(), month = now.getMonth(), day = now.getDate();
+    if (month === 9) return 'october';
+    if (month === 10 && day <= 7) return 'november-brown';
+    if (month === 10 || month === 11 || month === 0) return 'winter-blue';
+    if (month === 1) return 'february-pink';
+    return 'iconic';
+  }
+  function read(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function write(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
+
+  function stamp(doc) {
+    doc.body.dataset.season = currentTheme;
+    doc.documentElement.dataset.season = currentTheme;
+    doc.body.dataset.mode = currentMode;
+    doc.documentElement.dataset.mode = currentMode;
+  }
+
+  // Push theme + mode into the page shown in the iframe (same-origin pages only)
+  // Light-mode palettes, injected into the page in the frame so it does not need its own copy
+  const FRAME_LIGHT_CSS = "html[data-mode=\"light\"][data-season=\"iconic\"], body[data-mode=\"light\"][data-season=\"iconic\"] { --season-bg:#eefaf4; --season-bg-glow:rgba(0,168,107,.16); --season-panel:#ffffff; --season-panel-2:#e4f6ed; --season-panel-hover:#d3efe2; --season-card:#f7fdfa; --season-text:#0b2a1f; --season-muted:#4a6a5c; --season-accent:#00a86b; --season-accent-rgb:0,168,107; --season-border:rgba(0,140,90,.40); --season-border-soft:rgba(20,70,50,.18); --season-shadow:rgba(0,140,90,.18); --season-overlay:rgba(230,245,238,.88); --season-accent-soft:rgba(0,168,107,.14); --season-accent-border:rgba(0,140,90,.48); color-scheme: light; } html[data-mode=\"light\"][data-season=\"october\"], body[data-mode=\"light\"][data-season=\"october\"] { --season-bg:#fff4e8; --season-bg-glow:rgba(255,125,30,.18); --season-panel:#fffaf4; --season-panel-2:#ffe8d0; --season-panel-hover:#ffd9b3; --season-card:#fffaf4; --season-text:#3a1d08; --season-muted:#8a5a35; --season-accent:#d9660a; --season-accent-rgb:217,102,10; --season-border:rgba(217,102,10,.42); --season-border-soft:rgba(120,70,30,.20); --season-shadow:rgba(217,102,10,.20); --season-overlay:rgba(255,240,225,.88); --season-accent-soft:rgba(217,102,10,.16); --season-accent-border:rgba(217,102,10,.50); color-scheme: light; } html[data-mode=\"light\"][data-season=\"november-brown\"], body[data-mode=\"light\"][data-season=\"november-brown\"] { --season-bg:#f6efe6; --season-bg-glow:rgba(174,126,82,.20); --season-panel:#fffaf3; --season-panel-2:#efe2d2; --season-panel-hover:#e3d0ba; --season-card:#faf4ec; --season-text:#2f2013; --season-muted:#7a6048; --season-accent:#9a6232; --season-accent-rgb:154,98,50; --season-border:rgba(154,98,50,.42); --season-border-soft:rgba(90,65,40,.20); --season-shadow:rgba(154,98,50,.20); --season-overlay:rgba(246,239,230,.88); --season-accent-soft:rgba(154,98,50,.16); --season-accent-border:rgba(154,98,50,.50); color-scheme: light; } html[data-mode=\"light\"][data-season=\"winter-blue\"], body[data-mode=\"light\"][data-season=\"winter-blue\"] { --season-bg:#eaf5fd; --season-bg-glow:rgba(70,160,230,.20); --season-panel:#fbfeff; --season-panel-2:#dcedf9; --season-panel-hover:#c9e3f5; --season-card:#f3faff; --season-text:#0c2335; --season-muted:#4a6c85; --season-accent:#1a78c2; --season-accent-rgb:26,120,194; --season-border:rgba(26,120,194,.42); --season-border-soft:rgba(30,70,110,.18); --season-shadow:rgba(26,120,194,.20); --season-overlay:rgba(234,245,253,.88); --season-accent-soft:rgba(26,120,194,.16); --season-accent-border:rgba(26,120,194,.50); color-scheme: light; } html[data-mode=\"light\"][data-season=\"february-pink\"], body[data-mode=\"light\"][data-season=\"february-pink\"] { --season-bg:#fdeef5; --season-bg-glow:rgba(255,120,178,.20); --season-panel:#fffafd; --season-panel-2:#fbdceb; --season-panel-hover:#f7c8de; --season-card:#fff5fa; --season-text:#3a1428; --season-muted:#8a5570; --season-accent:#d6407f; --season-accent-rgb:214,64,127; --season-border:rgba(214,64,127,.42); --season-border-soft:rgba(110,50,80,.18); --season-shadow:rgba(214,64,127,.20); --season-overlay:rgba(253,238,245,.88); --season-accent-soft:rgba(214,64,127,.16); --season-accent-border:rgba(214,64,127,.50); color-scheme: light; }";
+  function ensurePalette(doc) {
+    if (doc.getElementById('index-light-palette') || !doc.head) return;
+    const st = doc.createElement('style');
+    st.id = 'index-light-palette';
+    st.textContent = FRAME_LIGHT_CSS;
+    doc.head.appendChild(st);
+  }
+
+  function applyToFrame() {
+    try { frame.contentWindow.postMessage({ siteTheme: { theme: currentTheme, mode: currentMode } }, '*'); } catch (e) {}
+    try {
+      const doc = frame.contentDocument, win = frame.contentWindow;
+      if (!doc || !doc.body) return;
+      ensurePalette(doc);
+      stamp(doc);
+      const rgb = win.getComputedStyle(doc.documentElement).getPropertyValue('--season-accent-rgb').trim();
+      if (rgb) win.__accentRgb = rgb;
+    } catch (e) { /* cross-origin page: leave it alone */ }
+  }
+
+  function render() {
+    stamp(document);
+    menu.querySelectorAll('.theme-chip').forEach(chip => {
+      const on = chip.dataset.theme === currentTheme;
+      chip.classList.toggle('active', on);
+      chip.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    menu.querySelectorAll('.mode-btn').forEach(b => {
+      const on = b.dataset.mode === currentMode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    applyToFrame();
+  }
+
+  function setMenu(open) {
+    menu.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  btn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
+  menu.addEventListener('click', e => {
+    const chip = e.target.closest('.theme-chip');
+    if (chip && THEMES.includes(chip.dataset.theme)) {
+      currentTheme = chip.dataset.theme;
+      write(KEY_THEME, currentTheme);
+      render();
+      setMenu(false);
+      return;
+    }
+    const modeBtn = e.target.closest('.mode-btn');
+    if (modeBtn && MODES.includes(modeBtn.dataset.mode)) {
+      currentMode = modeBtn.dataset.mode;
+      write(KEY_MODE, currentMode);
+      render();
+    }
+  });
+  document.addEventListener('click', e => { if (!menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  // Re-apply whenever a different section loads in the iframe
+  frame.addEventListener('load', () => { applyToFrame(); setTimeout(applyToFrame, 300); setTimeout(applyToFrame, 1500); });
+
+  // On load: keep the user's choice, except switch the THEME automatically ONE time
+  // when a new seasonal period has started since the last automatic switch.
+  const today = seasonForToday();
+  let theme = read(KEY_THEME);
+  if (read(KEY_LAST_AUTO) !== today) {
+    theme = today;
+    write(KEY_LAST_AUTO, today);
+    write(KEY_THEME, today);
+  }
+  currentTheme = THEMES.includes(theme) ? theme : today;
+  const savedMode = read(KEY_MODE);
+  currentMode = MODES.includes(savedMode) ? savedMode : 'dark';
+  render();
+})();
+</script>
 
 </body>
 </html>
