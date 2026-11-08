@@ -1,0 +1,570 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1280 720">
+<foreignObject x="0" y="0" width="1280" height="720">
+</foreignObject>
+<script type="text/javascript">
+//<![CDATA[
+(function () {
+  // ===== SETTINGS =====
+  // Repo address on jsDelivr (no trailing slash). Change @main to a commit hash to bypass caching.
+  // Leave it empty ("") to auto-detect when this file is hosted from the repo itself
+  // (GitHub Pages, jsDelivr, or raw.githubusercontent.com).
+  var REPO = "https://cdn.jsdelivr.net/gh/Humid-Mouse48/301010044444442831applesauce-queryw.dska@main";
+  // Where index.html lives inside the repo. The first one that loads is used.
+  var MAIN_CANDIDATES = ["index.html", "public/index.html"];
+  // =====================
+
+  function detectRepo() {
+    try {
+      var h = location.hostname, p = location.pathname.split("/").filter(Boolean), m;
+      if ((m = h.match(/^([^.]+)\.github\.io$/)))
+        return "https://cdn.jsdelivr.net/gh/" + m[1] + "/" + (p.length > 1 ? p[0] : m[1] + ".github.io") + "@main";
+      if (h === "raw.githubusercontent.com" && p.length >= 3) return "https://cdn.jsdelivr.net/gh/" + p[0] + "/" + p[1] + "@" + p[2];
+      if (h === "cdn.jsdelivr.net" && p[0] === "gh" && p.length >= 3) return "https://cdn.jsdelivr.net/gh/" + p[1] + "/" + p[2];
+    } catch (err) {}
+    return "";
+  }
+  if (!REPO) REPO = detectRepo();
+
+  var XHTML = "http://www.w3.org/1999/xhtml";
+  var CDN = REPO + "/";   // the repo
+  var PROXY = "https://geekedproxy.firebaseapp.com/";   // also treated as a trusted file source
+  var JSD = "https://cdn.jsdelivr.net/";
+  function trusted(u) { return typeof u === "string" && (u.indexOf(CDN) === 0 || u.indexOf(PROXY) === 0 || u.indexOf(JSD + "gh/") === 0); }
+  // "/gh/..." "/npm/..." etc. are jsDelivr's own routes: a page written for jsDelivr means cdn.jsdelivr.net, NOT my repo.
+  var JSD_ROUTE = /^\/(?:gh|npm|wp|combine)\//;
+  // The root that "/x" means for a page: the repo the page itself was loaded from.
+  function rootOf(u) {
+    if (typeof u === "string" && u.indexOf(CDN) !== 0) {
+      var m = u.match(/^https:\/\/cdn\.jsdelivr\.net\/gh\/[^\/]+\/[^\/@]+(?:@[^\/]+)?\//);
+      if (m) return m[0];
+    }
+    return SITE_ROOT;
+  }
+  var NFETCH = window.fetch.bind(window);   // pristine copy, used for all loader requests
+  var SITE_ROOT = REPO + "/";   // becomes the folder that index.html was found in
+  // Folder the SVG itself is hosted in (e.g. /geekededucation/ on ImageKit); it is never part of a repo path.
+  var HOST_DIR = "/";
+  try { HOST_DIR = new URL(".", location.href).pathname || "/"; } catch (err) {}
+  function hostPathToRepo(p) { return (HOST_DIR !== "/" && p.indexOf(HOST_DIR) === 0) ? p.slice(HOST_DIR.length) : p.replace(/^\//, ""); }
+
+  // Runs inside every loaded page: routes links, buttons, iframes and fetches to the loader,
+  // and reports load errors so a blank page can be diagnosed.
+  function bridgeMain() {
+    var reqId = 0, pending = {};
+    function post(msg) { msg.base = window.__UBG_BASE || document.baseURI; top.postMessage(msg, "*"); }
+    function go(u) { post({ ubgNav: String(u) }); }
+    function log(m) { post({ ubgLog: String(m).slice(0, 220) }); }
+    // Frames only go fullscreen if every frame in the chain allows it.
+    function ensureAllow(el) {
+      try {
+        var set = Element.prototype.setAttribute;
+        var a = el.getAttribute("allow") || "";
+        if (!/fullscreen/i.test(a)) {
+          set.call(el, "allow", (a ? a + "; " : "") + "fullscreen; autoplay; gamepad; clipboard-write; keyboard-map");
+        }
+        set.call(el, "allowfullscreen", "true");
+      } catch (err) {}
+    }
+    window.__ubgGo = go;
+    // Anything a page's own JS aims at the hosting site (Vercel etc.) or at "/x" is redirected into the repo.
+    var ROOT = window.__UBG_ROOT || "", HOSTDIR = window.__UBG_HOSTDIR || "/";
+    function fix(u) {
+      if (typeof u !== "string" || !ROOT) return u;
+      var t = u.trim();
+      if (!t || t.charAt(0) === "#" || /^(data|blob|javascript|about|mailto|tel):/i.test(t)) return u;
+      if (t.charAt(0) === "/" && t.charAt(1) !== "/") return /^\/(?:gh|npm|wp|combine)\//.test(t) ? "https://cdn.jsdelivr.net" + t : ROOT + t.slice(1);
+      var r;
+      try { r = new URL(t, window.__UBG_BASE || document.baseURI); } catch (err) { return u; }
+      if (location.origin && location.origin !== "null" && location.origin !== "https://cdn.jsdelivr.net" && r.origin === location.origin) {
+        var rel = (HOSTDIR !== "/" && r.pathname.indexOf(HOSTDIR) === 0) ? r.pathname.slice(HOSTDIR.length) : r.pathname.replace(/^\//, "");
+        if (/^(?:gh|npm|wp|combine)\//.test(rel)) return "https://cdn.jsdelivr.net/" + rel + r.search + r.hash;
+        return ROOT + rel + r.search + r.hash;
+      }
+      return u;
+    }
+    var FIXTAGS = { IMG: 1, SCRIPT: 1, SOURCE: 1, VIDEO: 1, AUDIO: 1, TRACK: 1, EMBED: 1, LINK: 1, OBJECT: 1 };
+    var FIXATTRS = { src: 1, href: 1, poster: 1, data: 1 };
+    try {
+      [[HTMLImageElement, "src"], [HTMLScriptElement, "src"], [HTMLSourceElement, "src"], [HTMLMediaElement, "src"],
+       [HTMLTrackElement, "src"], [HTMLEmbedElement, "src"], [HTMLLinkElement, "href"], [HTMLVideoElement, "poster"],
+       [HTMLObjectElement, "data"]].forEach(function (p) {
+        var d = Object.getOwnPropertyDescriptor(p[0].prototype, p[1]);
+        if (!d || !d.set) return;
+        Object.defineProperty(p[0].prototype, p[1], {
+          configurable: true, enumerable: d.enumerable, get: d.get,
+          set: function (v) { d.set.call(this, typeof v === "string" ? fix(v) : v); }
+        });
+      });
+    } catch (err) {}
+    try {
+      var xhrOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (m, u) {
+        var a = Array.prototype.slice.call(arguments);
+        if (typeof u === "string" || (u && typeof u.toString === "function")) a[1] = fix(String(u));
+        return xhrOpen.apply(this, a);
+      };
+    } catch (err) {}
+    // When the host serves this file sandboxed (origin "null"), workers cannot importScripts() from blob: URLs
+    // (Construct 3 / Unity / Emscripten games do exactly that). Turn JavaScript blob URLs into data: URLs.
+    try {
+      if (location.origin === "null") {
+        var origCOU = URL.createObjectURL;
+        URL.createObjectURL = function (obj) {
+          var u = origCOU.apply(URL, arguments);
+          try {
+            if (obj && /javascript|ecmascript/i.test(obj.type || "") && obj.size < 12000000) {
+              var x = new XMLHttpRequest();
+              x.open("GET", u, false);
+              x.overrideMimeType("text/plain; charset=x-user-defined");
+              x.send();
+              var bin = x.responseText.replace(/[\s\S]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) & 255); });
+              return "data:" + obj.type + ";base64," + btoa(bin);
+            }
+          } catch (err) {}
+          return u;
+        };
+      }
+    } catch (err) {}
+    var k7 = 0, kS = 0;
+    window.addEventListener("keydown", function (e) {
+      var t = Date.now();
+      if (e.key === "7" || e.code === "Digit7" || e.code === "Numpad7") k7 = t;
+      else if (e.key === "/" || e.code === "Slash" || e.code === "NumpadDivide") kS = t;
+      else return;
+      if (k7 && kS && Math.abs(k7 - kS) < 1200) { k7 = kS = 0; post({ ubgDebug: 1 }); }
+    }, true);
+    function ubgFrame(path, cb, kind) {
+      var id = ++reqId; pending[id] = cb;
+      post({ ubgFrame: String(path), id: id, kind: kind || "" });
+    }
+    window.addEventListener("message", function (e) {
+      var d = e.data;
+      if (d && d.ubgHtml !== undefined && pending[d.id]) {
+        var cb = pending[d.id]; delete pending[d.id]; cb(d.ubgHtml);
+      }
+      if (d && d.ubgSet !== undefined) {
+        try { window.frameElement.srcdoc = d.ubgSet; }
+        catch (err) { document.open(); document.write(d.ubgSet); document.close(); }
+      }
+    });
+    window.addEventListener("error", function (e) {
+      var t = e.target;
+      if (t && t !== window && (t.src || t.href)) post({ ubgErr: "Failed to load " + (t.src || t.href) });
+      else post({ ubgErr: (e.message || "Script error") + (e.filename ? "  @ " + e.filename + ":" + e.lineno : "") });
+    }, true);
+    window.addEventListener("unhandledrejection", function (e) {
+      var r = e.reason;
+      post({ ubgErr: "Promise error: " + ((r && r.message) || r) });
+    });
+    try {
+      var srcDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, "src");
+      Object.defineProperty(HTMLIFrameElement.prototype, "src", {
+        configurable: true,
+        get: function () { return srcDesc.get.call(this); },
+        set: function (v) {
+          var el = this; v = String(v);
+          ensureAllow(el);
+          log("iframe.src = " + v);
+          if (!v || /^(about|data|blob|javascript):/i.test(v)) return srcDesc.set.call(el, v);
+          ubgFrame(v, function (html) {
+            if (html === null) srcDesc.set.call(el, v); else el.srcdoc = html;
+          }, "iframe");
+        }
+      });
+      var origSetAttr = Element.prototype.setAttribute;
+      Element.prototype.setAttribute = function (n, v) {
+        if (this instanceof HTMLIFrameElement && String(n).toLowerCase() === "src") { this.src = v; return; }
+        if (typeof v === "string" && FIXTAGS[this.tagName] && FIXATTRS[String(n).toLowerCase()]) {
+          return origSetAttr.call(this, n, fix(v));
+        }
+        return origSetAttr.apply(this, arguments);
+      };
+    } catch (err) {}
+    // Pages that build a frame or document from a string themselves (iframe.srcdoc = html, document.write(html))
+    // would lose the base address and this bridge, so relative URLs would go to the hosting domain. Re-attach both.
+    try {
+      var SELF = "<scr" + "ipt>window.__UBG_BASE=" + JSON.stringify(window.__UBG_BASE || document.baseURI) +
+        ";window.__UBG_ROOT=" + JSON.stringify(ROOT) + ";window.__UBG_HOSTDIR=" + JSON.stringify(HOSTDIR) +
+        ";(" + bridgeMain.toString() + ")();</scr" + "ipt>";
+      var wrapDoc = function (h) {
+        h = String(h);
+        if (!ROOT || /__UBG_BASE/.test(h)) return h;
+        var hasBase = /<base\b[^>]*\bhref/i.test(h);
+        var inj = (hasBase ? "" : '<base href="' + (window.__UBG_BASE || document.baseURI) + '">') + SELF;
+        if (/<head[^>]*>/i.test(h)) return h.replace(/(<head[^>]*>)/i, function (m) { return m + inj; });
+        if (/<html[^>]*>/i.test(h)) return h.replace(/(<html[^>]*>)/i, function (m) { return m + "<head>" + inj + "</head>"; });
+        return inj + h;
+      };
+      var sdDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, "srcdoc");
+      if (sdDesc && sdDesc.set) Object.defineProperty(HTMLIFrameElement.prototype, "srcdoc", {
+        configurable: true, enumerable: sdDesc.enumerable, get: sdDesc.get,
+        set: function (v) { sdDesc.set.call(this, typeof v === "string" ? wrapDoc(v) : v); }
+      });
+      var fixHtml = function (h) {
+        return String(h).replace(/(\b(?:src|href|poster|data-src)\s*=\s*)(["'])([^"']*)\2/gi, function (m, pre, q, v) { return pre + q + fix(v) + q; });
+      };
+      var dw = Document.prototype.write, dwl = Document.prototype.writeln;
+      Document.prototype.write = function () { return dw.apply(this, Array.prototype.map.call(arguments, fixHtml)); };
+      Document.prototype.writeln = function () { return dwl.apply(this, Array.prototype.map.call(arguments, fixHtml)); };
+    } catch (err) {}
+    // Fullscreen: if the browser refuses (permissions policy), fall back to stretching
+    // the element over the whole window and asking the loader to fullscreen the window.
+    try {
+      var fsEl = null, fsStyle = null;
+      var nativeRFS = Element.prototype.requestFullscreen || Element.prototype.webkitRequestFullscreen;
+      var nativeExit = Document.prototype.exitFullscreen || Document.prototype.webkitExitFullscreen;
+      var fsDesc = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement");
+      var fsProps = ["position:fixed", "left:0", "top:0", "right:0", "bottom:0", "width:100vw", "height:100vh",
+        "max-width:none", "max-height:none", "margin:0", "border:0", "z-index:2147483647"];
+      var fakeExit = function (silent) {
+        if (!fsEl) return;
+        var el = fsEl; fsEl = null;
+        if (fsStyle === null) el.removeAttribute("style"); else el.setAttribute("style", fsStyle);
+        if (!silent) post({ ubgFs: 0 });
+        try { document.dispatchEvent(new Event("fullscreenchange")); } catch (err) {}
+      };
+      var fakeEnter = function (el) {
+        if (fsEl) fakeExit(true);
+        fsEl = el; fsStyle = el.getAttribute("style");
+        fsProps.forEach(function (p) {
+          var kv = p.split(":"); el.style.setProperty(kv[0], kv[1], "important");
+        });
+        post({ ubgFs: 1 });
+        try { document.dispatchEvent(new Event("fullscreenchange")); } catch (err) {}
+      };
+      var fakeRFS = function (o) {
+        var el = this, r;
+        try { r = nativeRFS ? nativeRFS.call(el, o) : Promise.reject(new TypeError("no fullscreen")); }
+        catch (err) { r = Promise.reject(err); }
+        return Promise.resolve(r).catch(function (err) {
+          log("fullscreen blocked (" + ((err && err.message) || err) + ") - using fallback");
+          fakeEnter(el);
+        });
+      };
+      Element.prototype.requestFullscreen = fakeRFS;
+      Element.prototype.webkitRequestFullscreen = fakeRFS;
+      Document.prototype.exitFullscreen = function () {
+        if (fsEl) { fakeExit(); return Promise.resolve(); }
+        return nativeExit ? nativeExit.call(this) : Promise.resolve();
+      };
+      if (fsDesc && fsDesc.get) {
+        Object.defineProperty(Document.prototype, "fullscreenElement", {
+          configurable: true, get: function () { return fsEl || fsDesc.get.call(this); }
+        });
+      }
+      window.addEventListener("message", function (e) {
+        if (e.data && e.data.ubgFsExit) {
+          fakeExit(true);
+          var fr = document.querySelectorAll("iframe");
+          for (var i = 0; i < fr.length; i++) {
+            try { fr[i].contentWindow.postMessage({ ubgFsExit: 1 }, "*"); } catch (err) {}
+          }
+        }
+      });
+    } catch (err) {}
+    try {
+      var origCreate = document.createElement;
+      document.createElement = function (t) {
+        var el = origCreate.apply(document, arguments);
+        if (String(t).toLowerCase() === "iframe") ensureAllow(el);
+        return el;
+      };
+    } catch (err) {}
+    try {
+      var origFetch = window.fetch;
+      window.fetch = function (input, init) {
+        if (typeof input === "string") input = fix(input);
+        else if (input && typeof input.url === "string" && typeof Request !== "undefined" && input instanceof Request) {
+          var fu = fix(input.url);
+          if (fu !== input.url) input = new Request(fu, input);
+        } else if (input && typeof input.href === "string") input = fix(String(input.href));
+        var u = (typeof input === "string") ? input : (input && input.url) || "";
+        if (u && !/^(data|blob|javascript):/i.test(u) && /\.html?(?:[?#]|$)|\/$/i.test(u)) {
+          return new Promise(function (res) {
+            ubgFrame(u, function (html) {
+              if (html === null) res(origFetch.call(window, input, init));
+              else res(new Response(html, { status: 200, headers: { "Content-Type": "text/html" } }));
+            }, "fetch");
+          });
+        }
+        return origFetch.call(window, input, init);
+      };
+    } catch (err) {}
+    try {
+      var mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          Array.prototype.forEach.call(m.addedNodes, function (n) {
+            if (n.nodeType !== 1) return;
+            var frames = (n.tagName === "IFRAME") ? [n]
+              : Array.prototype.slice.call(n.querySelectorAll ? n.querySelectorAll("iframe[src]") : []);
+            if (n.tagName === "IFRAME") ensureAllow(n);
+            frames.forEach(function (f) {
+              ensureAllow(f);
+              var v = f.getAttribute("src");
+              if (v && !f.__ubg && !f.hasAttribute("srcdoc") && !/^(about|data|blob|javascript):/i.test(v)) {
+                f.__ubg = 1; f.src = v;
+              }
+            });
+          });
+        });
+      });
+      mo.observe(document, { childList: true, subtree: true });
+    } catch (err) {}
+    window.addEventListener("click", function (e) {
+      var t = e.target, el = (t && t.closest) ? (t.closest("a,button,[onclick],[data-page],[data-src],[data-url]") || t) : t;
+      if (!el || !el.tagName) return;
+      var info = el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") +
+        (el.className && typeof el.className === "string" ? "." + el.className.split(" ").join(".") : "");
+      var extra = ["href", "onclick", "data-page", "data-src", "data-url", "target"].map(function (n) {
+        var v = el.getAttribute && el.getAttribute(n); return v ? n + "=" + v : "";
+      }).filter(Boolean).join(" ");
+      log("click " + info + " " + extra);
+    }, true);
+    try {
+      var origOpen = window.open;
+      window.open = function (u) {
+        var s = (u === undefined || u === null) ? "" : String(u);
+        if (s && /\.html?(?:[?#]|$)|\/(?:[?#]|$)/i.test(s.split("#")[0] + (s.indexOf("#") > -1 ? "#" : ""))) { go(s); return null; }
+        var a = Array.prototype.slice.call(arguments);
+        if (s) a[0] = fix(s);
+        return origOpen.apply(window, a);
+      };
+    } catch (err) {}
+    // Bubble phase on window = runs after the page's own click handlers.
+    window.addEventListener("click", function (e) {
+      if (e.defaultPrevented) return;
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.hasAttribute("download")) return;
+      var h = a.getAttribute("href");
+      if (!h || h.charAt(0) === "#" || /^(javascript|mailto|tel|data|blob):/i.test(h)) return;
+      var t = a.getAttribute("target");
+      if (t && !/^_(self|blank|top|parent)$/i.test(t)) {
+        var f = document.querySelector('iframe[name="' + t + '"]') || document.getElementById(t);
+        if (f) { e.preventDefault(); f.src = h; return; }
+      }
+      e.preventDefault(); go(h);
+    });
+    if (window.navigation) {
+      navigation.addEventListener("navigate", function (e) {
+        if (!e.cancelable || e.hashChange || e.downloadRequest) return;
+        var u = e.destination.url;
+        if (u.indexOf("about:") === 0 || u.indexOf("blob:") === 0 || u.indexOf("data:") === 0) return;
+        log("navigate -> " + u);
+        e.preventDefault(); go(u);
+      });
+    }
+  }
+  function bridgeTag(root, base) {
+    return "<scr" + "ipt>window.__UBG_BASE=" + JSON.stringify(base || root || SITE_ROOT) + ";window.__UBG_ROOT=" + JSON.stringify(root || SITE_ROOT) + ";window.__UBG_HOSTDIR=" + JSON.stringify(HOST_DIR) + ";(" + bridgeMain.toString() + ")();</scr" + "ipt>";
+  }
+
+  // ---------- layout: the page frame ----------
+  var wrap = document.createElementNS(XHTML, "div");
+  wrap.setAttribute("style", "position:relative;width:100%;height:100%;");
+  var frame = document.createElementNS(XHTML, "iframe");
+  frame.setAttribute("style", "position:absolute;left:0;top:0;width:100%;height:100%;border:0;background:#fff;");
+  frame.setAttribute("allow", "fullscreen; autoplay; gamepad; clipboard-write; keyboard-map");
+  frame.setAttribute("allowfullscreen", "true");
+  wrap.appendChild(frame);
+  document.querySelector("foreignObject").appendChild(wrap);
+
+  // ---------- debug panel: hidden for everyone; press 7 and / together (or one right after the other) to toggle ----------
+  var banner = document.createElementNS(XHTML, "div");
+  banner.setAttribute("style", "display:none;position:absolute;left:0;right:0;bottom:0;max-height:40%;overflow:auto;" +
+    "background:rgba(0,0,0,.88);color:#9f9;font:12px/1.4 monospace;padding:6px 8px;white-space:pre-wrap;z-index:2147483647;");
+  wrap.appendChild(banner);
+  var dbgOn = false, dbgLines = [];
+  function dbgRender() {
+    banner.textContent = dbgLines.slice(-60).join("\n") + "\n(press 7 + / or click here to hide)";
+    banner.style.display = dbgOn ? "block" : "none";
+  }
+  function note(msg, isErr) {
+    dbgLines.push((isErr ? "ERROR: " : "") + msg);
+    if (dbgLines.length > 300) dbgLines.shift();
+    if (dbgOn) dbgRender();
+  }
+  function toggleDebug() { dbgOn = !dbgOn; dbgRender(); }
+  banner.addEventListener("click", function () { dbgOn = false; dbgRender(); });
+  var lk7 = 0, lkS = 0;
+  window.addEventListener("keydown", function (e) {
+    var t = Date.now();
+    if (e.key === "7" || e.code === "Digit7" || e.code === "Numpad7") lk7 = t;
+    else if (e.key === "/" || e.code === "Slash" || e.code === "NumpadDivide") lkS = t;
+    else return;
+    if (lk7 && lkS && Math.abs(lk7 - lkS) < 1200) { lk7 = lkS = 0; toggleDebug(); }
+  }, true);
+
+  // ---------- url helpers ----------
+  function cleanUrl(u) { return u.split("#")[0].split("?")[0]; }
+  function dirOf(u) { return cleanUrl(u).replace(/[^\/]*$/, ""); }
+  function isHtmlLike(u) { return /\.html?$|\/$/i.test(cleanUrl(u)); }
+  function candidates(u) {
+    var c = cleanUrl(u), last = c.split("/").pop();
+    if (/\/$/.test(c)) return [c + "index.html"];
+    if (/\.html?$/i.test(c)) return [u];
+    if (last.indexOf(".") === -1) return [c + ".html", c + "/index.html"];
+    return [];
+  }
+  async function fetchFirst(cands) {
+    var lastErr = null;
+    for (var i = 0; i < cands.length; i++) {
+      try { return { url: cands[i], html: await fetchPage(cands[i]) }; }
+      catch (err) { lastErr = err; }
+    }
+    throw lastErr || new Error("not found");
+  }
+  function withIndex(u) { return /\/$/.test(cleanUrl(u)) ? cleanUrl(u) + "index.html" : u; }
+
+  // Resolve a path the way the original site would: "/x" means "x" at the site's root folder.
+  function toUrl(path, base) {
+    path = String(path).trim();
+    if (path.charAt(0) === "/" && path.charAt(1) !== "/") {
+      path = JSD_ROUTE.test(path) ? JSD.slice(0, -1) + path : rootOf(base) + path.slice(1);
+    }
+    var r = null;
+    try { r = new URL(path, base).href; } catch (e) {}
+    // Some pages lose their <base> and report file:/// or about: as their base.
+    // In that case resolve against the site's folder in the repo instead.
+    if (!r || !/^https?:/i.test(r)) {
+      try { r = new URL(path, SITE_ROOT).href; } catch (e) { r = null; }
+    }
+    return intoRepo(r);
+  }
+
+  // The hosting site (Vercel etc.) never serves pages: anything aimed at it is moved into the repo folder.
+  function intoRepo(u) {
+    try {
+      var x = new URL(u);
+      if (location.origin && location.origin !== "null" && location.origin !== "https://cdn.jsdelivr.net" && x.origin === location.origin) {
+        var rel = hostPathToRepo(x.pathname);
+        if (/^(?:gh|npm|wp|combine)\//.test(rel)) return JSD + rel + x.search + x.hash;
+        return SITE_ROOT + rel + x.search + x.hash;
+      }
+    } catch (err) {}
+    return u;
+  }
+
+  // Fetch a page from the repo, point its base at the repo, fix root-relative
+  // links, and add the bridge.
+  async function fetchPage(url) {
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 20000);
+    var r;
+    try { r = await NFETCH(url, { signal: ctl.signal }); }
+    catch (err) { throw new Error(err && err.name === "AbortError" ? "timed out after 20s" : (err && err.message) || "network error"); }
+    finally { clearTimeout(timer); }
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    var html = await r.text();
+    var pageDir = dirOf(url);
+    var root = rootOf(url);
+
+    var base = pageDir;
+    var bm = html.match(/<base\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/i);
+    if (bm) {
+      base = toUrl(bm[1], pageDir) || pageDir;
+      html = html.replace(/<base\b[^>]*>/gi, "");
+    }
+
+    html = html.replace(/(\b(?:src|href|poster|action|data-src)\s*=\s*)(["'])\/(?!\/)([^"']*)\2/gi,
+      function (m, pre, q, rest) { return pre + q + (JSD_ROUTE.test("/" + rest) ? JSD : root) + rest + q; });
+
+    html = html.replace(/url\(\s*(["']?)\/(?!\/)((?:gh|npm|wp|combine)\/)?/gi,
+      function (m, q, route) { return "url(" + q + (route ? JSD + route : root); });
+
+    var inject = '<base href="' + base + '">' + bridgeTag(root, base);
+    if (/<head[^>]*>/i.test(html)) return html.replace(/(<head[^>]*>)/i, function (m) { return m + inject; });
+    if (/<html[^>]*>/i.test(html)) return html.replace(/(<html[^>]*>)/i, function (m) { return m + "<head>" + inject + "</head>"; });
+    return inject + html;
+  }
+
+  function showError(lines) {
+    frame.srcdoc = "<body style='font-family:sans-serif;padding:24px'><h3>Could not load the page</h3><pre>" +
+      lines.join("\n").replace(/</g, "&lt;") + "</pre></body>";
+  }
+
+  async function show(url, target) {
+    try {
+      var r = await fetchFirst(candidates(url));
+      if (target) target.postMessage({ ubgSet: r.html }, "*"); else frame.srcdoc = r.html;
+      note("Loaded " + r.url, false);
+    } catch (err) {
+      if (!target) showError([url + "  (" + err.message + ")"]);
+      note("Failed " + url + " (" + err.message + ")", true);
+    }
+  }
+
+  window.addEventListener("message", function (e) {
+    try { handleMessage(e); }
+    catch (err) { note("Loader error: " + ((err && err.message) || err), true, true); }
+  });
+
+  function handleMessage(e) {
+    var d = e.data;
+    if (!d || typeof d !== "object") return;
+
+    if (d.ubgDebug !== undefined) { toggleDebug(); return; }
+    if (d.ubgErr !== undefined) { note(String(d.ubgErr), true); return; }
+    if (d.ubgLog !== undefined) { note(String(d.ubgLog), false, true); return; }
+
+    if (d.ubgFs !== undefined) {
+      if (d.ubgFs) {
+        var de = document.documentElement, p;
+        try { p = (de.requestFullscreen || de.webkitRequestFullscreen).call(de); } catch (err) { p = Promise.reject(err); }
+        Promise.resolve(p).catch(function (err) { note("Real fullscreen failed: " + ((err && err.message) || err), true, true); });
+      } else if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      return;
+    }
+
+    if (d.ubgFrame !== undefined) {
+      var src = e.source, id = d.id;
+      var u = toUrl(d.ubgFrame, d.base);
+      var cands = trusted(u) ? candidates(u) : [];
+      note("request " + d.ubgFrame + "  [base " + d.base + "]  ->  " + (cands.length ? cands.join(" | ") : "not bundled (passed through): " + u), false, true);
+      if (!cands.length) { src.postMessage({ ubgHtml: null, id: id }, "*"); return; }
+      fetchFirst(cands).then(function (r) {
+        note("Loaded " + r.url, false);
+        src.postMessage({ ubgHtml: r.html, id: id }, "*");
+      }).catch(function (err) {
+        note("Failed " + u + " (" + err.message + ")", true);
+        if (d.kind === "iframe") alert("Could not load: " + u + "\n" + err.message);
+        src.postMessage({ ubgHtml: null, id: id }, "*");
+      });
+      return;
+    }
+
+    if (d.ubgNav !== undefined) {
+      var nu = toUrl(d.ubgNav, d.base);
+      if (!nu) return;
+      if (trusted(nu) && candidates(nu).length) {
+        show(nu, e.source === frame.contentWindow ? null : e.source);
+      } else window.open(nu, "_blank");
+    }
+  }
+
+  document.addEventListener("fullscreenchange", function () {
+    if (!document.fullscreenElement) {
+      try { frame.contentWindow.postMessage({ ubgFsExit: 1 }, "*"); } catch (err) {}
+    }
+  });
+
+  (async function boot() {
+    var errs = [];
+    for (var i = 0; i < MAIN_CANDIDATES.length; i++) {
+      var u = REPO + "/" + MAIN_CANDIDATES[i];
+      try {
+        SITE_ROOT = dirOf(u);
+        frame.srcdoc = await fetchPage(u);
+        note("Loaded " + u, false);
+        return;
+      } catch (err) { errs.push(u + "  (" + err.message + ")"); }
+    }
+    SITE_ROOT = REPO + "/";
+    showError(errs);
+    note("Could not load index.html from the repo", true);
+  })();
+})();
+//]]>
+</script>
+</svg>
