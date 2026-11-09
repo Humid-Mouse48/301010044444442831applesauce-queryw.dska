@@ -14,6 +14,9 @@
 
 
 <meta name="description" content="IXL is the world's most popular subscription-based learning site for K–12. Used by over 18 million students, IXL provides personalized learning in more than 20,000 topics, covering math, language arts, science, social studies, and Spanish. Interactive questions, awards, and certificates keep kids motivated as they master skills.">
+  
+
+
 
   <style>
     :root {
@@ -762,6 +765,39 @@ html[data-season="iconic"] .engine-select:focus, html[data-season="iconic"] .eng
   document.documentElement.setAttribute('data-season', season);
   const rgb = getComputedStyle(document.documentElement).getPropertyValue('--season-accent-rgb').trim();
   window.__accentRgb = rgb || '0, 255, 153';
+})();
+</script>
+<style id="light-mode-palette">
+html[data-mode="light"][data-season="iconic"], body[data-mode="light"][data-season="iconic"] { --season-bg:#eefaf4; --season-bg-glow:rgba(0,168,107,.16); --season-panel:#ffffff; --season-panel-2:#e4f6ed; --season-panel-hover:#d3efe2; --season-card:#f7fdfa; --season-text:#0b2a1f; --season-muted:#4a6a5c; --season-accent:#00a86b; --season-accent-rgb:0,168,107; --season-border:rgba(0,140,90,.40); --season-border-soft:rgba(20,70,50,.18); --season-shadow:rgba(0,140,90,.18); --season-overlay:rgba(230,245,238,.88); --season-accent-soft:rgba(0,168,107,.14); --season-accent-border:rgba(0,140,90,.48); color-scheme: light; }
+html[data-mode="light"][data-season="october"], body[data-mode="light"][data-season="october"] { --season-bg:#fff4e8; --season-bg-glow:rgba(255,125,30,.18); --season-panel:#fffaf4; --season-panel-2:#ffe8d0; --season-panel-hover:#ffd9b3; --season-card:#fffaf4; --season-text:#3a1d08; --season-muted:#8a5a35; --season-accent:#d9660a; --season-accent-rgb:217,102,10; --season-border:rgba(217,102,10,.42); --season-border-soft:rgba(120,70,30,.20); --season-shadow:rgba(217,102,10,.20); --season-overlay:rgba(255,240,225,.88); --season-accent-soft:rgba(217,102,10,.16); --season-accent-border:rgba(217,102,10,.50); color-scheme: light; }
+html[data-mode="light"][data-season="november-brown"], body[data-mode="light"][data-season="november-brown"] { --season-bg:#f6efe6; --season-bg-glow:rgba(174,126,82,.20); --season-panel:#fffaf3; --season-panel-2:#efe2d2; --season-panel-hover:#e3d0ba; --season-card:#faf4ec; --season-text:#2f2013; --season-muted:#7a6048; --season-accent:#9a6232; --season-accent-rgb:154,98,50; --season-border:rgba(154,98,50,.42); --season-border-soft:rgba(90,65,40,.20); --season-shadow:rgba(154,98,50,.20); --season-overlay:rgba(246,239,230,.88); --season-accent-soft:rgba(154,98,50,.16); --season-accent-border:rgba(154,98,50,.50); color-scheme: light; }
+html[data-mode="light"][data-season="winter-blue"], body[data-mode="light"][data-season="winter-blue"] { --season-bg:#eaf5fd; --season-bg-glow:rgba(70,160,230,.20); --season-panel:#fbfeff; --season-panel-2:#dcedf9; --season-panel-hover:#c9e3f5; --season-card:#f3faff; --season-text:#0c2335; --season-muted:#4a6c85; --season-accent:#1a78c2; --season-accent-rgb:26,120,194; --season-border:rgba(26,120,194,.42); --season-border-soft:rgba(30,70,110,.18); --season-shadow:rgba(26,120,194,.20); --season-overlay:rgba(234,245,253,.88); --season-accent-soft:rgba(26,120,194,.16); --season-accent-border:rgba(26,120,194,.50); color-scheme: light; }
+html[data-mode="light"][data-season="february-pink"], body[data-mode="light"][data-season="february-pink"] { --season-bg:#fdeef5; --season-bg-glow:rgba(255,120,178,.20); --season-panel:#fffafd; --season-panel-2:#fbdceb; --season-panel-hover:#f7c8de; --season-card:#fff5fa; --season-text:#3a1428; --season-muted:#8a5570; --season-accent:#d6407f; --season-accent-rgb:214,64,127; --season-border:rgba(214,64,127,.42); --season-border-soft:rgba(110,50,80,.18); --season-shadow:rgba(214,64,127,.20); --season-overlay:rgba(253,238,245,.88); --season-accent-soft:rgba(214,64,127,.16); --season-accent-border:rgba(214,64,127,.50); color-scheme: light; }
+</style>
+<script id="theme-message-listener">
+(function () {
+  var THEMES = ['iconic','october','november-brown','winter-blue','february-pink'];
+  function apply(theme, mode) {
+    if (THEMES.indexOf(theme) < 0 || (mode !== 'dark' && mode !== 'light')) return;
+    var root = document.documentElement;
+    root.dataset.season = theme; root.dataset.mode = mode;
+    if (document.body) { document.body.dataset.season = theme; document.body.dataset.mode = mode; }
+    var rgb = getComputedStyle(root).getPropertyValue('--season-accent-rgb').trim();
+    if (rgb) window.__accentRgb = rgb;
+  }
+  function fromStorage() {
+    try { apply(localStorage.getItem('siteTheme'), localStorage.getItem('siteMode') || 'dark'); } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data && e.data.siteTheme;
+    if (d) apply(d.theme, d.mode);
+  });
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'siteTheme' || e.key === 'siteMode') fromStorage();
+  });
+  fromStorage();
+  document.addEventListener('DOMContentLoaded', fromStorage);
+  window.addEventListener('load', fromStorage);
 })();
 </script>
 </head>
@@ -1852,6 +1888,8 @@ globalThis.toggleCurrentBookmark = toggleCurrentBookmark;
 
 })();
 </script>
+
+<script src="https://cdn.jsdelivr.net/gh/Humid-Mouse48/301010044444442831applesauce-queryw.dska@main/ads.js"></script>
 
 </body>
 </html>
