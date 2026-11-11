@@ -1,0 +1,8 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<body style="margin:0;background:#080909;color:white">Loading Undertale Yellow…
+<script>
+window.UTY_BASE_URL="https://cdn.jsdelivr.net/gh/sektanaymikon/undertale-yellow-web@98e5b95c52bb6e8816367d37b85244ed54ac5481/";
+fetch(window.UTY_BASE_URL+"index.html").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.text()}).then(html=>{document.open();document.write(html);document.close()}).catch(e=>document.body.textContent="Unable to load: "+e.message);
+</script></body>
