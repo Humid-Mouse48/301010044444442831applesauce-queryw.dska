@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>lightnerslive.com</title>
+
+<!-- Ultraviolet + BareMux (same files as the main proxy page) -->
+<script src="../uv/uv.bundle.js"></script>
+<script src="../uv/uv.config.js"></script>
+<script src="../bare-mux/dist/index.js"></script>
+
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #05080c; color: #e8f1f5;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  iframe#frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+  #overlay { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center;
+    background: radial-gradient(circle at 50% 35%, #0d1a24, #05080c 70%);
+    transition: opacity .35s ease; }
+  #overlay.done { opacity: 0; pointer-events: none; }
+  .spinner { width: 38px; height: 38px; border-radius: 50%; border: 3px solid rgba(255,255,255,.15);
+    border-top-color: #00ff99; animation: spin .9s linear infinite; }
+  #overlay.failed .spinner { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #status { margin: 0; font-size: 15px; opacity: .9; max-width: 520px; }
+  #detail { margin: 0; max-width: 560px; max-height: 140px; overflow: auto; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; opacity: .65; }
+  button#retry { padding: 9px 20px; border-radius: 999px; border: 1px solid rgba(0,255,153,.5);
+    background: rgba(0,255,153,.12); color: #00ff99; font-size: 14px; cursor: pointer; }
+  button#retry:hover { background: rgba(0,255,153,.22); }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } #overlay { transition: none; } }
+</style>
+</head>
+<body>
+
+<iframe id="frame" title="lightnerslive.com"
+        allowfullscreen
+        allow="fullscreen; autoplay; encrypted-media; clipboard-read; clipboard-write; gamepad; microphone; camera"></iframe>
+
+<div id="overlay">
+  <div class="spinner"></div>
+  <p id="status">Starting…</p>
+  <p id="detail" hidden></p>
+  <button id="retry" type="button" hidden>Try again</button>
+</div>
+
+<script>
+(() => {
+  /* ===== settings ===== */
+  const TARGET = "https://lightnerslive.com/";
+  const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
+  const TRANSPORT_PATHS = { epoxy: "../epoxy-transport/dist/index.mjs", libcurl: "../libcurl-transport/dist/index.mjs" };
+  const BARE_TRANSPORT_PATH = "../bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
+  const BARE_SERVERS = ["https://tomp.app/"];
+  const MAX_ATTEMPTS = 4;                                  // how many servers to try before giving up
+
+  /* ===== public Wisp servers (same list as the main page) ===== */
+  const PUBLIC_WISP_LIST_URL = "https://cdn.jsdelivr.net/gh/virtuan4-max/ghostlinkhub@main/proxy/wisps.html";
+const DEFAULT_PUBLIC_WISPS = [
+  // Your Render server — always kept in the pool.
+  "wss://wisp-server-python-1-nljh.onrender.com/",
+
+  // Public Wisp endpoints published by community proxy projects.
+  "wss://glseries.net/wisp/",
+  "wss://wispserver.dev/wisp/",
+  "wss://seminar.drama.english.assignment.literature.homebrewer.org/wisp/",
+  "wss://admin.proxy.hydrovolter.com/scramjet/wisp/",
+  "wss://scram.owoellen.rocks/wisp/",
+  "wss://q13x.com/",
+
+  // Official MercuryWorkshop public Wisp server.
+  "wss://wisp.mercurywork.shop/",
+
+  // Public servers used by the Talon proxy site.
+  "wss://anura.mercurywork.shop/",
+  "wss://incog.works/wisp/",
+
+  // Additional public endpoints supplied for the pool.
+  "wss://mages.io/",
+  "wss://lichology.com/",
+  "wss://definitelyscience.com/",
+  "wss://motor-cycle-part.org/",
+  "wss://wisp.terbiumon.top/",
+  "wss://anura.pro/",
+  "wss://invisiproxy.com/",
+  "wss://nebulaproxy.io/",
+  "wss://area.forwardersoft.com/",
+  "wss://truf.the-nest.at/",
+  "wss://thoughts.forwardersoft.com/",
+  "wss://english.algebra.teacher.vocabulary.homework.forwardersoft.com/"
+];
+
+  const frame = document.getElementById("frame");
+  const overlay = document.getElementById("overlay");
+  const statusEl = document.getElementById("status");
+  const detailEl = document.getElementById("detail");
+  const retryBtn = document.getElementById("retry");
+
+  const setStatus = (t) => { statusEl.textContent = t; };
+  const REL = (p) => new URL(p, document.baseURI).href;   // "./x" -> full URL under this page's base
+  const withTimeout = (p, ms, label) => Promise.race([
+    p, new Promise((_, rej) => setTimeout(() => rej(new Error(label + " timed out")), ms))
+  ]);
+
+  /* ===== Ultraviolet service worker ===== */
+  async function registerSW() {
+    if (!("serviceWorker" in navigator)) throw new Error("Service workers are not supported in this browser.");
+    const reg = await navigator.serviceWorker.register(REL("../uv-sw.js"), { scope: __uv$config.prefix, updateViaCache: "none" });
+    // wait for THIS registration to activate (navigator.serviceWorker.ready would never resolve: scope is /service/)
+    const worker = reg.installing || reg.waiting || reg.active;
+    if (worker && worker.state !== "activated") {
+      await new Promise((resolve, reject) => {
+        const check = () => {
+          if (worker.state === "activated") resolve();
+          else if (worker.state === "redundant") reject(new Error("Service worker became redundant"));
+        };
+        worker.addEventListener("statechange", check);
+        check();
+      });
+    }
+  }
+
+  /* ===== transport (Wisp via BareMux, or Bare as a last resort) ===== */
+  let conn = null;
+  async function setTransport(url) {
+    if (typeof BareMux === "undefined") throw new Error("BareMux not loaded (check /bare-mux/dist/index.js)");
+    conn = conn || new BareMux.BareMuxConnection(REL("../bare-mux/dist/worker.js"));
+    if (/^wss?:\/\//i.test(url)) {
+      const options = TRANSPORT === "libcurl" ? [{ websocket: url }] : [{ wisp: url }];
+      await conn.setTransport(REL(TRANSPORT_PATHS[TRANSPORT]), options);
+    } else {
+      await conn.setTransport(REL(BARE_TRANSPORT_PATH), [url]);
+    }
+  }
+
+  /* ===== server pool ===== */
+  const normalizeWisp = (v) => {
+    try { const u = new URL((v || "").trim()); if (u.protocol !== "ws:" && u.protocol !== "wss:") return null; u.hash = ""; return u.href; }
+    catch (e) { return null; }
+  };
+
+  async function fetchWispList() {
+    const builtIn = DEFAULT_PUBLIC_WISPS.map(normalizeWisp).filter(Boolean);
+    try {
+      const c = new AbortController();
+      const t = setTimeout(() => c.abort(), 6000);
+      const res = await fetch(PUBLIC_WISP_LIST_URL + "?t=" + Date.now(), { cache: "no-store", signal: c.signal });
+      clearTimeout(t);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const text = await res.text();
+      const remote = [];
+      const re = /url\s*:\s*["'](wss?:\/\/[^"']+)["']/gi;
+      let m;
+      while ((m = re.exec(text))) { const u = normalizeWisp(m[1]); if (u) remote.push(u); }
+      return [...new Set([...builtIn, ...remote])];
+    } catch (e) {
+      return builtIn;
+    }
+  }
+
+  function testWisp(url, timeoutMs = 5000) {
+    return new Promise((resolve) => {
+      let socket = null, settled = false;
+      const started = performance.now();
+      const finish = (ok) => {
+        if (settled) return; settled = true;
+        try { socket && socket.close(); } catch (e) {}
+        resolve({ url, ok, latency: ok ? Math.round(performance.now() - started) : null });
+      };
+      try {
+        socket = new WebSocket(url);
+        const timer = setTimeout(() => finish(false), timeoutMs);
+        socket.onopen = () => { clearTimeout(timer); finish(true); };
+        socket.onerror = () => { clearTimeout(timer); finish(false); };
+      } catch (e) { finish(false); }
+    });
+  }
+
+  async function testBare(url) {
+    const started = performance.now();
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 6000);
+    try {
+      const res = await fetch(url, { cache: "no-store", signal: c.signal });
+      clearTimeout(t);
+      const info = res.ok ? await res.json().catch(() => null) : null;
+      return { url, ok: !!(info && info.versions), latency: Math.round(performance.now() - started) };
+    } catch (e) { clearTimeout(t); return { url, ok: false, latency: null }; }
+  }
+
+  // Fastest working Wisp servers first, working Bare servers after them
+  async function buildCandidates() {
+    const wisps = await fetchWispList();
+    const results = await Promise.all(wisps.map((u) => testWisp(u)));
+    const list = results.filter((r) => r.ok).sort((a, b) => a.latency - b.latency).map((r) => r.url);
+    if (!list.length) {
+      const bare = await Promise.all(BARE_SERVERS.map(testBare));
+      bare.filter((r) => r.ok).sort((a, b) => a.latency - b.latency).forEach((r) => list.push(r.url));
+    }
+    return list;
+  }
+
+  /* ===== load the site ===== */
+  const frameLooksBroken = () => {
+    try {
+      const d = frame.contentDocument;
+      const text = (d.title || "") + " " + (d.body ? d.body.innerText.slice(0, 500) : "");
+      return /Error processing your request/i.test(text);
+    } catch (e) { return false; }
+  };
+  const frameErrorText = () => {
+    try { const b = frame.contentDocument.getElementById("errorTrace"); return b ? b.value : ""; } catch (e) { return ""; }
+  };
+
+  function loadSite() {
+    return new Promise((resolve) => {
+      const target = __uv$config.prefix + __uv$config.encodeUrl(TARGET);
+      let done = false;
+      const finish = (v) => { if (done) return; done = true; frame.removeEventListener("load", onLoad); clearTimeout(timer); resolve(v); };
+      const onLoad = () => {
+        let href = "";
+        try { href = frame.contentWindow.location.href; } catch (e) {}
+        if (!href || href === "about:blank") return;
+        // give the page a moment to render before judging it
+        setTimeout(() => finish(frameLooksBroken() ? "broken" : "ok"), 400);
+      };
+      const timer = setTimeout(() => finish("timeout"), 30000);
+      frame.addEventListener("load", onLoad);
+      try { frame.contentWindow.location.replace(target); } catch (e) { frame.src = target; }
+    });
+  }
+
+  function showFailure(message, detail) {
+    overlay.classList.add("failed");
+    statusEl.textContent = message;
+    if (detail) { detailEl.textContent = detail; detailEl.hidden = false; } else { detailEl.hidden = true; }
+    retryBtn.hidden = false;
+  }
+
+  let running = false;
+  async function start() {
+    if (running) return;
+    running = true;
+    overlay.classList.remove("done", "failed");
+    retryBtn.hidden = true;
+    detailEl.hidden = true;
+    let lastError = "";
+
+    try {
+      setStatus("Starting proxy…");
+      await registerSW();
+
+      setStatus("Finding a fast server…");
+      const candidates = await buildCandidates();
+      if (!candidates.length) { showFailure("No servers responded.", "Check your connection and try again."); return; }
+
+      const attempts = Math.min(MAX_ATTEMPTS, candidates.length);
+      for (let i = 0; i < attempts; i++) {
+        const url = candidates[i];
+        let host = url;
+        try { host = new URL(url).host; } catch (e) {}
+        setStatus("Connecting via " + host + "…");
+        try {
+          await withTimeout(setTransport(url), 15000, "Transport setup");
+        } catch (e) { lastError = String(e && e.message ? e.message : e); continue; }
+
+        setStatus("Loading lightnerslive.com…");
+        const result = await loadSite();
+        if (result === "ok") { overlay.classList.add("done"); return; }
+        lastError = frameErrorText() || ("Page did not load (" + result + ") via " + host);
+      }
+      showFailure("Couldn't load lightnerslive.com.", lastError);
+    } catch (e) {
+      showFailure("Couldn't start the proxy.", String(e && e.message ? e.message : e));
+    } finally {
+      running = false;
+    }
+  }
+
+  retryBtn.addEventListener("click", start);
+  start();
+})();
+</script>
+</body>
+</html>
