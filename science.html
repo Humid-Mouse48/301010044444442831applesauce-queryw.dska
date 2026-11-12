@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>nowgg.fun</title>
+<title>web.cloudmoonapp.com/</title>
 
 <!-- Ultraviolet + BareMux (same files as the main proxy page) -->
 <script src="./uv/uv.bundle.js"></script>
@@ -51,10 +51,10 @@
 <script>
 (() => {
   /* ===== settings ===== */
-  const TARGET = "https://nowgg.fun/";
+  const TARGET = "https://web.cloudmoonapp.com/";
   const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
-  const TRANSPORT_PATHS = { epoxy: "/epoxy-transport/dist/index.mjs", libcurl: "/libcurl-transport/dist/index.mjs" };
-  const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
+  const TRANSPORT_PATHS = { epoxy: "./epoxy-transport/dist/index.mjs", libcurl: "./libcurl-transport/dist/index.mjs" };
+  const BARE_TRANSPORT_PATH = "./bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
   const BARE_SERVERS = ["https://tomp.app/"];
   const MAX_ATTEMPTS = 4;                                  // how many servers to try before giving up
 
@@ -101,6 +101,7 @@ const DEFAULT_PUBLIC_WISPS = [
   const retryBtn = document.getElementById("retry");
 
   const setStatus = (t) => { statusEl.textContent = t; };
+  const REL = (p) => new URL(p, document.baseURI).href;   // "./x" -> full URL under this page's base
   const withTimeout = (p, ms, label) => Promise.race([
     p, new Promise((_, rej) => setTimeout(() => rej(new Error(label + " timed out")), ms))
   ]);
@@ -108,7 +109,7 @@ const DEFAULT_PUBLIC_WISPS = [
   /* ===== Ultraviolet service worker ===== */
   async function registerSW() {
     if (!("serviceWorker" in navigator)) throw new Error("Service workers are not supported in this browser.");
-    const reg = await navigator.serviceWorker.register("/uv-sw.js", { scope: __uv$config.prefix, updateViaCache: "none" });
+    const reg = await navigator.serviceWorker.register(REL("./uv-sw.js"), { scope: __uv$config.prefix, updateViaCache: "none" });
     // wait for THIS registration to activate (navigator.serviceWorker.ready would never resolve: scope is /service/)
     const worker = reg.installing || reg.waiting || reg.active;
     if (worker && worker.state !== "activated") {
@@ -127,12 +128,12 @@ const DEFAULT_PUBLIC_WISPS = [
   let conn = null;
   async function setTransport(url) {
     if (typeof BareMux === "undefined") throw new Error("BareMux not loaded (check /bare-mux/dist/index.js)");
-    conn = conn || new BareMux.BareMuxConnection("/bare-mux/dist/worker.js");
+    conn = conn || new BareMux.BareMuxConnection(REL("./bare-mux/dist/worker.js"));
     if (/^wss?:\/\//i.test(url)) {
       const options = TRANSPORT === "libcurl" ? [{ websocket: url }] : [{ wisp: url }];
-      await conn.setTransport(TRANSPORT_PATHS[TRANSPORT], options);
+      await conn.setTransport(REL(TRANSPORT_PATHS[TRANSPORT]), options);
     } else {
-      await conn.setTransport(BARE_TRANSPORT_PATH, [url]);
+      await conn.setTransport(REL(BARE_TRANSPORT_PATH), [url]);
     }
   }
 
@@ -221,13 +222,15 @@ const DEFAULT_PUBLIC_WISPS = [
       let done = false;
       const finish = (v) => { if (done) return; done = true; frame.removeEventListener("load", onLoad); clearTimeout(timer); resolve(v); };
       const onLoad = () => {
-        if (!frame.src || frame.src === "about:blank") return;
+        let href = "";
+        try { href = frame.contentWindow.location.href; } catch (e) {}
+        if (!href || href === "about:blank") return;
         // give the page a moment to render before judging it
         setTimeout(() => finish(frameLooksBroken() ? "broken" : "ok"), 400);
       };
       const timer = setTimeout(() => finish("timeout"), 30000);
       frame.addEventListener("load", onLoad);
-      frame.src = target;
+      try { frame.contentWindow.location.replace(target); } catch (e) { frame.src = target; }
     });
   }
 

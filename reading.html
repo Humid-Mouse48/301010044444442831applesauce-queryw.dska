@@ -895,7 +895,7 @@ html[data-mode="light"][data-season="february-pink"], body[data-mode="light"][da
     </div>
 
     <div class="bookmarks-bar" id="bookmarks-bar">
-      <div class="bookmark-item" onclick="loadProxy('https://www.youtube.com')">
+      <div class="bookmark-item" onclick="loadProxy('https://yt.chocolatemoo53.com/')">
         <img src="https://www.google.com/s2/favicons?domain=youtube.com" class="bookmark-icon" alt="YT">
         YouTube
       </div>
@@ -1632,7 +1632,7 @@ function syncTabFromFrame(tab) {
   } catch (e) { tab.favicon = faviconFor(real); }
 
   if (tab.id === activeTabId) {
-    omniboxEl.value = tab.url;
+    if (document.activeElement !== omniboxEl) omniboxEl.value = tab.url;
     updateBookmarkStar();
   }
   renderTabs();
@@ -1776,8 +1776,23 @@ function syncEngines(value) {
   engineStartEl.value = value;
 }
 
+let omniboxSubmitted = false;
+
 function handleSearch(e) {
-  if (e.key === "Enter") { processQuery(e.target.value); omniboxEl.blur(); }
+  if (e.key === "Enter") {
+    omniboxSubmitted = true;            // keep what was typed; the new page will fill it in
+    processQuery(e.target.value);
+    omniboxEl.blur();
+  } else if (e.key === "Escape") {
+    revertOmnibox();
+    omniboxEl.blur();
+  }
+}
+
+/* Put the address of the page you are actually on back into the box */
+function revertOmnibox() {
+  const tab = activeTab();
+  omniboxEl.value = tab ? (tab.url || "") : "";
 }
 
 function handleCenterSearch(e) {
@@ -1967,6 +1982,12 @@ globalThis.toggleCurrentBookmark = toggleCurrentBookmark;
     catch (e) { alert("Eval failed: " + e.message); }
   };
   $gid("close_options_button").onclick = toggleOptions;
+
+  omniboxEl.addEventListener("focus", () => setTimeout(() => omniboxEl.select(), 0));
+  omniboxEl.addEventListener("blur", () => {
+    if (omniboxSubmitted) { omniboxSubmitted = false; return; }
+    revertOmnibox();
+  });
 
   renderSavedBookmarks();
   createNewTab();
