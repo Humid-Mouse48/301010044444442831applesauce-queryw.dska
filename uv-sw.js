@@ -1,5 +1,5 @@
-// Goes in the site ROOT (next to index.html) so it can control /service/
-// Same behaviour as before, but it reports WHICH step failed instead of a generic error.
+// Goes in the same folder as index.html / reading.html (site root, or the repo folder on jsDelivr).
+// Every path is relative to THIS file, so it works from any folder.
 
 function uvStep(name, fn) {
   try {
@@ -9,27 +9,26 @@ function uvStep(name, fn) {
   }
 }
 
-uvStep("importScripts('/uv/uv.bundle.js')", () => importScripts('/uv/uv.bundle.js'));
+uvStep("importScripts('./uv/uv.bundle.js')", () => importScripts('./uv/uv.bundle.js'));
 
 if (typeof self.Ultraviolet === 'undefined') {
   throw new Error('[uv-sw] uv.bundle.js loaded but self.Ultraviolet is undefined (wrong or corrupt bundle file)');
 }
-console.log('[uv-sw] Ultraviolet.BareClient is', typeof self.Ultraviolet.BareClient,
-            '| Ultraviolet.codec is', typeof self.Ultraviolet.codec);
 
-uvStep("importScripts('/uv/uv.config.js')", () => importScripts('/uv/uv.config.js'));
+uvStep("importScripts('./uv/uv.config.js')", () => importScripts('./uv/uv.config.js'));
 
-// Force every Ultraviolet file path to the /uv/ folder, even if the deployed
-// uv.config.js is stale or has different paths.
+// Make the paths authoritative, based on where this worker file lives
+const UV_ROOT = new URL('./', self.location.href).pathname;
 Object.assign(self.__uv$config, {
-  handler: '/uv/uv.handler.js',
-  client: '/uv/uv.client.js',
-  bundle: '/uv/uv.bundle.js',
-  config: '/uv/uv.config.js',
-  sw: '/uv/uv.sw.js'
+  prefix: UV_ROOT + 'service/',
+  handler: UV_ROOT + 'uv/uv.handler.js',
+  client: UV_ROOT + 'uv/uv.client.js',
+  bundle: UV_ROOT + 'uv/uv.bundle.js',
+  config: UV_ROOT + 'uv/uv.config.js',
+  sw: UV_ROOT + 'uv/uv.sw.js'
 });
 
-uvStep("importScripts('/uv/uv.sw.js')", () => importScripts('/uv/uv.sw.js'));
+uvStep("importScripts('./uv/uv.sw.js')", () => importScripts('./uv/uv.sw.js'));
 
 let sw;
 uvStep('new UVServiceWorker()', () => { sw = new UVServiceWorker(); });

@@ -6,7 +6,7 @@
 <title>IXL | Math, Language Arts, Science, Social Studies, and Spanish</title> 
 <link
   rel="icon"
-  href="/ixl-favicon.png"
+  href="./ixl-favicon.png"
   type="image/png"
 >
 
@@ -1056,7 +1056,7 @@ function ensureSW() {
       if (typeof registerSW === "function") {
         await registerSW();                       // defined in register-sw.js
       } else if ("serviceWorker" in navigator) {
-        await navigator.serviceWorker.register("/uv-sw.js", { scope: uvCfg().prefix });
+        await navigator.serviceWorker.register("./uv-sw.js", { scope: uvCfg().prefix });
       } else {
         throw new Error("Service workers are not supported here.");
       }
@@ -1687,7 +1687,7 @@ function createNewTab() {
         rotateToNextWisp().then(async (ok) => {
           if (!ok) { reportProxyError(tab); return; }
           try { await transportReady; } catch (e) { reportProxyError(tab); return; }
-          tab.iframe.src = encodeProxyUrl(tab.url);
+          navFrame(tab.iframe, encodeProxyUrl(tab.url));
         });
       } else {
         reportProxyError(tab);
@@ -1820,7 +1820,7 @@ function processQuery(query) {
 /* Runs only after the service worker fails to register: collects the real reason */
 async function diagnoseSW() {
   const out = [];
-  for (const p of ["/uv-sw.js", "/uv/uv.bundle.js", "/uv/uv.config.js", "/uv/uv.sw.js"]) {
+  for (const p of ["./uv-sw.js", "./uv/uv.bundle.js", "./uv/uv.config.js", "./uv/uv.sw.js"]) {
     try {
       const r = await fetch(p, { cache: "no-store" });
       const t = await r.text();
@@ -1832,12 +1832,18 @@ async function diagnoseSW() {
     let finished = false;
     const done = (msg) => { if (finished) return; finished = true; out.push("worker test: " + msg); resolve(); };
     try {
-      const w = new Worker("/uv-sw.js");
+      const w = new Worker("./uv-sw.js");
       w.onerror = (e) => { e.preventDefault(); done("ERROR " + (e.message || "unknown") + " @ " + (e.filename || "?") + ":" + (e.lineno || "?")); w.terminate(); };
       setTimeout(() => { done("no error (script evaluated OK)"); w.terminate(); }, 3000);
     } catch (e) { done("could not start: " + e.message); }
   });
   return out.join("\n");
+}
+
+/* Navigate a frame without touching iframe.src (the loader's bridge intercepts that setter) */
+function navFrame(iframe, url) {
+  try { iframe.contentWindow.location.replace(url); }
+  catch (e) { iframe.src = url; }
 }
 
 async function loadProxy(url) {
@@ -1872,7 +1878,7 @@ async function loadProxy(url) {
 
   startPageEl.classList.remove("active");
   tab.iframe.style.display = "block";
-  tab.iframe.src = encodeProxyUrl(url);
+  navFrame(tab.iframe, encodeProxyUrl(url));
 
   omniboxEl.value = url;
   if (tab.id === activeTabId) updateBookmarkStar();
