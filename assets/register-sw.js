@@ -14,12 +14,16 @@
 // "epoxy" or "libcurl"
 const TRANSPORT = "epoxy";
 const TRANSPORT_PATHS = {
-  epoxy: "/epoxy-transport/dist/index.mjs",
-  libcurl: "/libcurl-transport/dist/index.mjs"
+  epoxy: "./epoxy-transport/dist/index.mjs",
+  libcurl: "./libcurl-transport/dist/index.mjs"
 };
 
 // Used only when setTransport() is given an http(s):// Bare server instead of ws(s):// Wisp
-const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";
+const BARE_TRANSPORT_PATH = "./bare-as-module3/dist/index.mjs";
+
+// "./x" paths are resolved against the page's own base address (not the domain root).
+// Workers need full URLs, so turn each one into one before use.
+const REL = (p) => new URL(p, document.baseURI).href;
 
 let bareMuxConn = null;
 
@@ -27,7 +31,7 @@ async function registerSW() {
   if (!("serviceWorker" in navigator)) {
     throw new Error("Service workers are not supported in this browser.");
   }
-  const reg = await navigator.serviceWorker.register("/uv-sw.js", {
+  const reg = await navigator.serviceWorker.register(REL("./uv-sw.js"), {
     scope: __uv$config.prefix,
     updateViaCache: "none"
   });
@@ -53,15 +57,15 @@ async function setTransport(wispUrl) {
   if (typeof BareMux === "undefined") {
     throw new Error("BareMux not loaded - add /bare-mux/dist/index.js before register-sw.js");
   }
-  bareMuxConn = bareMuxConn || new BareMux.BareMuxConnection("/bare-mux/dist/worker.js");
+  bareMuxConn = bareMuxConn || new BareMux.BareMuxConnection(REL("./bare-mux/dist/worker.js"));
 
   if (/^wss?:\/\//i.test(wispUrl)) {
     const options = TRANSPORT === "libcurl"
       ? [{ websocket: wispUrl }]
       : [{ wisp: wispUrl }];
-    await bareMuxConn.setTransport(TRANSPORT_PATHS[TRANSPORT], options);
+    await bareMuxConn.setTransport(REL(TRANSPORT_PATHS[TRANSPORT]), options);
   } else {
     // Bare server (https://...)
-    await bareMuxConn.setTransport(BARE_TRANSPORT_PATH, [wispUrl]);
+    await bareMuxConn.setTransport(REL(BARE_TRANSPORT_PATH), [wispUrl]);
   }
 }
