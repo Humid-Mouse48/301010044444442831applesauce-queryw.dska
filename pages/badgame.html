@@ -6,17 +6,16 @@
 <title>badgame (frogiesarcade.win)</title>
 
 <!-- Ultraviolet + BareMux (same files as the main proxy page) -->
-<script src="../uv/uv.bundle.js"></script>
-<script src="../uv/uv.config.js"></script>
-<script src="../bare-mux/dist/index.js"></script>
+<script src="./uv/uv.bundle.js"></script>
+<script src="./uv/uv.config.js"></script>
+<script src="./bare-mux/dist/index.js"></script>
 
 <style>
-  :root { color-scheme: dark; }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: #05080c; color: #e8f1f5;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
-  iframe#frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
-  #overlay { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column;
+  iframe#frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+  #overlay { color-scheme: dark; position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center;
     background: radial-gradient(circle at 50% 35%, #0d1a24, #05080c 70%);
     transition: opacity .35s ease; }
@@ -53,8 +52,8 @@
   /* ===== settings ===== */
   const TARGET = "https://frogiesarcade.win/stuff/selfhosted/badgame/";
   const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
-  const TRANSPORT_PATHS = { epoxy: "../epoxy-transport/dist/index.mjs", libcurl: "../libcurl-transport/dist/index.mjs" };
-  const BARE_TRANSPORT_PATH = "../bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
+  const TRANSPORT_PATHS = { epoxy: "./epoxy-transport/dist/index.mjs", libcurl: "./libcurl-transport/dist/index.mjs" };
+  const BARE_TRANSPORT_PATH = "./bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
   const BARE_SERVERS = ["https://tomp.app/"];
   const MAX_ATTEMPTS = 4;                                  // how many servers to try before giving up
 
@@ -109,7 +108,7 @@ const DEFAULT_PUBLIC_WISPS = [
   /* ===== Ultraviolet service worker ===== */
   async function registerSW() {
     if (!("serviceWorker" in navigator)) throw new Error("Service workers are not supported in this browser.");
-    const reg = await navigator.serviceWorker.register(REL("../uv-sw.js"), { scope: __uv$config.prefix, updateViaCache: "none" });
+    const reg = await navigator.serviceWorker.register(REL("./uv-sw.js"), { scope: __uv$config.prefix, updateViaCache: "none" });
     // wait for THIS registration to activate (navigator.serviceWorker.ready would never resolve: scope is /service/)
     const worker = reg.installing || reg.waiting || reg.active;
     if (worker && worker.state !== "activated") {
@@ -128,7 +127,7 @@ const DEFAULT_PUBLIC_WISPS = [
   let conn = null;
   async function setTransport(url) {
     if (typeof BareMux === "undefined") throw new Error("BareMux not loaded (check /bare-mux/dist/index.js)");
-    conn = conn || new BareMux.BareMuxConnection(REL("../bare-mux/dist/worker.js"));
+    conn = conn || new BareMux.BareMuxConnection(REL("./bare-mux/dist/worker.js"));
     if (/^wss?:\/\//i.test(url)) {
       const options = TRANSPORT === "libcurl" ? [{ websocket: url }] : [{ wisp: url }];
       await conn.setTransport(REL(TRANSPORT_PATHS[TRANSPORT]), options);
@@ -219,17 +218,32 @@ const DEFAULT_PUBLIC_WISPS = [
   function loadSite() {
     return new Promise((resolve) => {
       const target = __uv$config.prefix + __uv$config.encodeUrl(TARGET);
-      let done = false;
-      const finish = (v) => { if (done) return; done = true; frame.removeEventListener("load", onLoad); clearTimeout(timer); resolve(v); };
-      const onLoad = () => {
-        let href = "";
-        try { href = frame.contentWindow.location.href; } catch (e) {}
-        if (!href || href === "about:blank") return;
-        // give the page a moment to render before judging it
-        setTimeout(() => finish(frameLooksBroken() ? "broken" : "ok"), 400);
-      };
-      const timer = setTimeout(() => finish("timeout"), 30000);
-      frame.addEventListener("load", onLoad);
+      let done = false, firstSeen = 0;
+      let oldDoc = null;
+      try { oldDoc = frame.contentDocument; } catch (e) {}
+
+      const finish = (v) => { if (done) return; done = true; clearInterval(poll); clearTimeout(timer); resolve(v); };
+
+      // The site counts as loaded once its own page has started rendering. Waiting for the frame's
+      // "load" event would wait for every image and audio file, which can take very long on games.
+      const poll = setInterval(() => {
+        let href = "", doc = null;
+        try { href = frame.contentWindow.location.href; doc = frame.contentDocument; } catch (e) { return; }
+        if (!doc || doc === oldDoc || !href || href === "about:blank") return;   // still the old/blank page
+        if (!firstSeen) firstSeen = Date.now();
+        if (frameLooksBroken()) { finish("broken"); return; }
+        const started = doc.readyState !== "loading" || (doc.body && doc.body.children.length > 0);
+        if (started && Date.now() - firstSeen > 1500) finish("ok");
+      }, 400);
+
+      // Never covers a working page with an error: only fail if nothing but a blank/error page is there
+      const timer = setTimeout(() => {
+        let href = "", doc = null;
+        try { href = frame.contentWindow.location.href; doc = frame.contentDocument; } catch (e) {}
+        const hasPage = doc && doc !== oldDoc && href && href !== "about:blank";
+        finish(hasPage && !frameLooksBroken() ? "ok" : "timeout");
+      }, 45000);
+
       try { frame.contentWindow.location.replace(target); } catch (e) { frame.src = target; }
     });
   }
