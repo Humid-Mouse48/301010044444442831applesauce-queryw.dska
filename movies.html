@@ -28,36 +28,6 @@
     overflow-x: hidden;
   }
 
-  header {
-    position: sticky;
-    top: 75px; /* Positioned much further down the page */
-    z-index: 50;
-    display: flex;
-    justify-content: center;
-    padding: 0 16px;
-    pointer-events: none;
-  }
-
-  .nav-controls {
-    pointer-events: auto;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 8px 16px;
-    background: var(--nav-bg, linear-gradient(135deg, #342317, #261a11));
-    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38)) !important;
-    border-radius: 9999px;
-    backdrop-filter: blur(26px) saturate(155%);
-    -webkit-backdrop-filter: blur(26px) saturate(155%);
-    box-shadow: 0 12px 38px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.08);
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .nav-controls:hover {
-    box-shadow: 0 12px 30px var(--season-accent-soft, rgba(170,112,62,0.18));
-    border-color: var(--season-accent, rgba(193,138,89,0.6)) !important;
-  }
-
   input, select, button {
     padding: 8px 14px;
     border-radius: 9999px;
@@ -68,24 +38,65 @@
     transition: var(--transition);
   }
 
-  /* Search bar: non-glowing outline by default, glowing on hover/focus */
+  /* ---- Search bar: same look as math.html. It sits in the page (not pinned), so it scrolls with the content ---- */
+  .top-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+    gap: 15px;
+  }
+  .search-container { display: flex; justify-content: center; width: 100%; max-width: 500px; }
+  .search-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+  .search-icon {
+    position: absolute; left: 16px; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; border-radius: 0; cursor: pointer;
+  }
+  .icon-svg { width: 18px; height: 18px; fill: none; stroke: var(--text-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s ease; }
+  .search-wrapper:focus-within .search-icon .icon-svg, .search-icon:hover .icon-svg { stroke: var(--secondary-color); }
+
   #q {
-    width: 180px;
-    border: 1px solid var(--season-accent-border, rgba(218,190,160,0.2)) !important;
-    box-shadow: none !important;
+    width: 100%;
+    padding: 12px 45px;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background: var(--card-bg, #21170f);
+    border: 1px solid var(--season-accent-border, rgba(218,190,160,0.2));
+    border-radius: 50px;
+    box-shadow: none;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  #q::placeholder { color: var(--text-muted); opacity: 1; }
+  #q:hover, #q:focus {
+    border-color: rgba(var(--season-accent-rgb, 193,138,89), .75);
+    box-shadow: 0 0 0 3px rgba(var(--season-accent-rgb, 193,138,89), .16), 0 0 20px rgba(var(--season-accent-rgb, 193,138,89), .22);
   }
 
-  #q:hover {
-    border-color: var(--season-accent, rgba(193,138,89,0.5)) !important;
-    box-shadow: none !important;
+  #clear-search {
+    position: absolute; right: 14px;
+    background: none; border: none; border-radius: 0; padding: 4px; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
   }
+  #clear-search .icon-svg { width: 16px; height: 16px; }
+  #clear-search:hover .icon-svg { stroke: #ef4444; }
 
-  #q:focus, #q:focus-visible {
-    outline: none !important;
-    border-color: var(--season-accent, #c18a59) !important;
-    box-shadow: 0 0 15px var(--season-accent-soft, rgba(193,138,89,0.3)) !important;
-    width: 240px;
+  .search-extras { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .search-extras select, .search-extras button {
+    background-color: var(--card-bg, #21170f);   /* not the shorthand: the select's chevron is a background image */
+    color: var(--text-muted);
+    border: 1.5px solid var(--season-accent-border, #334155);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
+  .search-extras select { padding-right: 32px; }
+  .search-extras select:hover, .search-extras button:hover { border-color: var(--secondary-color); color: var(--text-main); }
 
   select {
     cursor: pointer;
@@ -437,16 +448,25 @@ body[data-season="iconic"] {
 </div>
 
 <div id="app" style="display:none">
-  <header>
-    <div class="nav-controls">
+  <header class="top-header">
+    <div class="search-container">
+      <div class="search-wrapper">
+        <button type="button" class="search-icon" onclick="search()" aria-label="Search">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <input type="text" id="q" placeholder="Search titles..." aria-label="Search titles" autocomplete="off" oninput="toggleClear()" onkeydown="if(event.key==='Enter')search()">
+        <button type="button" id="clear-search" onclick="clearSearch()" aria-label="Clear search">
+          <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    <div class="search-extras">
       <select id="cat" onchange="load()">
         <option value="trending/movie/week">Trending Now</option>
         <option value="movie/popular">Popular</option>
         <option value="movie/top_rated">Top Rated</option>
         <option value="movie/upcoming">Upcoming</option>
       </select>
-      <input id="q" placeholder="Search titles..." onkeydown="if(event.key==='Enter')search()">
-      <button onclick="search()">Search</button>
       <button onclick="localStorage.removeItem('tmdb');location.reload()" title="Change API key">⚙</button>
     </div>
   </header>
@@ -531,6 +551,9 @@ async function load() {
     $('grid').innerHTML = '<p style="padding:20px;">Could not load items: ' + e.message + '</p>';
   }
 }
+
+function toggleClear() { $('clear-search').style.display = $('q').value ? 'flex' : 'none'; }
+function clearSearch() { $('q').value = ''; toggleClear(); $('q').focus(); load(); }
 
 async function search() {
   const q = $('q').value.trim();

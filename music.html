@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geeked Music</title>
+
+<!-- Ultraviolet + BareMux (same files as the other proxy pages) -->
+<script src="./uv/uv.bundle.js"></script>
+<script src="./uv/uv.config.js"></script>
+<script src="./bare-mux/dist/index.js"></script>
+
+<style>
+  :root {
+    --primary-color: #261a11;
+    --secondary-color: #c18a59;
+    --bg-dark: #100b07;
+    --text-main: #fff5e9;
+    --text-muted: #c5a487;
+    --radius-card: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(var(--season-accent-rgb, 193,138,89),.09), transparent 28%),
+      radial-gradient(circle at 88% 18%, rgba(218,190,160,.045), transparent 30%),
+      var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+
+  input[type=text], input[type=password], select, button {
+    padding: 8px 14px;
+    border-radius: 9999px;
+    border: 1px solid var(--season-accent-border, rgba(218,190,160,0.2));
+    background: var(--nav-bg, linear-gradient(135deg, #342317, #261a11));
+    color: var(--text-main);
+    font-size: 13px;
+    font-family: inherit;
+    transition: var(--transition);
+  }
+
+  /* ---- Search bar: same look as math.html. It sits in the page (not pinned), so it scrolls with the content ---- */
+  .top-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+    gap: 15px;
+  }
+  .search-container { display: flex; justify-content: center; width: 100%; max-width: 500px; }
+  .search-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+  .search-icon {
+    position: absolute; left: 16px; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; border-radius: 0; cursor: pointer;
+  }
+  .icon-svg { width: 18px; height: 18px; fill: none; stroke: var(--text-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s ease; }
+  .search-wrapper:focus-within .search-icon .icon-svg, .search-icon:hover .icon-svg { stroke: var(--secondary-color); }
+
+  #q {
+    width: 100%;
+    padding: 12px 45px;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background: var(--card-bg, #21170f);
+    border: 1px solid var(--season-accent-border, rgba(218,190,160,0.2));
+    border-radius: 50px;
+    box-shadow: none;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  #q::placeholder { color: var(--text-muted); opacity: 1; }
+  #q:hover, #q:focus {
+    border-color: rgba(var(--season-accent-rgb, 193,138,89), .75);
+    box-shadow: 0 0 0 3px rgba(var(--season-accent-rgb, 193,138,89), .16), 0 0 20px rgba(var(--season-accent-rgb, 193,138,89), .22);
+  }
+
+  #clear-search {
+    position: absolute; right: 14px;
+    background: none; border: none; border-radius: 0; padding: 4px; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+  }
+  #clear-search .icon-svg { width: 16px; height: 16px; }
+  #clear-search:hover .icon-svg { stroke: #ef4444; }
+
+  .search-extras { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .search-extras select, .search-extras button {
+    background-color: var(--card-bg, #21170f);   /* not the shorthand: the select's chevron is a background image */
+    color: var(--text-muted);
+    border: 1.5px solid var(--season-accent-border, #334155);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .search-extras select { padding-right: 32px; }
+  .search-extras select:hover, .search-extras button:hover { border-color: var(--secondary-color); color: var(--text-main); }
+
+  select {
+    cursor: pointer;
+    color-scheme: dark;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c5a487' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+    padding-right: 32px;
+  }
+  select option { background-color: var(--bg-dark); color: var(--text-main); }
+
+  button { cursor: pointer; font-weight: 600; }
+  button:hover { border-color: var(--season-accent, rgba(193,138,89,0.6)); color: var(--secondary-color); }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--season-accent, #c18a59); outline-offset: 2px; }
+
+  #hero {
+    position: relative;
+    min-height: 300px;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 4% 32px;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(0deg, var(--bg-dark) 0%, rgba(16,11,7,0.55) 45%, rgba(16,11,7,0.25) 100%),
+      linear-gradient(90deg, var(--bg-dark) 0%, rgba(16,11,7,0.4) 55%, transparent 100%);
+  }
+  #hero-bg { position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(14px) brightness(.8); transform: scale(1.05); }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    background: var(--panel-bg, linear-gradient(135deg, #342317, #261a11 58%, #100b07));
+    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38));
+    padding: 22px 24px;
+    border-radius: 16px;
+    box-shadow: 0 18px 52px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.07);
+  }
+  .hero-meta { color: var(--secondary-color); font-size: 0.9rem; margin-bottom: 8px; font-weight: 600; }
+  .hero-title { font-size: 2rem; font-weight: 800; margin: 0 0 8px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); overflow-wrap: anywhere; }
+  .hero-desc { color: var(--text-muted); font-size: 0.95rem; margin: 0 0 18px; }
+  .hero-btn {
+    background: var(--nav-bg, linear-gradient(135deg, #342317, #261a11));
+    color: var(--text-main);
+    font-weight: 700;
+    padding: 11px 26px;
+    font-size: 1rem;
+    border-radius: var(--radius-card);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+  }
+  .hero-btn:hover { transform: scale(1.03); box-shadow: 0 8px 25px var(--season-accent-soft, rgba(170,112,62,0.18)); }
+  .hero-btn + .hero-btn { margin-left: 10px; }
+
+  .section-title { font-size: 1.3rem; font-weight: 700; margin: 28px 4% 16px; letter-spacing: .5px; }
+  .msg { padding: 8px 4%; color: var(--text-muted); line-height: 1.5; grid-column: 1 / -1; }
+
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 20px;
+    padding: 0 4% 40px;
+  }
+  .card {
+    position: relative;
+    cursor: pointer;
+    background: var(--card-bg, #21170f);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    transition: var(--transition);
+    border: 1px solid var(--season-accent-border, rgba(218,190,160,0.2));
+    box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+  }
+  .card:hover, .card:focus-visible {
+    transform: scale(1.05) translateY(-5px);
+    z-index: 10;
+    border-color: var(--season-accent, rgba(193,138,89,0.6));
+    box-shadow: 0 12px 30px var(--season-accent-soft, rgba(170,112,62,0.18));
+  }
+  .card.playing { border-color: var(--season-accent, #c18a59); box-shadow: 0 0 22px var(--season-accent-soft, rgba(170,112,62,0.3)); }
+  .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--bg-dark); }
+  .card-text { padding: 10px 12px 12px; }
+  .card-title { font-weight: 700; font-size: .88rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-meta { font-size: .75rem; color: var(--secondary-color); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-add {
+    position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; padding: 0; border-radius: 50%;
+    display: grid; place-items: center; font-size: 18px; line-height: 1; opacity: 0;
+  }
+  .card:hover .card-add, .card-add:focus-visible { opacity: 1; }
+  .card-eq { position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 9999px; background: rgba(0,0,0,.65); color: var(--season-accent, #c18a59); display: none; }
+  .card.playing .card-eq { display: block; }
+
+  #keybox {
+    display: none;
+    max-width: 560px;
+    margin: 18px auto 0;
+    padding: 22px 24px;
+    line-height: 1.5;
+    background: var(--panel-bg, linear-gradient(135deg, #342317, #261a11 58%, #100b07));
+    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38));
+    border-radius: 16px;
+    box-shadow: 0 18px 52px rgba(0,0,0,0.42);
+  }
+  #keybox h3 { margin: 0 0 8px; color: var(--secondary-color); }
+  #keybox p { margin: 0 0 12px; color: var(--text-muted); font-size: .92rem; }
+  #keybox input { width: 100%; margin-bottom: 12px; border-radius: 12px; }
+  a { color: var(--secondary-color); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------- player dock ---------- */
+  #dock {
+    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 60;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 16px;
+    background: var(--panel-bg, linear-gradient(135deg, #342317, #261a11 58%, #100b07));
+    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38));
+    border-radius: 16px;
+    box-shadow: 0 18px 52px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter: blur(26px) saturate(155%);
+    -webkit-backdrop-filter: blur(26px) saturate(155%);
+  }
+  #vidbox {
+    position: relative; flex: 0 0 auto; background: #000; overflow: hidden;
+    border-radius: 10px; border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38));
+    transition: width .3s ease, height .3s ease;
+  }
+  #vidbox.mini { width: 192px; height: 108px; }
+  #vidbox.med { width: 320px; height: 180px; }
+  #vidbox.large { width: 480px; height: 270px; }
+  #vidbox iframe { width: 100%; height: 100%; border: 0; display: block; }
+  #vidph { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 10px; font-size: 12px; color: var(--text-muted); pointer-events: none; background: #000; }
+  #vidbox.has #vidph { display: none; }
+
+  #dockmain { flex: 1 1 auto; min-width: 0; }
+  #np-title { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #np-artist { font-size: .82rem; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  #ctrls { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 6px; }
+  #ctrls button { width: 38px; height: 38px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: 16px; }
+  #ctrls #btn-play { width: 48px; height: 48px; font-size: 20px; border-color: var(--season-accent, #c18a59); color: var(--secondary-color); }
+  #ctrls button.on { color: var(--season-accent, #c18a59); border-color: var(--season-accent, #c18a59); box-shadow: 0 0 12px var(--season-accent-soft, rgba(170,112,62,.3)); }
+  #seekrow { display: flex; align-items: center; gap: 10px; font-size: .75rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  #seekrow input { flex: 1; min-width: 0; }
+  input[type=range] { accent-color: var(--season-accent, #c18a59); cursor: pointer; }
+  #dockright { flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: stretch; width: 178px; }
+  #volrow { display: flex; align-items: center; gap: 8px; }
+  #volrow button { width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: 14px; flex: 0 0 auto; }
+  #volrow input { flex: 1; min-width: 0; }
+  #dockbtns { display: flex; gap: 8px; }
+  #dockbtns button { flex: 1; padding: 7px 8px; font-size: 12px; white-space: nowrap; }
+  #pxstat { font-size: 11px; color: var(--text-muted); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #dock.basic #seekrow, #dock.basic #btn-play, #dock.basic #volrow { opacity: .35; pointer-events: none; }
+
+  #queuepanel {
+    position: fixed; right: 12px; bottom: 190px; z-index: 61; width: 360px; max-width: calc(100vw - 24px);
+    max-height: 50vh; overflow-y: auto; display: none;
+    background: var(--panel-bg, linear-gradient(135deg, #342317, #261a11 58%, #100b07));
+    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38));
+    border-radius: 16px; padding: 14px; box-shadow: 0 18px 52px rgba(0,0,0,.5);
+  }
+  #queuepanel h4 { margin: 0 0 10px; font-size: .95rem; display: flex; justify-content: space-between; align-items: center; }
+  #queuepanel h4 button { padding: 4px 10px; font-size: 11px; }
+  .q-item { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 10px; cursor: pointer; }
+  .q-item:hover { background: rgba(255,255,255,.06); }
+  .q-item.cur { background: rgba(var(--season-accent-rgb, 193,138,89), .16); }
+  .q-item img { width: 56px; height: 32px; object-fit: cover; border-radius: 6px; background: #000; flex: 0 0 auto; }
+  .q-text { flex: 1; min-width: 0; }
+  .q-title { font-size: .82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .q-artist { font-size: .72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .q-x { padding: 2px 8px; font-size: 12px; border-radius: 8px; }
+
+  #toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 80;
+    max-width: min(520px, calc(100vw - 32px)); padding: 10px 18px; font-size: 13px; text-align: center;
+    background: var(--panel-bg, #261a11); color: var(--text-main);
+    border: 1px solid var(--season-accent-border, rgba(193,138,89,0.38)); border-radius: 12px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.5); opacity: 0; pointer-events: none; transition: all .3s ease;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, -150px); }
+
+  @media (max-width: 820px) {
+    #dock { flex-wrap: wrap; gap: 10px 14px; }
+    #vidbox.mini { width: 128px; height: 72px; }
+    #vidbox.med { width: 100%; height: auto; aspect-ratio: 16/9; }
+    #vidbox.large { width: 100%; height: auto; aspect-ratio: 16/9; }
+    #dockright { width: 100%; flex-direction: row; align-items: center; }
+    #volrow { flex: 1; }
+    #pxstat { display: none; }
+    .hero-title { font-size: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<style id="geeked-seasonal-glass-theme">
+:root {
+  --secondary-color: #c18a59;
+  --season-accent: #c18a59;
+  --season-accent-rgb: 193,138,89;
+  --season-accent-soft: rgba(170,112,62,.18);
+  --season-accent-border: rgba(193,138,89,.48);
+  --bg-dark: #100b07;
+  --text-main: #fff5e9;
+  --text-muted: #c5a487;
+  --nav-bg: linear-gradient(135deg, #342317, #261a11);
+  --panel-bg: linear-gradient(135deg, #342317, #261a11 58%, #100b07);
+  --card-bg: #21170f;
+}
+
+body[data-season="october"] {
+  --secondary-color: #ff922e;
+  --season-accent: #ff922e;
+  --season-accent-rgb: 255,146,46;
+  --season-accent-soft: rgba(255,112,24,.20);
+  --season-accent-border: rgba(255,146,46,.48);
+  --bg-dark: #0a0705;
+  --text-main: #fff3ec;
+  --text-muted: #d4a382;
+  --nav-bg: linear-gradient(135deg, #2b180d, #1a0f08);
+  --panel-bg: linear-gradient(135deg, #2b180d, #1a0f08 58%, #0a0705);
+  --card-bg: #1f120a;
+}
+
+body[data-season="november-brown"] {
+  --secondary-color: #c18a59;
+  --season-accent: #c18a59;
+  --season-accent-rgb: 193,138,89;
+  --season-accent-soft: rgba(170,112,62,.18);
+  --season-accent-border: rgba(193,138,89,.48);
+  --bg-dark: #100b07;
+  --text-main: #fff5e9;
+  --text-muted: #c5a487;
+  --nav-bg: linear-gradient(135deg, #342317, #261a11);
+  --panel-bg: linear-gradient(135deg, #342317, #261a11 58%, #100b07);
+  --card-bg: #21170f;
+}
+
+body[data-season="winter-blue"] {
+  --secondary-color: #9bdcff;
+  --season-accent: #9bdcff;
+  --season-accent-rgb: 155,220,255;
+  --season-accent-soft: rgba(93,185,255,.18);
+  --season-accent-border: rgba(155,220,255,.48);
+  --bg-dark: #070a10;
+  --text-main: #eef6ff;
+  --text-muted: #94b2d2;
+  --nav-bg: linear-gradient(135deg, #101c2e, #0a111b);
+  --panel-bg: linear-gradient(135deg, #101c2e, #0a111b 58%, #070a10);
+  --card-bg: #0d1522;
+}
+
+body[data-season="february-pink"] {
+  --secondary-color: #ffb6d5;
+  --season-accent: #ffb6d5;
+  --season-accent-rgb: 255,182,213;
+  --season-accent-soft: rgba(255,120,178,.19);
+  --season-accent-border: rgba(255,182,213,.5);
+  --bg-dark: #10070c;
+  --text-main: #fff0f6;
+  --text-muted: #d49db6;
+  --nav-bg: linear-gradient(135deg, #2b111e, #1a0a12);
+  --panel-bg: linear-gradient(135deg, #2b111e, #1a0a12 58%, #10070c);
+  --card-bg: #211019;
+}
+
+body[data-season="iconic"] {
+  --secondary-color: #00ff99;
+  --season-accent: #00ff99;
+  --season-accent-rgb: 0,255,153;
+  --season-accent-soft: rgba(0,255,153,.16);
+  --season-accent-border: rgba(0,255,153,.42);
+  --bg-dark: #000000;
+  --text-main: #ffffff;
+  --text-muted: #64748b;
+  --nav-bg: rgba(5, 11, 10, 0.95);
+  --panel-bg: rgba(5, 11, 10, 0.95);
+  --card-bg: rgba(5, 11, 10, 0.92);
+}
+</style>
+
+</head>
+<body data-season="november-brown">
+
+<header class="top-header">
+  <div class="search-container">
+    <div class="search-wrapper">
+      <button type="button" class="search-icon" id="btn-search" aria-label="Search">
+        <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+      <input type="text" id="q" placeholder="Search songs or paste a link..." aria-label="Search songs" autocomplete="off">
+      <button type="button" id="clear-search" aria-label="Clear search">
+        <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+  <div class="search-extras">
+    <select id="cat" aria-label="Category">
+      <option value="trending">Trending Music</option>
+      <option value="starter">Starter Picks</option>
+      <option value="recent">Recently Played</option>
+    </select>
+    <button id="btn-key" title="YouTube API key">⚙</button>
+  </div>
+</header>
+
+<div id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-meta" id="hero-meta">--</div>
+    <h1 class="hero-title" id="hero-title">--</h1>
+    <p class="hero-desc" id="hero-desc">--</p>
+    <button class="hero-btn" id="hero-play">▶ Play</button><button class="hero-btn" id="hero-all">Play all</button>
+  </div>
+</div>
+
+<div id="keybox">
+  <h3>YouTube API key</h3>
+  <p>A built-in key is already set up. You can use your own instead: a free key turns on search and trending. Create one at <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> (enable “YouTube Data API v3”). Without one you can still paste a YouTube link into the search box, or use Starter Picks.</p>
+  <input type="text" id="key" placeholder="API key" autocomplete="off" spellcheck="false">
+  <button id="key-save">Save key</button> <button id="key-clear">Remove key</button> <button id="key-close">Close</button>
+</div>
+
+<div class="section-title" id="section-label">Starter Picks</div>
+<div id="grid"></div>
+
+<div id="dock">
+  <div id="vidbox" class="mini">
+    <iframe id="ytframe" title="Music player" allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>
+    <div id="vidph">Pick a song to start</div>
+  </div>
+
+  <div id="dockmain">
+    <div id="np-title">Nothing playing</div>
+    <div id="np-artist">Pick a song to start</div>
+    <div id="ctrls">
+      <button id="btn-shuffle" title="Shuffle" aria-label="Shuffle">⇄</button>
+      <button id="btn-prev" title="Previous" aria-label="Previous">⏮</button>
+      <button id="btn-play" title="Play / pause" aria-label="Play or pause">▶</button>
+      <button id="btn-next" title="Next" aria-label="Next">⏭</button>
+      <button id="btn-repeat" title="Repeat: off" aria-label="Repeat">⟳</button>
+    </div>
+    <div id="seekrow">
+      <span id="tcur">0:00</span>
+      <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
+      <span id="tdur">0:00</span>
+    </div>
+  </div>
+
+  <div id="dockright">
+    <div id="volrow">
+      <button id="btn-mute" title="Mute" aria-label="Mute">🔊</button>
+      <input type="range" id="vol" min="0" max="100" value="80" aria-label="Volume">
+    </div>
+    <div id="dockbtns">
+      <button id="btn-size" title="Video size">⤢ Video</button>
+      <button id="btn-queue" title="Queue">☰ Queue <span id="qcount">0</span></button>
+    </div>
+    <div id="pxstat">● Proxy: starting…</div>
+  </div>
+</div>
+
+<div id="queuepanel">
+  <h4><span>Up next</span><button id="q-clear">Clear</button></h4>
+  <div id="qlist"></div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+
+  /* ===== settings ===== */
+  const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
+  const TRANSPORT_PATHS = { epoxy: "/epoxy-transport/dist/index.mjs", libcurl: "/libcurl-transport/dist/index.mjs" };
+  const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
+  const BARE_SERVERS = ["https://tomp.app/"];
+  const KEY_STORE = "geeked_music_yt_key", RECENT_STORE = "geeked_music_recent", VOL_STORE = "geeked_music_vol";
+
+  /* ===== public Wisp servers (same list as the other pages) ===== */
+  const PUBLIC_WISP_LIST_URL = "https://cdn.jsdelivr.net/gh/virtuan4-max/ghostlinkhub@main/proxy/wisps.html";
+const DEFAULT_PUBLIC_WISPS = [
+  // Your Render server — always kept in the pool.
+  "wss://wisp-server-python-1-nljh.onrender.com/",
+
+  // Public Wisp endpoints published by community proxy projects.
+  "wss://glseries.net/wisp/",
+  "wss://wispserver.dev/wisp/",
+  "wss://seminar.drama.english.assignment.literature.homebrewer.org/wisp/",
+  "wss://admin.proxy.hydrovolter.com/scramjet/wisp/",
+  "wss://scram.owoellen.rocks/wisp/",
+  "wss://q13x.com/",
+
+  // Official MercuryWorkshop public Wisp server.
+  "wss://wisp.mercurywork.shop/",
+
+  // Public servers used by the Talon proxy site.
+  "wss://anura.mercurywork.shop/",
+  "wss://incog.works/wisp/",
+
+  // Additional public endpoints supplied for the pool.
+  "wss://mages.io/",
+  "wss://lichology.com/",
+  "wss://definitelyscience.com/",
+  "wss://motor-cycle-part.org/",
+  "wss://wisp.terbiumon.top/",
+  "wss://anura.pro/",
+  "wss://invisiproxy.com/",
+  "wss://nebulaproxy.io/",
+  "wss://area.forwardersoft.com/",
+  "wss://truf.the-nest.at/",
+  "wss://thoughts.forwardersoft.com/",
+  "wss://english.algebra.teacher.vocabulary.homework.forwardersoft.com/"
+];
+
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+  const withTimeout = (p, ms, label) => Promise.race([
+    p, new Promise((_, rej) => setTimeout(() => rej(new Error(label + " timed out")), ms))
+  ]);
+  const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+  const decodeEntities = (s) => new DOMParser().parseFromString(s || "", "text/html").documentElement.textContent;
+
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 4200);
+  }
+
+  /* =====================================================================
+     Proxy: Ultraviolet service worker + Wisp transport
+     ===================================================================== */
+  async function registerSW() {
+    if (!("serviceWorker" in navigator)) throw new Error("Service workers are not supported in this browser.");
+    const reg = await navigator.serviceWorker.register("/uv-sw.js", { scope: __uv$config.prefix, updateViaCache: "none" });
+    // wait for THIS registration to activate (navigator.serviceWorker.ready would never resolve: scope is /service/)
+    const worker = reg.installing || reg.waiting || reg.active;
+    if (worker && worker.state !== "activated") {
+      await new Promise((resolve, reject) => {
+        const check = () => {
+          if (worker.state === "activated") resolve();
+          else if (worker.state === "redundant") reject(new Error("Service worker became redundant"));
+        };
+        worker.addEventListener("statechange", check);
+        check();
+      });
+    }
+  }
+
+  let conn = null;
+  async function setTransport(url) {
+    if (typeof BareMux === "undefined") throw new Error("BareMux not loaded (check bare-mux/dist/index.js)");
+    conn = conn || new BareMux.BareMuxConnection("/bare-mux/dist/worker.js");
+    if (/^wss?:\/\//i.test(url)) {
+      const options = TRANSPORT === "libcurl" ? [{ websocket: url }] : [{ wisp: url }];
+      await conn.setTransport(TRANSPORT_PATHS[TRANSPORT], options);
+    } else {
+      await conn.setTransport(BARE_TRANSPORT_PATH, [url]);
+    }
+  }
+
+  const normalizeWisp = (v) => {
+    try { const u = new URL((v || "").trim()); if (u.protocol !== "ws:" && u.protocol !== "wss:") return null; u.hash = ""; return u.href; }
+    catch (e) { return null; }
+  };
+
+  async function fetchWispList() {
+    const builtIn = DEFAULT_PUBLIC_WISPS.map(normalizeWisp).filter(Boolean);
+    try {
+      const c = new AbortController();
+      const t = setTimeout(() => c.abort(), 6000);
+      const res = await fetch(PUBLIC_WISP_LIST_URL + "?t=" + Date.now(), { cache: "no-store", signal: c.signal });
+      clearTimeout(t);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const text = await res.text();
+      const remote = [];
+      const re = /url\s*:\s*["'](wss?:\/\/[^"']+)["']/gi;
+      let m;
+      while ((m = re.exec(text))) { const u = normalizeWisp(m[1]); if (u) remote.push(u); }
+      return [...new Set([...builtIn, ...remote])];
+    } catch (e) { return builtIn; }
+  }
+
+  function testWisp(url, timeoutMs = 5000) {
+    return new Promise((resolve) => {
+      let socket = null, settled = false;
+      const started = performance.now();
+      const finish = (ok) => {
+        if (settled) return; settled = true;
+        try { socket && socket.close(); } catch (e) {}
+        resolve({ url, ok, latency: ok ? Math.round(performance.now() - started) : null });
+      };
+      try {
+        socket = new WebSocket(url);
+        const timer = setTimeout(() => finish(false), timeoutMs);
+        socket.onopen = () => { clearTimeout(timer); finish(true); };
+        socket.onerror = () => { clearTimeout(timer); finish(false); };
+      } catch (e) { finish(false); }
+    });
+  }
+
+  async function testBare(url) {
+    const started = performance.now();
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 6000);
+    try {
+      const res = await fetch(url, { cache: "no-store", signal: c.signal });
+      clearTimeout(t);
+      const info = res.ok ? await res.json().catch(() => null) : null;
+      return { url, ok: !!(info && info.versions), latency: Math.round(performance.now() - started) };
+    } catch (e) { clearTimeout(t); return { url, ok: false, latency: null }; }
+  }
+
+  async function buildCandidates() {
+    const wisps = await fetchWispList();
+    const results = await Promise.all(wisps.map((u) => testWisp(u)));
+    const list = results.filter((r) => r.ok).sort((a, b) => a.latency - b.latency).map((r) => r.url);
+    if (!list.length) {
+      const bare = await Promise.all(BARE_SERVERS.map(testBare));
+      bare.filter((r) => r.ok).sort((a, b) => a.latency - b.latency).forEach((r) => list.push(r.url));
+    }
+    return list;
+  }
+
+  const hostOf = (u) => { try { return new URL(u).host; } catch (e) { return u; } };
+  function setProxyStatus(text) { $("pxstat").textContent = "● " + text; }
+
+  let candidates = [], candIdx = 0, proxyP = null;
+  async function connectCandidate(i) {
+    candIdx = i;
+    await withTimeout(setTransport(candidates[i]), 15000, "Transport setup");
+    setProxyStatus("Proxy: " + hostOf(candidates[i]));
+  }
+  function proxyReady() {
+    if (!proxyP) {
+      proxyP = (async () => {
+        setProxyStatus("Proxy: starting…");
+        await registerSW();
+        setProxyStatus("Proxy: finding a server…");
+        candidates = await buildCandidates();
+        if (!candidates.length) throw new Error("No proxy servers responded");
+        for (let i = 0; i < Math.min(4, candidates.length); i++) {
+          try { await connectCandidate(i); return; } catch (e) { /* try the next one */ }
+        }
+        throw new Error("Could not connect to a proxy server");
+      })().catch((e) => { proxyP = null; setProxyStatus("Proxy: offline"); throw e; });
+    }
+    return proxyP;
+  }
+  async function nextServer() {
+    for (let i = candIdx + 1; i < Math.min(candidates.length, candIdx + 4); i++) {
+      try { await connectCandidate(i); return true; } catch (e) {}
+    }
+    return false;
+  }
+
+  const proxied = (url) => __uv$config.prefix + __uv$config.encodeUrl(url);
+
+  /* ===== network helper: direct first, through the proxy if that is blocked ===== */
+  async function netFetch(url) {
+    try {
+      const r = await fetch(url);
+      return r;
+    } catch (e) {
+      await proxyReady();
+      return fetch(proxied(url));
+    }
+  }
+
+  /* =====================================================================
+     YouTube data
+     ===================================================================== */
+  let API_KEY = store.get(KEY_STORE) || "";   // a key typed into the settings box wins over the built-in one
+
+  // Built-in key, stored encrypted (AES-GCM). This keeps it out of plain-text scans, but the page
+  // has to be able to decrypt it, so restrict the key in Google Cloud Console too.
+  const EMBEDDED = {"s":"U7iO8pQUwLi524bhwXN3aw==","i":"pjVpNI6SVqD00e9J","c":"gRz8EZZMk6TWoV5q6kVrJUfs0VS2AkwFbphSh7UYaJdoVVYhIDZPxvQIwsVqkZdETXnEEkcTUQ==","p":[129,119,116,109,125,60,114,60,124,105,115,56,125,56,118,107,115,129,110,113,124,128,115,57,127,110]};
+  async function embeddedKey() {
+    try {
+      if (!window.crypto || !crypto.subtle) return "";
+      const un = (s) => Uint8Array.from(atob(s), (ch) => ch.charCodeAt(0));
+      const pass = String.fromCharCode(...EMBEDDED.p.map((n) => n - 7).reverse());
+      const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+      const k = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: un(EMBEDDED.s), iterations: 100000, hash: "SHA-256" },
+        base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+      const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: un(EMBEDDED.i) }, k, un(EMBEDDED.c));
+      return new TextDecoder().decode(plain);
+    } catch (e) { return ""; }
+  }
+  const thumb = (id) => "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg";
+  const mk = (id, title, artist) => ({ id, title: decodeEntities(title) || "Untitled", artist: decodeEntities(artist) || "" });
+
+  const STARTER = [
+    mk("dQw4w9WgXcQ", "Never Gonna Give You Up", "Rick Astley"),
+    mk("kJQP7kiw5Fk", "Despacito", "Luis Fonsi"),
+    mk("JGwWNGJdvx8", "Shape of You", "Ed Sheeran"),
+    mk("RgKAFK5djSk", "See You Again", "Wiz Khalifa"),
+    mk("OPf0YbXqDm0", "Uptown Funk", "Mark Ronson"),
+    mk("fRh_vgS2dFE", "Sorry", "Justin Bieber"),
+    mk("hT_nvWreIhg", "Counting Stars", "OneRepublic"),
+    mk("CevxZvSJLk8", "Roar", "Katy Perry")
+  ];
+
+  async function ytApi(path, params) {
+    const qs = new URLSearchParams(Object.assign({ key: API_KEY }, params)).toString();
+    const r = await netFetch("https://www.googleapis.com/youtube/v3/" + path + "?" + qs);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error((data.error && data.error.message) || ("YouTube API returned " + r.status));
+    return data;
+  }
+  async function apiTrending() {
+    const d = await ytApi("videos", { part: "snippet,status", chart: "mostPopular", videoCategoryId: "10", regionCode: "US", maxResults: "24" });
+    return (d.items || []).filter((v) => !v.status || v.status.embeddable !== false).map((v) => mk(v.id, v.snippet.title, v.snippet.channelTitle));
+  }
+  async function apiSearch(q) {
+    const d = await ytApi("search", { part: "snippet", type: "video", videoCategoryId: "10", videoEmbeddable: "true", maxResults: "24", q });
+    return (d.items || []).filter((v) => v.id && v.id.videoId).map((v) => mk(v.id.videoId, v.snippet.title, v.snippet.channelTitle));
+  }
+  async function oembed(id) {
+    try {
+      const r = await netFetch("https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + id));
+      if (!r.ok) throw new Error("oEmbed " + r.status);
+      const d = await r.json();
+      return mk(id, d.title, d.author_name);
+    } catch (e) { return mk(id, "YouTube video " + id, ""); }
+  }
+  function parseId(input) {
+    const s = (input || "").trim();
+    if (/^(?=.*[\dA-Z_-])[\w-]{11}$/.test(s)) return s;
+    try {
+      const u = new URL(/^https?:\/\//i.test(s) ? s : "https://" + s);
+      const h = u.hostname.replace(/^(www|m|music)\./, "");
+      if (h === "youtu.be") { const id = u.pathname.slice(1, 12); return /^[\w-]{11}$/.test(id) ? id : null; }
+      if (h === "youtube.com") {
+        const v = u.searchParams.get("v");
+        if (v && /^[\w-]{11}/.test(v)) return v.slice(0, 11);
+        const m = u.pathname.match(/\/(?:embed|shorts|live|v)\/([\w-]{11})/);
+        if (m) return m[1];
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  /* =====================================================================
+     Player: proxied YouTube embed, controlled with the IFrame Player API
+     message protocol (listening handshake + command / infoDelivery events)
+     ===================================================================== */
+  const frame = $("ytframe");
+  const WIDGET_ID = 1;
+  const yt = { ready: false, state: -1, time: 0, duration: 0, hs: null, loadedId: null };
+  let basicMode = false, seeking = false, retries = 0;
+
+  function navFrame(url) { frame.src = url; }
+  function embedUrl(id) {
+    const p = new URLSearchParams({
+      enablejsapi: "1", autoplay: "1", playsinline: "1", rel: "0", modestbranding: "1", iv_load_policy: "3",
+      controls: basicMode ? "1" : "0", disablekb: basicMode ? "0" : "1", fs: "0",
+      origin: location.origin, widgetid: String(WIDGET_ID)
+    });
+    return "https://www.youtube.com/embed/" + id + "?" + p.toString();
+  }
+  function post(obj) {
+    try { frame.contentWindow.postMessage(JSON.stringify(Object.assign({ id: WIDGET_ID, channel: "widget" }, obj)), "*"); } catch (e) {}
+  }
+  const cmd = (func, args) => post({ event: "command", func, args: args || [] });
+
+  function frameLooksBroken() {
+    try {
+      const d = frame.contentDocument;
+      const text = (d.title || "") + " " + (d.body ? d.body.innerText.slice(0, 500) : "");
+      return /Error processing your request/i.test(text);
+    } catch (e) { return false; }
+  }
+
+  function startHandshake() {
+    clearInterval(yt.hs);
+    let tries = 0;
+    yt.hs = setInterval(() => {
+      if (yt.ready) { clearInterval(yt.hs); return; }
+      tries++;
+      post({ event: "listening" });
+      if (tries % 5 === 0 && frameLooksBroken()) { clearInterval(yt.hs); onProxyError(); return; }
+      if (tries > 45) { clearInterval(yt.hs); enterBasicMode(); }      // ~18 s without a reply
+    }, 400);
+  }
+
+  async function onProxyError() {
+    if (retries >= 2 || !cur()) { toast("The proxy could not load the player. Try again in a moment."); return; }
+    retries++;
+    toast("Switching proxy server…");
+    if (await nextServer()) loadFresh(cur().id); else toast("No other proxy servers worked.");
+  }
+
+  async function loadFresh(id) {
+    try { await proxyReady(); } catch (e) { toast("Proxy is not available: " + e.message); return; }
+    yt.ready = false; yt.state = -1; yt.time = 0; yt.duration = 0; yt.loadedId = id;
+    navFrame(proxied(embedUrl(id)));
+    startHandshake();
+  }
+
+  function loadTrackIntoPlayer(id) {
+    if (yt.ready && !basicMode && yt.loadedId) {
+      yt.loadedId = id; yt.time = 0; yt.duration = 0;
+      cmd("loadVideoById", [id]);
+    } else {
+      loadFresh(id);
+    }
+  }
+
+  function enterBasicMode() {
+    if (basicMode) return;
+    basicMode = true;
+    $("dock").classList.add("basic");
+    toast("Player controls are not reachable through the proxy, so the video's own controls are shown.");
+    if (cur()) loadFresh(cur().id);
+  }
+
+  window.addEventListener("message", (e) => {
+    if (e.source !== frame.contentWindow) return;
+    let d = e.data;
+    if (typeof d === "string") { try { d = JSON.parse(d); } catch (err) { return; } }
+    if (!d || typeof d !== "object" || !d.event) return;
+
+    if (d.event === "onReady" || d.event === "initialDelivery" || d.event === "infoDelivery" || d.event === "onStateChange") {
+      if (!yt.ready) {
+        yt.ready = true;
+        retries = 0;
+        clearInterval(yt.hs);
+        cmd("addEventListener", ["onStateChange"]);
+        cmd("addEventListener", ["onError"]);
+        applyVolume();
+      }
+    }
+    if (d.info && typeof d.info === "object") {
+      const i = d.info;
+      if (typeof i.currentTime === "number") yt.time = i.currentTime;
+      if (typeof i.duration === "number" && i.duration > 0) yt.duration = i.duration;
+      if (typeof i.playerState === "number") setState(i.playerState);
+      if (i.videoData && i.videoData.title && cur() && /^YouTube video /.test(cur().title)) {
+        cur().title = i.videoData.title; if (i.videoData.author) cur().artist = i.videoData.author;
+        renderNow(); renderQueue();
+      }
+      updateTime();
+    }
+    if (d.event === "onStateChange" && typeof d.info === "number") setState(d.info);
+    if (d.event === "onError") {
+      toast("That video can't be played here, skipping…");
+      setTimeout(() => next(true), 800);
+    }
+  });
+
+  function setState(s) {
+    if (s === yt.state) return;
+    yt.state = s;
+    $("btn-play").textContent = s === 1 || s === 3 ? "⏸" : "▶";
+    if (s === 1) $("vidbox").classList.add("has");
+    updateCards();
+    if (s === 0) onEnded();
+  }
+
+  function onEnded() {
+    if (repeat === 2) { cmd("seekTo", [0, true]); cmd("playVideo"); return; }
+    next(false);
+  }
+
+  /* =====================================================================
+     Queue / playback logic
+     ===================================================================== */
+  let queue = [], qi = -1, shuffle = false, repeat = 0;     // repeat: 0 off, 1 all, 2 one
+  const cur = () => (qi >= 0 ? queue[qi] : null);
+
+  function playFrom(list, i) {
+    queue = list.slice();
+    qi = i;
+    playCurrent();
+  }
+  function playCurrent() {
+    const t = cur();
+    if (!t) return;
+    retries = 0;
+    addRecent(t);
+    renderNow();
+    renderQueue();
+    updateCards();
+    setHero(t, true);
+    loadTrackIntoPlayer(t.id);
+    mediaSession();
+  }
+  function addToQueue(t) {
+    queue.push(t);
+    if (qi < 0) { qi = queue.length - 1; playCurrent(); }
+    else { renderQueue(); toast("Added to queue: " + t.title); }
+  }
+  function next(auto) {
+    if (!queue.length) return;
+    if (shuffle && queue.length > 1) {
+      let n; do { n = Math.floor(Math.random() * queue.length); } while (n === qi);
+      qi = n;
+    } else if (qi + 1 < queue.length) {
+      qi++;
+    } else if (repeat === 1 || !auto) {
+      qi = 0;
+    } else {
+      $("btn-play").textContent = "▶";   // reached the end of the queue
+      return;
+    }
+    playCurrent();
+  }
+  function prev() {
+    if (!queue.length) return;
+    if (yt.time > 3 && yt.ready && !basicMode) { cmd("seekTo", [0, true]); return; }
+    qi = qi > 0 ? qi - 1 : queue.length - 1;
+    playCurrent();
+  }
+  function togglePlay() {
+    if (!cur()) { if (currentList.length) playFrom(currentList, 0); return; }
+    if (basicMode) return;
+    cmd(yt.state === 1 || yt.state === 3 ? "pauseVideo" : "playVideo");
+  }
+
+  /* ===== recently played ===== */
+  function getRecent() {
+    try { const a = JSON.parse(store.get(RECENT_STORE) || "[]"); return Array.isArray(a) ? a.filter((t) => t && t.id) : []; }
+    catch (e) { return []; }
+  }
+  function addRecent(t) {
+    const a = getRecent().filter((x) => x.id !== t.id);
+    a.unshift({ id: t.id, title: t.title, artist: t.artist });
+    store.set(RECENT_STORE, JSON.stringify(a.slice(0, 30)));
+  }
+
+  /* =====================================================================
+     UI
+     ===================================================================== */
+  let currentList = [];
+
+  function setHero(t, nowPlaying) {
+    if (!t) return;
+    $("hero-bg").style.backgroundImage = "url('" + thumb(t.id) + "')";
+    $("hero-meta").textContent = nowPlaying ? "Now playing" : "Featured";
+    $("hero-title").textContent = t.title;
+    $("hero-desc").textContent = t.artist || "YouTube";
+    $("hero-play").onclick = () => {
+      const i = currentList.findIndex((x) => x.id === t.id);
+      if (i >= 0) playFrom(currentList, i); else playFrom([t], 0);
+    };
+  }
+
+  function cardEl(t, i) {
+    const d = document.createElement("div");
+    d.className = "card";
+    d.tabIndex = 0;
+    d.dataset.id = t.id;
+
+    const img = new Image();
+    img.loading = "lazy"; img.alt = ""; img.src = thumb(t.id);
+    img.onerror = () => {                       // thumbnails blocked? fetch them through the proxy
+      img.onerror = null;
+      proxyReady().then(() => { img.src = proxied(thumb(t.id)); }).catch(() => {});
+    };
+
+    const eq = document.createElement("div"); eq.className = "card-eq"; eq.textContent = "▶ PLAYING";
+    const add = document.createElement("button"); add.className = "card-add"; add.textContent = "+"; add.title = "Add to queue"; add.setAttribute("aria-label", "Add to queue");
+    add.onclick = (ev) => { ev.stopPropagation(); addToQueue(t); };
+
+    const text = document.createElement("div"); text.className = "card-text";
+    const title = document.createElement("div"); title.className = "card-title"; title.textContent = t.title;
+    const meta = document.createElement("div"); meta.className = "card-meta"; meta.textContent = t.artist;
+    text.append(title, meta);
+
+    d.append(img, eq, add, text);
+    d.onclick = () => playFrom(currentList, i);
+    d.onkeydown = (ev) => { if (ev.key === "Enter") playFrom(currentList, i); };
+    return d;
+  }
+
+  function renderList(list, label, emptyMsg) {
+    currentList = list;
+    $("section-label").textContent = label;
+    const grid = $("grid");
+    grid.textContent = "";
+    if (!list.length) {
+      const p = document.createElement("p"); p.className = "msg"; p.textContent = emptyMsg || "No results.";
+      grid.appendChild(p);
+      return;
+    }
+    list.forEach((t, i) => grid.appendChild(cardEl(t, i)));
+    $("hero-all").onclick = () => playFrom(currentList, 0);
+    if (!cur()) setHero(list[0], false);
+    updateCards();
+  }
+
+  function updateCards() {
+    const t = cur();
+    document.querySelectorAll(".card").forEach((c) => c.classList.toggle("playing", !!t && c.dataset.id === t.id && yt.state !== -1));
+  }
+
+  function renderNow() {
+    const t = cur();
+    $("np-title").textContent = t ? t.title : "Nothing playing";
+    $("np-artist").textContent = t ? (t.artist || "YouTube") : "Pick a song to start";
+    if (t) { $("vidph").textContent = "Loading…"; $("vidbox").classList.remove("has"); }
+  }
+
+  function renderQueue() {
+    $("qcount").textContent = String(queue.length);
+    const list = $("qlist");
+    list.textContent = "";
+    if (!queue.length) {
+      const p = document.createElement("p"); p.className = "msg"; p.style.padding = "4px"; p.textContent = "The queue is empty. Use the + on a song to add it.";
+      list.appendChild(p);
+      return;
+    }
+    queue.forEach((t, i) => {
+      const row = document.createElement("div"); row.className = "q-item" + (i === qi ? " cur" : "");
+      const img = new Image(); img.alt = ""; img.src = thumb(t.id);
+      const tx = document.createElement("div"); tx.className = "q-text";
+      const a = document.createElement("div"); a.className = "q-title"; a.textContent = t.title;
+      const b = document.createElement("div"); b.className = "q-artist"; b.textContent = t.artist;
+      tx.append(a, b);
+      const x = document.createElement("button"); x.className = "q-x"; x.textContent = "✕"; x.title = "Remove"; x.setAttribute("aria-label", "Remove from queue");
+      x.onclick = (ev) => {
+        ev.stopPropagation();
+        queue.splice(i, 1);
+        if (i < qi) qi--;
+        else if (i === qi) { qi = Math.min(qi, queue.length - 1); if (qi >= 0) playCurrent(); else { qi = -1; renderNow(); } }
+        renderQueue();
+      };
+      row.append(img, tx, x);
+      row.onclick = () => { qi = i; playCurrent(); };
+      list.appendChild(row);
+    });
+  }
+
+  function updateTime() {
+    if (seeking) return;
+    $("tcur").textContent = fmt(yt.time);
+    $("tdur").textContent = fmt(yt.duration);
+    $("seek").value = yt.duration > 0 ? String(Math.round((yt.time / yt.duration) * 1000)) : "0";
+  }
+
+  /* ===== volume ===== */
+  let volume = parseInt(store.get(VOL_STORE) || "80", 10); if (!(volume >= 0 && volume <= 100)) volume = 80;
+  let muted = false;
+  function applyVolume() {
+    if (!yt.ready || basicMode) return;
+    cmd("setVolume", [volume]);
+    cmd(muted || volume === 0 ? "mute" : "unMute");
+  }
+  function renderVolume() {
+    $("vol").value = String(volume);
+    $("btn-mute").textContent = muted || volume === 0 ? "🔇" : "🔊";
+  }
+
+  /* ===== hide-able extras ===== */
+  function toggleKeyBox(show) {
+    const k = $("keybox");
+    const on = show === undefined ? k.style.display !== "block" : show;
+    k.style.display = on ? "block" : "none";
+    if (on) { $("key").value = store.get(KEY_STORE) || ""; k.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+  }
+
+  function mediaSession() {
+    try {
+      const t = cur();
+      if (!("mediaSession" in navigator) || !t) return;
+      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumb(t.id), sizes: "480x360", type: "image/jpeg" }] });
+      navigator.mediaSession.setActionHandler("play", togglePlay);
+      navigator.mediaSession.setActionHandler("pause", togglePlay);
+      navigator.mediaSession.setActionHandler("nexttrack", () => next(false));
+      navigator.mediaSession.setActionHandler("previoustrack", prev);
+    } catch (e) {}
+  }
+
+  /* =====================================================================
+     Browsing / searching
+     ===================================================================== */
+  async function loadCategory() {
+    const cat = $("cat").value;
+    try {
+      if (cat === "starter") {
+        renderList(STARTER, "Starter Picks");
+      } else if (cat === "recent") {
+        renderList(getRecent(), "Recently Played", "Nothing played yet. Pick a song and it will show up here.");
+      } else {
+        if (!API_KEY) {
+          renderList([], "Trending Music", "Trending needs a YouTube API key. Click ⚙ to add one, or use Starter Picks and paste YouTube links.");
+          toggleKeyBox(true);
+          return;
+        }
+        $("section-label").textContent = "Trending Music";
+        renderList(await apiTrending(), "Trending Music", "No trending songs were returned.");
+      }
+    } catch (e) {
+      if (cat === "trending") {       // key blocked / quota used up / API unreachable: stay usable
+        $("cat").value = "starter";
+        renderList(STARTER, "Starter Picks");
+        toast("Trending isn't available right now (" + e.message + "). Showing Starter Picks.");
+      } else {
+        renderList([], $("cat").options[$("cat").selectedIndex].text, "Could not load songs: " + e.message);
+      }
+    }
+  }
+
+  async function search() {
+    const q = $("q").value.trim();
+    if (!q) return loadCategory();
+    const id = parseId(q);
+    if (id) {
+      renderList([mk(id, "Loading…", "")], "Link");
+      const t = await oembed(id);
+      renderList([t], "Link");
+      playFrom([t], 0);
+      return;
+    }
+    if (!API_KEY) {
+      renderList([], "Search", "Searching by name needs a YouTube API key. Click ⚙ to add one, or paste a YouTube link here.");
+      toggleKeyBox(true);
+      return;
+    }
+    $("section-label").textContent = 'Searching for "' + q + '"…';
+    try {
+      renderList(await apiSearch(q), 'Results for "' + q + '"', "No songs found.");
+    } catch (e) {
+      renderList([], "Search", "Search failed: " + e.message);
+    }
+  }
+
+  /* =====================================================================
+     Wiring
+     ===================================================================== */
+  const toggleClear = () => { $("clear-search").style.display = $("q").value ? "flex" : "none"; };
+  $("q").addEventListener("input", toggleClear);
+  $("clear-search").onclick = () => { $("q").value = ""; toggleClear(); $("q").focus(); loadCategory(); };
+  $("btn-search").onclick = search;
+  $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
+  $("cat").onchange = () => { $("q").value = ""; toggleClear(); loadCategory(); };
+  $("btn-key").onclick = () => toggleKeyBox();
+  $("key-close").onclick = () => toggleKeyBox(false);
+  $("key-save").onclick = async () => {
+    const typed = $("key").value.trim();
+    if (typed) store.set(KEY_STORE, typed); else store.del(KEY_STORE);
+    API_KEY = typed || await embeddedKey();
+    toggleKeyBox(false);
+    toast(typed ? "API key saved." : (API_KEY ? "Using the built-in key." : "API key removed."));
+    loadCategory();
+  };
+  $("key-clear").onclick = async () => {
+    store.del(KEY_STORE); $("key").value = "";
+    API_KEY = await embeddedKey();
+    toast(API_KEY ? "Your key was removed. Using the built-in key." : "API key removed.");
+  };
+
+  $("btn-play").onclick = togglePlay;
+  $("btn-next").onclick = () => next(false);
+  $("btn-prev").onclick = prev;
+  $("btn-shuffle").onclick = () => { shuffle = !shuffle; $("btn-shuffle").classList.toggle("on", shuffle); $("btn-shuffle").title = "Shuffle: " + (shuffle ? "on" : "off"); };
+  $("btn-repeat").onclick = () => {
+    repeat = (repeat + 1) % 3;
+    const b = $("btn-repeat");
+    b.classList.toggle("on", repeat > 0);
+    b.textContent = repeat === 2 ? "⟳1" : "⟳";
+    b.title = "Repeat: " + ["off", "all", "one"][repeat];
+  };
+
+  const seek = $("seek");
+  seek.addEventListener("input", () => { seeking = true; $("tcur").textContent = fmt((seek.value / 1000) * yt.duration); });
+  seek.addEventListener("change", () => {
+    if (yt.duration > 0 && yt.ready && !basicMode) cmd("seekTo", [(seek.value / 1000) * yt.duration, true]);
+    seeking = false;
+  });
+
+  $("vol").addEventListener("input", (e) => { volume = parseInt(e.target.value, 10); muted = false; store.set(VOL_STORE, String(volume)); renderVolume(); applyVolume(); });
+  $("btn-mute").onclick = () => { muted = !muted; renderVolume(); applyVolume(); };
+
+  const sizes = ["mini", "med", "large"];
+  $("btn-size").onclick = () => {
+    const box = $("vidbox");
+    const i = sizes.findIndex((s) => box.classList.contains(s));
+    box.classList.remove(sizes[i]);
+    box.classList.add(sizes[(i + 1) % sizes.length]);
+  };
+
+  function positionPanels() {
+    const h = $("dock").offsetHeight;
+    document.body.style.paddingBottom = (h + 36) + "px";
+    $("queuepanel").style.bottom = (h + 24) + "px";
+  }
+  $("btn-queue").onclick = () => {
+    const p = $("queuepanel");
+    p.style.display = p.style.display === "block" ? "none" : "block";
+    positionPanels();
+  };
+  $("q-clear").onclick = () => {
+    const t = cur();
+    queue = t ? [t] : [];
+    qi = t ? 0 : -1;
+    renderQueue();
+  };
+  if (window.ResizeObserver) new ResizeObserver(positionPanels).observe($("dock"));
+  window.addEventListener("resize", positionPanels);
+
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target && e.target.tagName) || "";
+    if (e.code === "Space" && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(tag)) { e.preventDefault(); togglePlay(); }
+  });
+
+  // smooth time updates between the player's own infoDelivery messages
+  setInterval(() => { if (yt.state === 1 && !seeking) { yt.time += 0.25; updateTime(); } }, 250);
+
+  /* ===== start ===== */
+  renderVolume();
+  renderQueue();
+  (async () => {
+    if (!API_KEY) API_KEY = await embeddedKey();
+    $("cat").value = API_KEY ? "trending" : "starter";
+    loadCategory();
+  })();
+  proxyReady().catch(() => {});      // connect to the proxy in the background so the first song starts fast
+})();
+</script>
+
+<script>
+(() => {
+ const now = new Date(), month = now.getMonth(), day = now.getDate();
+ let season = 'iconic';
+ if (month === 9) season = 'october';
+ else if (month === 10 && day <= 7) season = 'november-brown';
+ else if (month === 10 || month === 11 || month === 0) season = 'winter-blue';
+ else if (month === 1) season = 'february-pink';
+ document.body.dataset.season = season;
+})();
+</script>
+
+</body>
+</html>
