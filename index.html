@@ -29,7 +29,7 @@ body {
 }
 .topbar {
   position: fixed;
-  z-index: 100;
+  z-index: 10000;
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
@@ -82,7 +82,7 @@ body {
 /* Tighten only the space between Online Games and AI. */
 .nav-btn[data-section="ai"] { margin-left: -4px; }
 .page-wrap {
-  position: relative; width: 100%; height: 100%; isolation: isolate;
+  position: relative; z-index: 0; width: 100%; height: 100%; isolation: isolate;
   background:
     radial-gradient(ellipse at 18% -5%, rgba(0,255,153,.075), transparent 34%),
     radial-gradient(ellipse at 90% 0%, rgba(0,207,255,.065), transparent 28%),
@@ -139,6 +139,10 @@ body {
 @media (max-width: 680px) { .icon-svg { width: 15px; height: 15px; margin-right: 3px; } }
 @media (max-width: 430px) { .icon-svg { display: none; } }
 
+/* Keep the menu and its collapse handle above the iframe without altering menu positioning. */
+.topbar { z-index: 10000; }
+.bar-zone { z-index: 10001; }
+.page-wrap { z-index: 0; }
 </style>
 
 <style id="geeked-index-seasonal-theme">
@@ -191,7 +195,7 @@ body { background-image:radial-gradient(ellipse at 18% -5%,var(--season-bg-glow)
   border-color: var(--season-border) !important;
 }
 .theme-menu {
-  position: absolute; right: 0; top: calc(100% + 20px);
+  position: fixed; right: auto; top: 0; left: 0; z-index: 20000;
   width: 268px; padding: 10px;
   display: none; flex-direction: column; gap: 10px;
   background: linear-gradient(135deg, var(--season-panel-2), var(--season-panel));
@@ -264,7 +268,7 @@ body { background-image:radial-gradient(ellipse at 18% -5%,var(--season-bg-glow)
 
 /* ---- Small tag under the menu that toggles it; fades away when the cursor is not near ---- */
 .bar-zone {
-  position: fixed; z-index: 101; left: 50%;
+  position: fixed; z-index: 10001; left: 50%;
   top: calc(var(--bar-bottom, 76px) - 2px);
   width: 140px; height: 40px; padding-top: 6px;
   transform: translateX(-50%);
@@ -339,7 +343,7 @@ html[data-menu-pos="bottom"] .bar-zone {
 html[data-menu-pos="bottom"] .bar-tag svg { transform: rotate(180deg); }
 html[data-menu-pos="bottom"] body.bar-collapsed .bar-tag svg { transform: rotate(0deg); }
 html[data-menu-pos="bottom"] body.bar-collapsed .topbar { transform: translate(-50%, var(--bar-shift, 4px)); }
-html[data-menu-pos="bottom"] .page-wrap { padding-bottom: calc(var(--bar-h, 76px) + 20px) !important; padding-top: 0 !important; }
+html[data-menu-pos="bottom"] .page-wrap { padding: 0 !important; }
 
 /* ---- LEFT ---- */
 html[data-menu-pos="left"] .topbar {
@@ -374,7 +378,7 @@ html[data-menu-pos="left"] .bar-zone {
 html[data-menu-pos="left"] .bar-tag svg { transform: rotate(-90deg); }
 html[data-menu-pos="left"] body.bar-collapsed .bar-tag svg { transform: rotate(90deg); }
 html[data-menu-pos="left"] body.bar-collapsed .topbar { transform: translate(calc(var(--bar-shift, 4px) * -1), -50%); }
-html[data-menu-pos="left"] .page-wrap { padding-left: calc(var(--bar-w, 220px) + 20px) !important; padding-top: 0 !important; }
+html[data-menu-pos="left"] .page-wrap { padding: 0 !important; }
 
 /* ---- RIGHT ---- */
 html[data-menu-pos="right"] .topbar {
@@ -409,11 +413,63 @@ html[data-menu-pos="right"] .bar-zone {
 html[data-menu-pos="right"] .bar-tag svg { transform: rotate(90deg); }
 html[data-menu-pos="right"] body.bar-collapsed .bar-tag svg { transform: rotate(-90deg); }
 html[data-menu-pos="right"] body.bar-collapsed .topbar { transform: translate(var(--bar-shift, 4px), -50%); }
-html[data-menu-pos="right"] .page-wrap { padding-right: calc(var(--bar-w, 220px) + 20px) !important; padding-top: 0 !important; }
+html[data-menu-pos="right"] .page-wrap { padding: 0 !important; }
+
+/* Side menus keep the top bar's capsule silhouette, oriented vertically. */
+html[data-menu-pos="left"] .topbar,
+html[data-menu-pos="right"] .topbar {
+  border-radius: 999px;
+  align-items: center;
+  gap: 8px;
+}
+html[data-menu-pos="left"] .brand,
+html[data-menu-pos="right"] .brand { justify-content: center; }
+html[data-menu-pos="left"] .nav,
+html[data-menu-pos="right"] .nav { align-items: center; width: 100%; }
+html[data-menu-pos="left"] .nav-btn,
+html[data-menu-pos="right"] .nav-btn {
+  justify-content: center;
+  width: 100%;
+  border-radius: 999px;
+}
+html[data-menu-pos="left"] .theme-wrap,
+html[data-menu-pos="right"] .theme-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+/* Side layouts are icon-only. */
+html[data-menu-pos="left"] .nav .nav-btn,
+html[data-menu-pos="right"] .nav .nav-btn {
+  font-size: 0 !important;
+  padding: 10px 12px;
+}
+html[data-menu-pos="left"] .nav .nav-btn .icon-svg,
+html[data-menu-pos="right"] .nav .nav-btn .icon-svg {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
 
 /* keep collapsed square right: its own rules override position but not transform */
 html[data-menu-pos="left"] .topbar.is-collapsed,
 html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
+</style>
+
+
+
+<style id="layout-section-theme-match">
+/* Match the Layout setting sections to the main menu bar theme. */
+#themeMenu .set-panel[data-panel="layout"] .theme-block {
+  background: linear-gradient(135deg, var(--season-panel-2), var(--season-panel) 58%, var(--season-bg)) !important;
+  border-color: var(--season-border-soft) !important;
+}
+#themeMenu .set-panel[data-panel="layout"] .theme-cat {
+  color: var(--season-text) !important;
+}
+#themeMenu .set-panel[data-panel="layout"] .seg {
+  background: var(--season-bg) !important;
+}
 </style>
 </head>
 <body>
@@ -550,6 +606,9 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   const frame = document.getElementById('sectionFrame');
   const btn = document.getElementById('themeBtn');
   const menu = document.getElementById('themeMenu');
+  const topbar = document.querySelector('.topbar');
+  // Keep the settings panel outside the transformed menu/header so fixed viewport positioning works in every layout.
+  document.body.appendChild(menu);
   let currentTheme = 'iconic';
   const currentMode = 'dark';   // dark only: pages in the frame are always told 'dark'
 
@@ -603,7 +662,15 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   } catch (e) {}
 
   function applyLayout() {
+    const sidePosition = layout.menuPos === 'left' || layout.menuPos === 'right';
+    if (sidePosition && layout.navLabels !== 'icons') layout.navLabels = 'icons';
     Object.keys(layout).forEach(k => document.documentElement.setAttribute(LAYOUT_ATTR[k], layout[k]));
+    menu.querySelectorAll('.seg[data-setting="navLabels"] .seg-btn').forEach(button => {
+      const unavailable = sidePosition && button.dataset.value !== 'icons';
+      button.disabled = unavailable;
+      button.hidden = unavailable;
+      button.setAttribute('aria-disabled', unavailable ? 'true' : 'false');
+    });
     menu.querySelectorAll('.seg').forEach(seg => {
       seg.querySelectorAll('.seg-btn').forEach(b => {
         const on = b.dataset.value === layout[seg.dataset.setting];
@@ -629,25 +696,37 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   });
 
   function repositionMenu() {
+    if (!menu.classList.contains('open')) return;
     const bar = topbar.getBoundingClientRect();
     const pos = document.documentElement.dataset.menuPos || 'top';
-    const W = innerWidth, mw = 288;
-    let top, left;
+    const gap = 12, pad = 8;
+    const mw = menu.offsetWidth || 268;
+    const mh = menu.offsetHeight || 420;
+    let left, top;
+
     if (pos === 'left') {
-      left = bar.right + 12;
-      top = Math.max(8, bar.top);
+      // Side menu on the left: settings panel opens to its right.
+      left = bar.right + gap;
+      top = bar.top + (bar.height - mh) / 2;
     } else if (pos === 'right') {
-      left = bar.left - mw - 12;
-      top = Math.max(8, bar.top);
+      // Side menu on the right: settings panel opens to its left.
+      left = bar.left - mw - gap;
+      top = bar.top + (bar.height - mh) / 2;
     } else if (pos === 'bottom') {
-      left = Math.max(8, bar.right - mw);
-      top = bar.top - 460 - 12;
+      // Bottom menu: settings panel opens above it.
+      left = bar.left + (bar.width - mw) / 2;
+      top = bar.top - mh - gap;
     } else {
-      left = Math.max(8, bar.right - mw);
-      top = bar.bottom + 20;
+      // Top menu: settings panel opens below it.
+      left = bar.right - mw;
+      top = bar.bottom + gap;
     }
-    menu.style.left = Math.max(8, Math.min(left, W - mw)) + 'px';
-    menu.style.top = Math.max(8, top) + 'px';
+
+    // Keep the entire panel on-screen, including on short or narrow viewports.
+    left = Math.max(pad, Math.min(left, innerWidth - mw - pad));
+    top = Math.max(pad, Math.min(top, innerHeight - mh - pad));
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
   }
 
   function setMenu(open) {
@@ -657,6 +736,7 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   }
 
   btn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
+  window.addEventListener('resize', repositionMenu);
   menu.addEventListener('click', e => {
     const chip = e.target.closest('.theme-chip');
     if (chip && THEMES.includes(chip.dataset.theme)) {
@@ -675,7 +755,7 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
         layout[key] = segBtn.dataset.value;
         write(KEY_LAYOUT, JSON.stringify(layout));
         applyLayout();
-        setTimeout(() => { refresh(); repositionMenu(); }, 350);
+        repositionMenu();
       }
     }
   });
