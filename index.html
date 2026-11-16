@@ -177,7 +177,6 @@ body { background-image:radial-gradient(ellipse at 18% -5%,var(--season-bg-glow)
 .nav-btn:hover { color:var(--season-text) !important; background:var(--season-panel-hover) !important; }
 .nav-btn.active { color:var(--season-accent) !important; background:linear-gradient(110deg,rgba(var(--season-accent-rgb),.16),rgba(0,207,255,.07)) !important; border-color:var(--season-border) !important; box-shadow:inset 0 0 14px rgba(var(--season-accent-rgb),.05),0 0 12px var(--season-shadow) !important; }
 .icon-svg { color:inherit; }
-.page-frame { border:0 !important; }
 * { scrollbar-color:var(--season-accent) var(--season-panel); }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; } }
 </style>
@@ -315,8 +314,106 @@ body.bar-collapsed .bar-tag svg { transform: rotate(180deg); }
 }
 html[data-nav-labels="text"] .nav .nav-btn .icon-svg { display: none; }
 html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
-:where(html[data-page-frame="framed"]) .page-wrap { padding: 8px 10px 10px; }
-:where(html[data-page-frame="framed"]) .page-frame { border-radius: 18px; border: 1px solid var(--season-border-soft, rgba(190,220,230,.15)); }
+
+
+/* ===== Menu position ===== */
+
+/* ---- shared: the bar-zone tag follows the menu wherever it goes ---- */
+/* (top is the default; already handled by the existing JS) */
+
+/* ---- BOTTOM ---- */
+html[data-menu-pos="bottom"] .topbar {
+  top: auto;
+  bottom: 15px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+html[data-menu-pos="bottom"] .bar-zone {
+  top: auto !important;
+  bottom: calc(var(--bar-bottom-offset, 76px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+html[data-menu-pos="bottom"] .bar-tag svg { transform: rotate(180deg); }
+html[data-menu-pos="bottom"] body.bar-collapsed .bar-tag svg { transform: rotate(0deg); }
+html[data-menu-pos="bottom"] body.bar-collapsed .topbar { transform: translate(-50%, var(--bar-shift, 4px)); }
+html[data-menu-pos="bottom"] .page-wrap { padding-bottom: calc(var(--bar-h, 76px) + 20px) !important; padding-top: 0 !important; }
+
+/* ---- LEFT ---- */
+html[data-menu-pos="left"] .topbar {
+  top: 50%;
+  left: 15px;
+  right: auto;
+  transform: translateY(-50%);
+  flex-direction: column;
+  width: max-content;
+  min-width: 70px;
+  max-width: 220px;
+  border-radius: 24px;
+  gap: 6px;
+  padding: 14px 8px;
+  align-items: stretch;
+}
+html[data-menu-pos="left"] .nav { flex-direction: column; border-left: 0; padding-left: 0; border-top: 1px solid var(--season-border-soft, rgba(190,220,230,.15)); padding-top: 6px; gap: 2px; }
+html[data-menu-pos="left"] .nav-btn { justify-content: flex-start; border-radius: 14px; white-space: nowrap; }
+html[data-menu-pos="left"] .theme-wrap { border-left: 0; padding-left: 0; border-top: 1px solid var(--season-border-soft, rgba(190,220,230,.15)); padding-top: 6px; }
+
+html[data-menu-pos="left"] .bar-zone {
+  top: 50% !important;
+  left: calc(var(--bar-right, 220px) + 2px);
+  right: auto;
+  transform: translateY(-50%);
+  width: 40px; height: 140px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 0 0 6px;
+}
+html[data-menu-pos="left"] .bar-tag svg { transform: rotate(-90deg); }
+html[data-menu-pos="left"] body.bar-collapsed .bar-tag svg { transform: rotate(90deg); }
+html[data-menu-pos="left"] body.bar-collapsed .topbar { transform: translate(calc(var(--bar-shift, 4px) * -1), -50%); }
+html[data-menu-pos="left"] .page-wrap { padding-left: calc(var(--bar-w, 220px) + 20px) !important; padding-top: 0 !important; }
+
+/* ---- RIGHT ---- */
+html[data-menu-pos="right"] .topbar {
+  top: 50%;
+  left: auto;
+  right: 15px;
+  transform: translateY(-50%);
+  flex-direction: column;
+  width: max-content;
+  min-width: 70px;
+  max-width: 220px;
+  border-radius: 24px;
+  gap: 6px;
+  padding: 14px 8px;
+  align-items: stretch;
+}
+html[data-menu-pos="right"] .nav { flex-direction: column; border-left: 0; padding-left: 0; border-top: 1px solid var(--season-border-soft, rgba(190,220,230,.15)); padding-top: 6px; gap: 2px; }
+html[data-menu-pos="right"] .nav-btn { justify-content: flex-start; border-radius: 14px; white-space: nowrap; }
+html[data-menu-pos="right"] .theme-wrap { border-left: 0; padding-left: 0; border-top: 1px solid var(--season-border-soft, rgba(190,220,230,.15)); padding-top: 6px; }
+
+html[data-menu-pos="right"] .bar-zone {
+  top: 50% !important;
+  right: calc(100vw - var(--bar-left, calc(100vw - 235px)) + 2px);
+  left: auto;
+  transform: translateY(-50%);
+  width: 40px; height: 140px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 6px 0 0;
+}
+html[data-menu-pos="right"] .bar-tag svg { transform: rotate(90deg); }
+html[data-menu-pos="right"] body.bar-collapsed .bar-tag svg { transform: rotate(-90deg); }
+html[data-menu-pos="right"] body.bar-collapsed .topbar { transform: translate(var(--bar-shift, 4px), -50%); }
+html[data-menu-pos="right"] .page-wrap { padding-right: calc(var(--bar-w, 220px) + 20px) !important; padding-top: 0 !important; }
+
+/* keep collapsed square right: its own rules override position but not transform */
+html[data-menu-pos="left"] .topbar.is-collapsed,
+html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
 </style>
 </head>
 <body>
@@ -378,10 +475,12 @@ html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
           </div>
         </section>
         <section class="theme-block cat-default">
-          <div class="theme-cat">Page frame</div>
-          <div class="seg" data-setting="pageFrame" role="group" aria-label="Page frame">
-            <button class="seg-btn" type="button" data-value="full">Full screen</button>
-            <button class="seg-btn" type="button" data-value="framed">Framed</button>
+          <div class="theme-cat">Menu position</div>
+          <div class="seg" data-setting="menuPos" role="group" aria-label="Menu position">
+            <button class="seg-btn" type="button" data-value="top">Top</button>
+            <button class="seg-btn" type="button" data-value="bottom">Bottom</button>
+            <button class="seg-btn" type="button" data-value="left">Left</button>
+            <button class="seg-btn" type="button" data-value="right">Right</button>
           </div>
         </section>
     </div>
@@ -495,12 +594,12 @@ html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
   }
 
   // ----- settings: categories (tabs) and layout -----
-  const LAYOUT_VALUES = { menuSize: ['small', 'default', 'large'], navLabels: ['both', 'icons', 'text'], pageFrame: ['full', 'framed'] };
-  const LAYOUT_ATTR = { menuSize: 'data-menu-size', navLabels: 'data-nav-labels', pageFrame: 'data-page-frame' };
-  const layout = { menuSize: 'default', navLabels: 'both', pageFrame: 'full' };
+  const LAYOUT_VALUES = { menuSize: ['small', 'default', 'large'], navLabels: ['both', 'icons', 'text'], menuPos: ['top', 'bottom', 'left', 'right'] };
+  const LAYOUT_ATTR = { menuSize: 'data-menu-size', navLabels: 'data-nav-labels', menuPos: 'data-menu-pos' };
+  const layout = { menuSize: 'default', navLabels: 'both', menuPos: 'top' };
   try {
     const saved = JSON.parse(read(KEY_LAYOUT) || '{}');
-    Object.keys(layout).forEach(k => { if (LAYOUT_VALUES[k].includes(saved[k])) layout[k] = saved[k]; });
+    Object.keys(layout).forEach(k => { if (k === 'menuPos') { if (['top','bottom','left','right'].includes(saved[k])) layout[k] = saved[k]; } else if (LAYOUT_VALUES[k].includes(saved[k])) layout[k] = saved[k]; });
   } catch (e) {}
 
   function applyLayout() {
@@ -529,9 +628,32 @@ html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
     if (t) { b.title = t; b.setAttribute('aria-label', t); }
   });
 
+  function repositionMenu() {
+    const bar = topbar.getBoundingClientRect();
+    const pos = document.documentElement.dataset.menuPos || 'top';
+    const W = innerWidth, mw = 288;
+    let top, left;
+    if (pos === 'left') {
+      left = bar.right + 12;
+      top = Math.max(8, bar.top);
+    } else if (pos === 'right') {
+      left = bar.left - mw - 12;
+      top = Math.max(8, bar.top);
+    } else if (pos === 'bottom') {
+      left = Math.max(8, bar.right - mw);
+      top = bar.top - 460 - 12;
+    } else {
+      left = Math.max(8, bar.right - mw);
+      top = bar.bottom + 20;
+    }
+    menu.style.left = Math.max(8, Math.min(left, W - mw)) + 'px';
+    menu.style.top = Math.max(8, top) + 'px';
+  }
+
   function setMenu(open) {
     menu.classList.toggle('open', open);
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) repositionMenu();
   }
 
   btn.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
@@ -553,6 +675,7 @@ html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
         layout[key] = segBtn.dataset.value;
         write(KEY_LAYOUT, JSON.stringify(layout));
         applyLayout();
+        setTimeout(() => { refresh(); repositionMenu(); }, 350);
       }
     }
   });
@@ -600,11 +723,24 @@ html[data-nav-labels="text"] .nav .nav-btn { padding: 10px 14px; }
   }
 
   // Where the tag sits: directly under whatever the menu currently looks like
+  function barPos() { return document.documentElement.dataset.menuPos || 'top'; }
+
   function placeTag(collapsed, h) {
     fullH = h;
-    const shift = (h - SQUARE) / 2;                  // keeps the square centred on the bar's old position
+    const shift = (h - SQUARE) / 2;
+    const pos = barPos();
     root.style.setProperty('--bar-shift', shift + 'px');
-    root.style.setProperty('--bar-bottom', (topPx() + (collapsed ? shift + SQUARE : h)) + 'px');
+    if (pos === 'top') {
+      root.style.setProperty('--bar-bottom', (topPx() + (collapsed ? shift + SQUARE : h)) + 'px');
+    } else if (pos === 'bottom') {
+      root.style.setProperty('--bar-bottom-offset', (collapsed ? shift + SQUARE : h) + 15 + 'px');
+    } else {
+      const r = topbar.getBoundingClientRect();
+      root.style.setProperty('--bar-right', r.right + 'px');
+      root.style.setProperty('--bar-left', r.left + 'px');
+      root.style.setProperty('--bar-w', r.width + 'px');
+    }
+    root.style.setProperty('--bar-h', (collapsed ? shift + SQUARE : h) + 'px');
   }
 
   function setTagState(collapsed) {
