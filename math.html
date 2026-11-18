@@ -556,7 +556,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end; 
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 1 / 1;
       height: auto;
       padding: 12px; 
       background-color: #1e293b;
@@ -639,7 +639,8 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
-      z-index: 10000;
+      z-index: 2147483647;
+      position: relative;   /* z-index requires a positioned ancestor */
     }
 
     .close-game-btn:hover {
@@ -647,11 +648,12 @@
     }
 
     #game-controls {
-      position: absolute;
+      position: fixed;
       display: flex;
       gap: 10px;
-      z-index: 10000;
+      z-index: 2147483647;   /* max z-index: always on top, even in fullscreen */
       transition: var(--transition);
+      pointer-events: auto;
     }
 
     #game-controls.corner-top-left {
@@ -742,7 +744,7 @@ body {
 }
 
 .game-card {
-  aspect-ratio: 16 / 9 !important;
+  aspect-ratio: 1 / 1 !important;
   height: auto !important;
   border-radius: 12px !important;
   overflow: hidden !important;
@@ -1664,6 +1666,148 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
   window.addEventListener('load', fromStorage);
 })();
 </script>
+
+<style id="compact-flat-game-cards">
+.game-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 26px !important;
+  padding: 0 24px !important;
+}
+@media (max-width: 1250px) {
+  .game-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 24px !important; }
+}
+@media (max-width: 850px) {
+  .game-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 20px !important; }
+}
+@media (max-width: 560px) {
+  .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 16px !important; padding: 0 10px !important; }
+}
+.game-card {
+  aspect-ratio: 1 / 1 !important;
+  padding: 10px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--season-card, #1e293b) !important;
+  transition: transform .18s ease, border-color .18s ease !important;
+}
+.game-card::before { display: none !important; content: none !important; }
+.game-card::after {
+  background: linear-gradient(to top, rgba(1,2,6,.82), rgba(1,2,6,.08) 68%, transparent) !important;
+  box-shadow: none !important;
+}
+.game-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+  background: var(--season-card, #1e293b) !important;
+}
+.game-card:hover .card-bg-image {
+  transform: none !important;
+  opacity: .82 !important;
+}
+.card-bg-image { opacity: .76 !important; }
+</style>
+
+<style id="remove-game-card-shadows">
+.game-card,
+.game-card:hover,
+.game-card:focus,
+.game-card:active,
+.game-card::before,
+.game-card::after,
+.game-card * {
+  box-shadow: none !important;
+  filter: none !important;
+}
+</style>
+
+<style id="final-game-card-flat-white-text">
+/* Keep game tiles completely flat in every interaction state. */
+.game-card,
+.game-card:hover,
+.game-card:focus,
+.game-card:focus-visible,
+.game-card:active,
+.game-card:focus-within,
+.game-card *,
+.game-card:hover *,
+.game-card::before,
+.game-card::after,
+.game-card:hover::before,
+.game-card:hover::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+.game-card,
+.game-card *,
+.game-card:hover,
+.game-card:hover *,
+.game-card .card-title,
+.game-card:hover .card-title,
+.game-card .card-content,
+.game-card .card-content * {
+  color: #fff !important;
+}
+</style>
+
+<style id="absolute-game-card-no-shadow-white-labels">
+/* Remove the dark title fade and every card/title shadow. */
+#game-container .game-card,
+#game-container .game-card:hover,
+#game-container .game-card:focus,
+#game-container .game-card:active,
+.game-grid .game-card,
+.game-grid .game-card:hover,
+.game-card {
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+}
+#game-container .game-card::before,
+#game-container .game-card::after,
+.game-grid .game-card::before,
+.game-grid .game-card::after,
+.game-card::before,
+.game-card::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+#game-container .game-card .card-bg-image,
+.game-grid .game-card .card-bg-image,
+.game-card .card-bg-image {
+  opacity: 1 !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+#game-container .game-card .card-content,
+#game-container .game-card .card-title,
+.game-grid .game-card .card-content,
+.game-grid .game-card .card-title,
+.game-card .card-content,
+.game-card .card-content *,
+.game-card .card-title,
+.game-card:hover .card-title {
+  color: #fff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+#game-container .game-card .card-content,
+.game-grid .game-card .card-content,
+.game-card .card-content {
+  position: relative !important;
+  z-index: 5 !important;
+  background: transparent !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -1792,1149 +1936,7 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
   </header>
 
  <main id="game-container" class="game-grid">
-    
-    <button class="game-card" onclick="loadGame('/pages/1datedanger.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5XZOtxcgUdFA5fWU3p1D5nOtaY7SHEoRcCD4-p1ThMCy7LtnsYvHBmO4m&s=10" alt="datedanger">
-      <div class="card-content">
-        <span class="card-title">1 Date Danger</span>
-      </div>
-    </button>
-  
-    <button class="game-card" onclick="loadGame('/pages/3dash.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIpZVsWkI8EeUIN2hIoA0hRhvs8__Q2T9gXkETZksUbA&s=10" alt="3dash">
-      <div class="card-content">
-        <span class="card-title">3Dash</span>
-      </div>
-    </button>
-  
-    <button class="game-card" onclick="loadGame('/pages/60secondsburgerrun.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKHZdu3hP-aa5zjMHsNt0jYCUUBc9GTFjHABlyFJFCuA&s=10" alt="burgrun">
-      <div class="card-content">
-        <span class="card-title">60 Second Burger Run</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/99nights.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu64ExRfMC8um7NL9MKs5HjJXbJu4zIcuAP7cNMKL5MQ&s=10" alt="99nights">
-      <div class="card-content">
-        <span class="card-title">99 Nights In the Forest</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/academytale.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/NfWntrp4/Screenshot-2026-11-01-215016.png" alt="academytale">
-      <div class="card-content">
-        <span class="card-title">Academytale</span>
-      </div>
-    </button>
-    
-    
-     <button class="game-card" onclick="loadGame('/pages/adanceoffireandice.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGndN6p8MPxR8LNXHBwWK7d75Ciae4HeHES9AHBltaew&s" alt="fireandice">
-      <div class="card-content">
-        <span class="card-title">A Dance of Fire and Ice</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/angrybirds.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/02dfK0Hv/image-1.jpg" alt="angrybirds">
-      <div class="card-content">
-        <span class="card-title">Angry Birds</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/animalcrossing.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/kX8q5J9W/Animal-Crossing-20-Year-Annivers.jpg" alt="animalcrossing">
-      <div class="card-content">
-        <span class="card-title">Animal Crossing</span>
-      </div>
-    </button>
-  
-    <button class="game-card" onclick="loadGame('/pages/amongus.html')">
-      <img class="card-bg-image" src="https://cdn.mos.cms.futurecdn.net/XhoJ8bY6bSJMTkLmMW4BtL-650-80.jpg.webp" alt="amongus">
-      <div class="card-content">
-        <span class="card-title">Among Us</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/appel.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRtYloggy9mui0AVg94Uy68MhkJUwcNZVudlyCKMkBnA&s=10" alt="appel">
-      <div class="card-content">
-        <span class="card-title">Appel</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/asmallworldcup.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdHzzTBoPXPSGVX0khetaXUeVWhEU8Z-WuR5txrezC0A&s=10" alt="worldcup">
-      <div class="card-content">
-        <span class="card-title">A Small World Cup</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/badgame.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0FfFympVC_3s3eaWmSej6s-0U1tzh0BsPopqiRn6ZwQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bad Game</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/badmondaysimulator.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxV8T1DoSHMabpLr0lqYtGK6jgkSBpiuJfub1vjS5bCQ8L8nwQgcy0P6A&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bad Monday Simulator</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/badtimesim.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvdnNltw4IkOcHsCDBPUbP8OMTNqa9NCAo6jRMvvSDHA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bad Time Simulator</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/balatroweb/')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC2MWbFAk0MUqxwVl1tpBH4nWKexZGlzLK77MNpXTGJQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Balatro</span>
-      </div>
-    </button>
-
- <button class="game-card" onclick="loadGame('/pages/baldisbasics.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7j_6IdCu6yMepH1zOKKcIKuArItrF3s-hrRdZgd5B3g&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Baldi's Basics</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/basketballbros.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMVDLEUnLSZh-5pSoCIndaptCcqLNrDjfp36TSfRm2SA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Basketball Bros</span>
-      </div>
-    </button> 
-    
-        <button class="game-card" onclick="loadGame('/pages/basketballstars.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHPzrznYD0vNYK_o8l_QxspBc3YOHvrcB-NnaVvI2Mbw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Basketball Stars</span>
-      </div>
-    </button> 
-       
-       <button class="game-card" onclick="loadGame('/pages/basketrandom.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIwQmUUVP5n21AbRS70y69ZyYT9dAZWREbwmmQE1hrvA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Basket Random</span>
-      </div>
-    </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/BERGENTRUCK201x.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwQ_2coHUi-jzX1Ptxle2IeSkARO9ZlHtJ522HNbc02Q&s" alt="">
-      <div class="card-content">
-        <span class="card-title">BERGENTRUCK201x</span>
-      </div>
-    </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/bfdia5b.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqXHtDsunxTHvKSGv-ZikZmf6gadTZBj_wgslBeCKzxw&s=100" alt="">
-      <div class="card-content">
-        <span class="card-title">BFDIA 5B</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/bindingofisacclamb.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpfcKGYhiiisRygZ_jFBKS0wnuHu1XB02_rJ8OGA7cYQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Binding of Isacc: Wrath of the Lamb</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/bindingofisacclambeternal.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/9QdtQMwL/The-Binding-of-Isaac-Wot-L-(v1.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Binding of Isacc: Wrath of the Lamb Eternal Edition</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/bitlife.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF8kuicJcK0cWR0Ry-_5IMwdrwq_ka7TgTX508jtCHbA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">BitLife</span>
-      </div>
-    </button>
-    
-      <button class="game-card" onclick="loadGame('/pages/bladeball.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTss7LJYyaY5KKyFI3R055BiSSeQH6EBjx30BeGGRoIFQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Blade Ball</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/blockblast.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMsMN2hxRbVpkOL7-vJLBrQqWEO5_H0C53gbKc7RlJ6g&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Block Blast</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/blockysnakes.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiWQAdVi0XWVVopazYjCKoRzdkvM4PAoRwy2bXTllOGQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Blocky Snakes</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/bloodmoney.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIvySdii0iiZJr6lTWt3viUdt8DpHSYf3rl8vOmch2Yw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloodmoney</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloonstd1.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGctUq_jnQCIbJdB8ZSFDUGGmBaK_HdW60N6Y0Qaa1YA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloons Tower Defense</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloonstd2.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/26F0Q0LH/cover-1638358840555.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloons Tower Defense 2</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloonstd3.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/8zcDsfJz/bloons3-1714172823739.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloons Tower Defense 3</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloonstd4.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/J4hkxpBm/SI-DSi-Ware-Bloons-TD4-image1600w.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloons Tower Defense 4</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloonstd5.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/3rqtg0kw/f3b35c4de43eb2a84076fdf0833184fdca451ac2d7d8d3410bbc4846a51abf50.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloons Tower Defense 5</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/bloxorz.html')">
-      <img class="card-bg-image" src="https://www.coolmathgames.com/sites/default/files/Bloxorz_OG-logo.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Bloxorz</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/boomslingers.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQasww08bfMJ2LRrGJGjuPLtgkhCRK09xwOTSjc9bTsbVN6MH0ykbrjylu2Ts2LOW1mRKe3XR1UqCGXXLkq1kt05Req5bc7mnQO4tQ9K_s&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Boom Slingers</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/bossslayer.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLipDnvYhzcNG-XY1tCQM2XvlQDXSwPIk-ytfkSFdu7g&s=10" alt="Among Us cover art">
-      <div class="card-content">
-        <span class="card-title">Boss Slayer</span>
-      </div>
-    </button>
-  
-    <button class="game-card" onclick="loadGame('/pages/bouncemasters.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREvekW_B9LKdjhWGynJ028m9f8daXEjxStTlNZHL3G2gGicvainu2vH8LVSIzX6zIxfyY2sIWnxgAsKz3Q-hkSaxHhFWQeUSSXvReVz7lB&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bouncemasters</span>
-      </div>
-    </button>
-    
-      <button class="game-card" onclick="loadGame('pages/bowmasters.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzH_f2ucbsbaDpGOU2u8wZ9wBhqt7O0CnBS8vwPhX6nQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Bowmasters</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/boxingrandom.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5oL-3tjohtk204z4-wy5_cOrzb2ELwNONgRQw9oz1zg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Boxing Random</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/brawlstars.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKT44rf5hSZYS1yKk4S725ckf3TxEQEi84XyXPy6_dUw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Brawl Stars</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/cactusmccoy.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/YT-jhiU5mKM/maxresdefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Cactus McCoy</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/cactusmccoy2.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/Hkxh5g4f/icn-heroimage.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Cactus McCoy 2</span>
-      </div>
-    </button>
-    
- <button class="game-card" onclick="loadGame('/pages/capuchin.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA22cF80G9wRTYxnjuQ4_WtSc86Xgs_E5LwVUtkLu2EA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Capuchin</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/clashofvikings.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/hvH32kjH/image.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Clash of Vikings</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/cloverpit.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/J4JSWdRz/Clover-Pit-Key-Art-1920x1080.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">CloverPit</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/cookieclicker.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrUUCxiiXHPOmXEp8bwSvxKgM9gJVLndp35RnvKK9LIg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Cookie Clicker</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/cuphead.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQREOmHh1YCCZSA5KOe6f4Lz9cxshHep-Cqtaz5Hj_AYA&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Cuphead</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/deathrun3d/')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOxrxNKwP5JLHvXfKA6CAorZSeC_5ba1SNkuyix-kLHg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Death Run 3D</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/deltarune.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuJ6GFCAumszl8W_IC0g3B5T_wsJFVqjMNZCNzNynbQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Deltarune</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/deltatraveler.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ6WunTQBBfEG2V2LeNA6cAonQJ5rvG511yhCLsWxOTQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Deltatraveler</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ddlc.html')">
-      <img class="card-bg-image" src="https://upload.wikimedia.org/wikipedia/en/7/7c/Doki_Doki_Literature_Club_Cover.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" alt="">
-      <div class="card-content">
-        <span class="card-title">Doki Doki Literature Club</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/doodlejump.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJMFHTYDgLhbMj4Exl2A3hTtlemyV4ATu90RaxxU344g&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Doodle Jump</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/dbzdevolution.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEd1bwyUmMScW1vJYG1HSMDtj7IrNXOvz4X4GmvC2Hw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Dragon Ball Devolution</span>
-      </div>
-    </button>
-    
-        
-    <button class="game-card" onclick="loadGame('/pages/dborgins.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/pLxKyDpw/6-1-97149-13.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Dragon Ball: Orgins</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/dborgins2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZNP04-O4Vs7ujZXcM9ekxjCjyLG_qcuedo5szb1g-hg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Dragon Ball: Orgins 2</span>
-      </div>
-    </button>
-
-      <button class="game-card" onclick="loadGame('/pages/dragonvsbricks.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG3n7tG90-Vsbjk5IIYzYuDJN3Zbv3EyCzac0zoEeVKw&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Dragon vs Icy Bricks</span>
-      </div>
-    </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/drawclimber.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsTKLd74hGQQ-diBapd98PunPo61OUC8bxcb7IYcqDPQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Draw Climber</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/driftboss.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/85GvDOJv21k/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAUuFRvX1ktvtlyueMCisTMHHYZWA" alt="">
-      <div class="card-content">
-        <span class="card-title">Drift Boss</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/drivemad.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzfoWjRroSnUUWDS3m3-vMSufTekaJnLcKCOMWRxXsBCGF_JNgvoM-keR9jRipsdhp-_GeiBeXflhOdkUrpHXF-oN-nxJmqfRoTZodUT9W&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Drive Mad</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ducklife.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHaypThZbA9YnerLj_Elv3sKQc6S_thh50xZqB5EeS5PlSYzCUH77wIydX&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Duck Life</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ducklife2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIQ_BufY__6sAuuqoYTQFR75m0wXh0SkX76tgz5zlBaA&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Duck Life 2</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ducklife3.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBM5fEGiVxRqbyLi5UDkfNH7CLmJip3nk7GyuVyi_KqQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Duck Life 3</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ducklife4.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/DZgTz9Xr/duck-life-4-classic-101f2.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Duck Life 4 Classic</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ducklife5.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcPuOEbk9hbkpiGbg0Q6cHUbefkw1ymE0_RKVLSimiuQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Duck Life 5</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/escaperoad.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/gjphGfW5/escape-road-asm-16x9-cover-metadata-none-quality-100-width-1200-height-630-fit-crop.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Escape Road</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fireboyandwatergirl.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/05DzxmRN/fireboy-and-watergirl-1-forest-temple-3.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Fireboy And Watergirl</span>
-      </div>
-    </button>
-   
-    <button class="game-card" onclick="loadGame('/pages/fnaf1.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXzh4krVDvdfMayf3bO_9yXHEODyziQ1NaxyY6XOYWww&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fnaf2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR7nb9ZfIfJQ2dyesd3VHrZylIJM_sKo2wLfTZ1jxo4w&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's 2</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fnaf3.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ImkB1s1ujIBeWn2rSSfIVdCCxSdiRZShi8QloSMGZA&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's 3</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fnaf4.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/pd064GLd/header.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's 4</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fnaf5.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/WbPXWLwH/header.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's 5: SL</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('./pages/fnaf6.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLKwRfvh3NyJ0ZE0AtFt-eBp9rfN899dMlPOVrh4HNRQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Five Nights At Freddy's 6: PS</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/flyinggorilla.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDSzGlGau7ZmAf12ocF1G_8w_Sd5dSU35K8L1Ycu43u1G1UFYvtdRoG7Ws&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Flying Gorilla</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/fnafworld.html')">
-      <img class="card-bg-image" src="https://upload.wikimedia.org/wikipedia/en/f/f8/FNAFWorldlogo.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" alt="">
-      <div class="card-content">
-        <span class="card-title">FNAF World</span>
-      </div>
-    </button>
-
-   <button class="game-card" onclick="loadGame('/pages/footballbros.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQYlmrC42odRXckLMPi4KJybqBX9qyfhKlIn2REuNR-Q&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Football Bros</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fortzone.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/E_duOab1e84/maxresdefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Fortzone Battle Royale</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/fnf.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmmjEx0-A8iAdSOt9Q5og-RJpiNc31Mtg5SX_dUaENRQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Friday Night Funkin</span>
-      </div>
-    </button>
-
-      <button class="game-card" onclick="loadGame('/pages/fnfbfdi26.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgYGgVQtk1ctpG6Jq3rWSXY-2CWthdRlgbi9tifGRPLw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">FNF: BFDI 26</span>
-      </div>
-    </button>   
-
-     <button class="game-card" onclick="loadGame('/frontwars.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO_HNT6OJOsoomUqzMwajQVNCHCzeOytsqEKXKcGK-Aw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Frontwars.io</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/roaringknightremake.html')">
-      <img class="card-bg-image" src="https://trampoline.turbowarp.org/thumbnails/1197449054" alt="">
-      <div class="card-content">
-        <span class="card-title">Full Roaring Knight Remake</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/getyoked.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/YqJ3qfd3/0eezqm.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Get Yoked</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/webdashers.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4ehTwxBPoyuDolqk-q5Z5irrfIVlT9Tuw1SVLVeXPbw&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Geometry Dash</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/geometrydashlite.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVbML9JmSzlecUBvfAHecC-pP1Qf1WpoVRR3X3jFZLSQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Geometry Dash Lite</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/gladihoppers.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/c49QxCkW/maxresdefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Gladihoppers</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/googlebaseball.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/NFg1Bbnd/image.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Google Baseball</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/gtag/index.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/y3bR3s546CU/maxresdefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Gorilla Tag</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/granny.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Bf8t68Ck6HyAmMwBe-ACysAm038YdlunxrShtxFOmQ&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Granny</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/gta.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHSgulnD8elB6sccLSirlS4VoNAFffE-TK5EyjS8_OBw&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Grand Theft Auto</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/gta2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrBu3uKPOZgI9D2G1-gVFtbqLMAt4ewJG3QRIUJDJ5JQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Grand Theft Auto 2</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/gtavice.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxhKP6doUTzfXqmFOfw8I9ST4jc4mC79DAbbcPOAW5mA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Grand Theft Auto: Vice City</span>
-      </div>
-    </button>
-      
-    <button class="game-card" onclick="loadGame('/pages/gunspin.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQsVS-xlT6ydL46Q2kUooqvceAtGpL62S2PmaOSjJT-g&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Gunspin</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/gswitch3.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9O4jyHs_3-Fmp4ZvvRcPb2GlfVvn2NfAnMTnjb_Nq-Q&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">G-Switch 3</span>
-      </div>
-    </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/gswitch4.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ5rJVknbTPQR86tTSp7MOsF0badorrmqCZt7M_aM16Q&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">G-Switch 4: Creator</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/helixjump.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/P5bTSy9k/71MZwja-YPXL.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Helix Jump</span>
-      </div>
-    </button>
-
-      <button class="game-card" onclick="loadGame('/pages/karlson2d.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQphGX-ecOr_qiPWd5mY9WJ0Uf-AdXnWmgk7IsAo3WzRw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Karlson 2D</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/lightnerslive.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ89WrKads1_0Hc15SDuHVtKEXPYU7hfRUhwo3Bv2_viw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Lightner's Live</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/minecraft.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/wBM2gv0W/XCe-BJU.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Minecraft 1.8.8</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/dylanclient.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/tgJkpT2d/XCe-BJU2.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Minecraft 26.3</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/motox3m.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6MY8j-zwIfhdFaLJEQxu1sUlwzM4ZJ9tU6kcpEvZVCw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Moto X3M</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/motox3m2.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/GFKzn0KoLTw/maxresdefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Moto X3M 2</span>
-      </div>
-    </button>
-    
-      <button class="game-card" onclick="loadGame('/pages/myteardrop.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwCXQbE-ScXEHWQRjiXeYRsE5x6cnYGKWlh7UKMlvAnA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">myTeardrop</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/classic/')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZvCW10RMwHGphf1rnL3998t8OuVBaXXXCOEnuSlk54msgVMgcLRrJk3Y&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Noomicheems</span>
-      </div>
-    </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/noomiclone/')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEgHaMlP6tkXoyWs_jDzay0YAwUtjnEIlssRu7RZvK6g&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Noomiclone</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/omegasans.html')">
-      <img class="card-bg-image" src="https://uploads.scratch.mit.edu/get_image/project/101076511_480x360.png" alt="">
-      <div class="card-content">
-        <span class="card-title">OmEgA Sans</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/paperio.html')">
-      <img class="card-bg-image" src="https://play-lh.googleusercontent.com/h4OAd4kgLOR9q9s3Fh0N_k4rX_jy7svTHmohKJD06p6xLKV5DBzB06n6AnrLfK-YvNehhvZjTji2SYOdhxz4gaM" alt="">
-      <div class="card-content">
-        <span class="card-title">Paper.io</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/peopleplayground.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/cJ0j0Z4C/peopleplayground.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">People Playground</span>
-      </div>
-    </button>
-
-      <button class="game-card" onclick="loadGame('/pages/pvz.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW9g6sij6hyM4ErHZ69Zgw1JDuoiDVmgFM9ZC0C8kSRg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Plants Vs. Zombies</span>
-      </div>
-    </button>
-    
-      <button class="game-card" onclick="loadGame('/pages/polytrack/')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjYzMQs7W03rtnywfHz-vm3w8508Xxw3dm1AIvZgWKA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Polytrack</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/qwop.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8NaFCV2EDypMk_wlTn2DO6TJA-2djFM50IwpUfQlclg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">QWOP</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ragdollarchers.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTuMzRXkXdEsuZkKlf9SW-jE1JrbM_Dsq7WpS5HAroyw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Ragdoll Archers</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ragdollhit.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG6IZwu6mNk4M1oGcDvpswR7XvC2Qdat0DUkv_kWdTgw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Ragdoll Hit</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ragdollio.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfpULC82FnP7CyFGP3klgUwIez-Ps2cNBMqUcI8aY4IA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Ragdoll.io</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/redball4vol1.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUsqPNajCYSkuAd8IoxZHqILPHCmbmyGdoHF9OPhBuLA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Red Ball 4</span>
-      </div>
-      </button>
-
-      <button class="game-card" onclick="loadGame('/pages/retrobowl.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3wel7D7jRaCMHP9nec2Ku_hSoWBvar-t4uZafouttg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Retro Bowl</span>
-      </div>
-      </button>
-
-      <button class="game-card" onclick="loadGame('/pages/retrobowlcollege.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GutAJgdRK1g7RS29rfSjaBGE4mEArFaRBt5FnCXPGQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Retro Bowl College</span>
-      </div>
-      </button>
-
-       <button class="game-card" onclick="loadGame('/roblox.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb7ZTp9qfyyjcOKpkQRa5K6PbDGytYp0X_sMu52zxExA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Roblox</span>
-      </div>
-      </button>
-    
-        <button class="game-card" onclick="loadGame('/pages/sandboxels.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmdbmkJi-w1k874YKEKRMPjcfql5hfCN94D_GSQuwYRA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sandboxels</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/sandtris.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFW9M4mEyM8O9omsEgWO1IRXM6nI3MKgFtsAk5mQPGdA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sandtris</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/skyriders.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTZoHLcVOvkxg74bKS7HRJkAEk_3DRAefED2xx5A9jCQ&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Sky Riders</span>
-      </div>
-    </button>
-   
-    <button class="game-card" onclick="loadGame('/pages/slitherio.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfkJQPCJe9dp2D2YAIlYBmvQJ2xF1KL8jBhlvWqe3aBjo3JBAqwxgt8oqmfkszW02FG8aY-ACX1SjyAqtCLBPC2u2KVDAMsj4RloTo4us&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Slither.io</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/slimerancher.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzmG4EabbmmDSP207N_1bBg__xCZBNW42V1kLa3BEAMQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Slime Rancher</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/slope.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCRSORt7l9G07aW0QmsuJyOAiH-sdHxnLhV8JzPG-oZQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Slope</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/snake.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/0NyjkF5z/image.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Snake</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/snowballio.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/pTsy5PX4/snowballio.webp" alt="">
-      <div class="card-content">
-        <span class="card-title">Snowball.io</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/snowrider3d.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiyu1hc_ZeY6_Wdyy66XLMT2d2OtHsBK-c1JVUK1cDb773GpW-qKeoxdiOYsunG5Oda-3Wx29FcRa_3ec9bq4-xNuaSnE7jG6AJ0ARhnE&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Snow Rider 3D</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/soccerrandom.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_AvWf3HaIr_uEr3XL5z4zjedB1zCxQZ82Dlw-VJhfGg&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Soccer Random</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/solarsmash.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6-3pyL3bXxT6W0PZJOywm2pSMC0SdPlCf-oSdsp4PdCnm3EYx0G7PSCMMgVHZc-20dsWcTAXogVHs9wJelOov1JVWDJFU_8TmejUtXyZe5A&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Solar Smash</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/sonicmania.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VPhG7tgRXBNhzWnL_QqAICyDyejA63Y_GPfbgM4oRQ&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Sonic Mania</span>
-      </div>
-    </button>
-    
-          <button class="game-card" onclick="loadGame('/pages/sonicroboblast2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzC9z-PxTtMJttvV_LJX6SG1ps3AvxMHJZZqz2W2LLeQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sonic Robo Blast 2</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/sonicthehedgehog.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz6IR8VLMs2kmz1KlvtWIfC_Bcprl72h8S8PQgAEflA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sonic The Hedgehog</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/sonicthehedgehog2.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF205X-rP8EJSxemRvtXaYSVoGirj90RJ-UnZWp-KPeA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sonic The Hedgehog 2</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/sonicthehedgehog3.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMjU9Oj-74jpy7XjuQwQGOUaruV_IvJSmNM-AImUkxIg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Sonic The Hedgehog 3</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/spacewaves.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/g04vs5c3/pad-screenshot-0.webp" alt="">
-      <div class="card-content">
-        <span class="card-title">Space Waves</span>
-      </div>
-    </button>
-
-  <button class="game-card" onclick="loadGame('/pages/spearofjoestice.html')">
-      <img class="card-bg-image" src="https://uploads.scratch.mit.edu/get_image/project/1394579824_480x360.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Spear of Joestice</span>
-      </div>
-    </button>
-
-       <button class="game-card" onclick="loadGame('/pages/speedstars.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTabUHquDz3DLzp4KkMb46urOggIuqFD2s2nkFPg8Yk4Q&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Speed Stars</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/shellshockers.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYULVDR41n1_c5Dzk1e51rQmJaiPQAIkHVAhSWM8VEuA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Shell Shockers</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/soccerbros.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKqdzBoRbsJJNY_8cfi_FRvpzEo0_0Ag-6bijmbbwXpw&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Soccer Bros</span>
-      </div>
-    </button>
-    
- <button class="game-card" onclick="loadGame('/pages/wheelielife/')">
-      <img class="card-bg-image" src="https://i.postimg.cc/Dzx1cVh7/3d4f4354.webp" alt="">
-      <div class="card-content">
-        <span class="card-title">Soflo Wheelie Life</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/stickmanduel.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/RC33nMFZ/Banner-Supreme-Duelist-Stickman.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Stickman Duel</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/stickmanhook.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScWCtZy6g2G1HRGtxAwl8wZTC9dPyA1d78noiBfUfMxA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Stickman Hook</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/stickwar.html')">
-      <img class="card-bg-image" src="https://m.media-amazon.com/images/I/81qP2v+zOfL.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Stick War Legacy</span>
-      </div>
-    </button>
-    
-      <button class="game-card" onclick="loadGame('/pages/stickwithit.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBmbepzyR_1k6dg34ozXvC1_wS3fwj3XmKg--OC76e5Q&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Stick With It</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/subwaysurfers')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE3DLoerj8_xDBOq1hlOtO0lYuTCxMaQy1xqWw-aiULQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Subway Surfers</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/superhot.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc89xd7dwRhTIs8c6o9pWAYRRTvYpasF0BhLmpL8niUQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Superhot</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/survivalrace.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc89xd7dwRhTIs8c6o9pWAYRRTvYpasF0BhLmpL8niUQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Survival Race</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/survivorio.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZ1m8dOO4QKvL3JJ-XsywobaPaa_d8adaF8aPNnxpPrg&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Survivor.io</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/taproad.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/ydxcJVQr/tap-road-game-banner-taproad1.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Tap Road</span>
-      </div>
-    </button>
-    
-       <button class="game-card" onclick="loadGame('/pages/tinyfishing.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmNDVbJi83--xTdWs8c67l4xb8HGL1rqn-elQRE2awnQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Tiny Fishing</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/terraria.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTiqIKoD1CGru8EvYZIsU9qvzgSaPwMy9ZpzKSFrFdLQ&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Terraria</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/totm.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf67LEDtEAZ0TmaxYNvlXqAna8EMn3iwEE1yi5hlfDkA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Tomb of the Mask</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/ucn.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/qqSC5pK1/header.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Ultimate Custom Night</span>
-      </div>
-    </button>
-   
-    <button class="game-card" onclick="loadGame('/pages/ultrakill.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWvdbbQqfs_gbiRBXPgdRsM8yO-ZhztvPhiOt7YcmIdA&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Ultrakill</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/undertale.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXgY44UOvfNxbiqQ7Ebk3yqY6LSmhRRmIwd-rgn2amAQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Undertale</span>
-      </div>
-    </button>
-
-        <button class="game-card" onclick="loadGame('/pages/undertaleicebound.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVNKpneBCnCr8V_dOvqQu25yB6p2ylZfJF4ph4Kvc1hw&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Undertale Icebound</span>
-      </div>
-    </button>
-   
-    <button class="game-card" onclick="loadGame('/pages/undertaleyellow.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqB80EqG5kUncyn-05EZOWWu9lOH9GcR1p8BWjCss4LA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Undertale Yellow</span>
-      </div>
-    </button>
-
-     <button class="game-card" onclick="loadGame('/pages/undertaleyellowsoj.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgOGLsDXGyCn2xL-RQnn4akuKnhk6fP94xA3YVwF1FBA&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Undertale Yellow: Shades of Justice</span>
-      </div>
-    </button>
-      
-    <button class="game-card" onclick="loadGame('/pages/vex3.html')">
-      <img class="card-bg-image" src="https://www.coolmathgames.com/sites/default/files/Vex3_OG-logo.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Vex 3</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/vex4.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/9XSF684B/vex-4.png" alt="">
-      <div class="card-content">
-        <span class="card-title">Vex 4</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/vex5.html')">
-      <img class="card-bg-image" src="https://i.postimg.cc/pd6LPqGR/vex-5.webp" alt="">
-      <div class="card-content">
-        <span class="card-title">Vex 5</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/vex6.html')">
-      <img class="card-bg-image" src="https://i.ytimg.com/vi/lxsUd3FvsQY/sddefault.jpg" alt="">
-      <div class="card-content">
-        <span class="card-title">Vex 6</span>
-      </div>
-    </button>
-
-    <button class="game-card" onclick="loadGame('/pages/vollyrandom.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfRwno0CGwwaggceLloMejvdbU4A-tu3IQd1C2ftk1eg&s" alt="">
-      <div class="card-content">
-        <span class="card-title">Volley Random</span>
-      </div>
-    </button>
-    
-    <button class="game-card" onclick="loadGame('/pages/whg.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBO4goyZrt_Ak0YwAApNs_co3uczaNl9uIXzStwg8aew&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">World's Hardest Game</span>
-      </div>
-    </button>
-    
-     <button class="game-card" onclick="loadGame('/pages/yandresimulator.html')">
-      <img class="card-bg-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9iLwTwJoZQG86IiAt2Po7fA-wUVdt860HWzu1-xoQJQ&s=10" alt="">
-      <div class="card-content">
-        <span class="card-title">Yandere Simulator</span>
-      </div>
-    </button>
+    <div id="loading-games" style="grid-column:1/-1;text-align:center;padding:40px;opacity:.6">Loading games…</div>
   </main>
 
   <div id="no-results" class="no-results-msg">
@@ -2943,10 +1945,10 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
 
   <section id="game-screen-wrapper" class="full-screen-wrapper">
     <div id="game-controls" class="corner-bottom-middle">
-      <button id="close-game-btn" class="close-game-btn" style="position: static;" onclick="closeGame()">✕ Close</button>
-      <button id="fullscreen-game-btn" class="close-game-btn" style="position: static; font-size: 1.2rem; padding: 10px 12px;" onclick="toggleFullScreenGame()">⛶</button>
+      <button id="close-game-btn" class="close-game-btn" onclick="closeGame()">✕ Close</button>
+      <button id="fullscreen-game-btn" class="close-game-btn" style="font-size: 1.2rem; padding: 10px 12px;" onclick="toggleFullScreenGame()">⛶</button>
     </div>
-    <div id="game-frame-container" style="width: 100%; height: 100%;"></div>
+    <div id="game-frame-container" style="position:relative;width:100%;height:100%;overflow:hidden;"></div>
   </section>
 
   <script>
@@ -3167,73 +2169,83 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
       filterGames();
     }
 
-    function loadGame(url) {
+    let originalDocumentTitle = document.title;
+
+    function clearRemoteGame() { /* games run in a sandboxed iframe — nothing to inject or clean up */ }
+
+    let currentBlobUrl = null;
+
+    async function loadGame(url) {
       if (!url) return;
-      document.getElementById('game-frame-container').innerHTML = `<iframe src="${url}" allow="xr-spatial-tracking; fullscreen; accelerometer; gyroscope" style="width:100%; height:100%; border:none;" title="Active Game Frame"></iframe>`;
-      document.getElementById('game-screen-wrapper').style.display = 'block';
+      url = resolveUrl(url);
+      const wrapper = document.getElementById('game-screen-wrapper');
+      const container = document.getElementById('game-frame-container');
+
+      // stop any currently running game immediately
+      container.querySelectorAll('iframe').forEach(f => { try { f.src = 'about:blank'; } catch(e){} });
+      container.innerHTML = '';
+      if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
+
+      wrapper.style.display = 'block';
       document.body.classList.add('game-active');
-    }
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font:16px system-ui">Loading game…</div>';
 
-    function closeGame() {
-      document.getElementById('game-frame-container').innerHTML = '';
-      document.getElementById('game-screen-wrapper').style.display = 'none';
-      document.body.classList.remove('game-active');
-    }
+      let blobUrl;
+      try {
+        // jsDelivr serves .html as text/plain so we must fetch it and re-serve as a blob
+        const res = await fetch(url, { cache: 'force-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        let html = await res.text();
 
-    function launchGeekedCloaker() {
-      toggleMenu();
+        // Inject a <base> tag so relative asset paths resolve against the CDN URL
+        const baseTag = '<base href="' + url + '">';
+        if (/<head[\s>]/i.test(html)) {
+          html = html.replace(/(<head[\s>][^>]*>)/i, '$1' + baseTag);
+        } else if (/<html[\s>]/i.test(html)) {
+          html = html.replace(/(<html[\s>][^>]*>)/i, '$1<head>' + baseTag + '</head>');
+        } else {
+          html = baseTag + html;
+        }
 
-      const originalTitle = document.title;
-      const originalFaviconNode = document.querySelector("link[rel*='icon']");
-      let originalFaviconHref = originalFaviconNode ? originalFaviconNode.href : "";
-
-      if (originalFaviconHref && !originalFaviconHref.startsWith('http') && !originalFaviconHref.startsWith('data:')) {
-        const tempAnchor = document.createElement('a');
-        tempAnchor.href = originalFaviconHref;
-        originalFaviconHref = tempAnchor.href;
-      }
-
-      const cleanWindow = window.open('about:blank', '_blank');
-      
-      if (!cleanWindow) {
-        alert("Popup blocker active! Please allow popups to open the cloaked site.");
+        const blob = new Blob([html], { type: 'text/html' });
+        blobUrl = URL.createObjectURL(blob);
+        currentBlobUrl = blobUrl;
+      } catch (err) {
+        container.innerHTML = '<div style="padding:28px;color:white;font:15px system-ui;line-height:1.5">' +
+          '<h2 style="margin-top:0">Could not load this game</h2><p>' +
+          String(err.message).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) +
+          '</p></div>';
         return;
       }
 
-      let rawCodeString = document.documentElement.outerHTML;
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'width:100%;height:100%;border:none;background:#000;display:block;';
+      iframe.setAttribute('allow', 'autoplay; fullscreen; pointer-lock; xr-spatial-tracking; accelerometer; gyroscope');
+      iframe.setAttribute('allowfullscreen', '');
+      // Note: allow-same-origin omitted intentionally so the blob-origin iframe
+      // cannot access the parent page's DOM. Games load sub-resources via the <base> tag.
+      iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock allow-presentation allow-same-origin');
+      iframe.src = blobUrl;
+      container.innerHTML = '';
+      container.appendChild(iframe);
+      loadGameControlsCorner();
+    }
 
-      cleanWindow.document.body.style.margin = '0';
-      cleanWindow.document.body.style.padding = '0';
-      cleanWindow.document.body.style.overflow = 'hidden';
-      cleanWindow.document.body.style.backgroundColor = '#121212';
-
-      cleanWindow.document.title = originalTitle;
-      if (originalFaviconHref) {
-        const targetFavicon = cleanWindow.document.createElement('link');
-        targetFavicon.rel = 'icon';
-        targetFavicon.type = originalFaviconNode.type || 'image/x-icon';
-        targetFavicon.href = originalFaviconHref;
-        cleanWindow.document.head.appendChild(targetFavicon);
-      }
-
-      const frameContainer = cleanWindow.document.createElement('iframe');
-      frameContainer.style.position = 'fixed';
-      frameContainer.style.top = '0';
-      frameContainer.style.left = '0';
-      frameContainer.style.width = '100vw';
-      frameContainer.style.height = '100vh';
-      frameContainer.style.border = 'none';
-
-      const scriptFreeBlob = new Blob([rawCodeString], { type: 'text/html;charset=utf-8' });
-      frameContainer.src = URL.createObjectURL(scriptFreeBlob);
-
-      cleanWindow.document.body.appendChild(frameContainer);
+    function closeGame() {
+      const container = document.getElementById('game-frame-container');
+      container.querySelectorAll('iframe').forEach(f => { try { f.src = 'about:blank'; } catch(e){} });
+      container.innerHTML = '';
+      if (currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; }
+      document.getElementById('game-screen-wrapper').style.display = 'none';
+      document.body.classList.remove('game-active');
+      document.title = originalDocumentTitle;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       generateCategories();
       loadGameControlsCorner();
     });
+
 
     function toggleFullScreenGame() {
       const gameWrapper = document.getElementById('game-screen-wrapper');
@@ -3265,6 +2277,66 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
         gameControls.style.display = "flex";
       }
     }
+    // ===== Load games from math.json (jsDelivr) =====
+    const MATH_JSON = 'https://cdn.jsdelivr.net/gh/Humid-Mouse48/mathassignments@main/math.json';
+    const CDN_BASE  = 'https://cdn.jsdelivr.net/gh/Humid-Mouse48/mathassignments@main/';
+    // Some entries use cdn.gitdelivr.in – we rewrite those to jsDelivr so only one CDN is needed
+    const GITDELIVR = /^https?:\/\/cdn\.gitdelivr\.in\/gh\//i;
+
+    function resolveUrl(url) {
+      if (!url) return '';
+      // rewrite gitdelivr.in -> jsdelivr.net
+      if (GITDELIVR.test(url)) {
+        return 'https://cdn.jsdelivr.net/gh/' + url.replace(GITDELIVR, '').replace('/main/', '@main/');
+      }
+      if (/^https?:\/\//.test(url)) return url;
+      // relative path (no leading slash) -> resolve against CDN base
+      return CDN_BASE + url.replace(/^\.?\//, '');
+    }
+
+    function buildCard(game) {
+      const btn = document.createElement('button');
+      btn.className = 'game-card';
+      if (game.category) btn.dataset.category = game.category;
+      btn.onclick = () => loadGame(resolveUrl(game.url));
+
+      const img = document.createElement('img');
+      img.className = 'card-bg-image';
+      img.alt = game.title || '';
+      img.loading = 'lazy';
+      // field may be "image", "img", or "thumbnail"
+      img.src = game.image || game.img || game.thumbnail || '';
+      img.onerror = () => { img.onerror = null; img.src = ''; };
+
+      const content = document.createElement('div');
+      content.className = 'card-content';
+      const span = document.createElement('span');
+      span.className = 'card-title';
+      span.textContent = game.title || game.name || '';
+      content.appendChild(span);
+
+      btn.append(img, content);
+      return btn;
+    }
+
+    async function loadGames() {
+      const container = document.getElementById('game-container');
+      const loading = document.getElementById('loading-games');
+      try {
+        const res = await fetch(MATH_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const games = await res.json();
+        if (!Array.isArray(games) || !games.length) throw new Error('Empty or invalid JSON');
+        loading && loading.remove();
+        games.forEach(g => container.appendChild(buildCard(g)));
+      } catch (e) {
+        if (loading) loading.textContent = 'Could not load games (' + e.message + '). Check that math.json exists on the repo and is valid JSON.';
+        console.error('[math.html] loadGames:', e);
+      }
+    }
+
+    loadGames();
+
   </script>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/SxzwysFt/Screenshot-2026-08-21-231620-removebg-preview.png">
 
