@@ -1106,9 +1106,9 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
     say('');
     window.__authRedirect = true; // skip the "Leave site?" prompt for this redirect
 
-    // Return to this exact page on the hostname the user is currently visiting.
-    // The Supabase client on this page will process the OAuth callback.
-    const samePageRedirect = `${window.location.origin}${window.location.pathname}`;
+    // Always return to the homepage of the hostname the user is currently visiting.
+    // The Supabase client on the homepage will process the OAuth callback.
+    const samePageRedirect = `${window.location.origin}/`;
 
     try {
       const { error } = await sb.auth.signInWithOAuth({
