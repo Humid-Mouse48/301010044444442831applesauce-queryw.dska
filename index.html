@@ -1105,16 +1105,23 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   googleBtn.addEventListener('click', async () => {
     say('');
     window.__authRedirect = true; // skip the "Leave site?" prompt for this redirect
-    const { data, error } = await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        // Dynamically return to the same domain the user is currently visiting.
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
+
+    // Return to this exact page on the hostname the user is currently visiting.
+    // The Supabase client on this page will process the OAuth callback.
+    const samePageRedirect = `${window.location.origin}${window.location.pathname}`;
+
+    try {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: samePageRedirect,
+        },
+      });
+
+      if (error) throw error;
+    } catch (err) {
       window.__authRedirect = false;
-      say(error.message, 'error');
+      say(err.message || 'Google sign-in could not be started.', 'error');
     }
   });
 
