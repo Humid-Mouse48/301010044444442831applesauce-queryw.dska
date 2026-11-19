@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>eta5</title>
+<title>Fiveplay</title>
 
 <!-- Ultraviolet + BareMux (same files as the main proxy page) -->
 <script src="./uv/uv.bundle.js"></script>
@@ -36,7 +36,7 @@
 </head>
 <body>
 
-<iframe id="frame" title="eta5"
+<iframe id="frame" title="Fiveplay"
         allowfullscreen
         allow="fullscreen; autoplay; encrypted-media; clipboard-read; clipboard-write; gamepad; microphone; camera"></iframe>
 
@@ -50,7 +50,7 @@
 <script>
 (() => {
   /* ===== settings ===== */
-  const TARGET = "https://eta5.vercel.app/play";
+  const TARGET = "https://v2.fiveplay.lol/game.html?mode=sandbox&cfg=1";
   const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
   const TRANSPORT_PATHS = { epoxy: "/epoxy-transport/dist/index.mjs", libcurl: "/libcurl-transport/dist/index.mjs" };
   const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
@@ -281,12 +281,12 @@ const DEFAULT_PUBLIC_WISPS = [
           await withTimeout(setTransport(url), 15000, "Transport setup");
         } catch (e) { lastError = String(e && e.message ? e.message : e); continue; }
 
-        setStatus("Loading eta5…");
+        setStatus("Loading Fiveplay…");
         const result = await loadSite();
         if (result === "ok") { overlay.classList.add("done"); return; }
         lastError = frameErrorText() || ("Page did not load (" + result + ") via " + host);
       }
-      showFailure("Couldn't load eta5.", lastError);
+      showFailure("Couldn't load Fiveplay.", lastError);
     } catch (e) {
       showFailure("Couldn't start the proxy.", String(e && e.message ? e.message : e));
     } finally {

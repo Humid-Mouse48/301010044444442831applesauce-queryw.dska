@@ -1808,6 +1808,7 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -2169,6 +2170,111 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
       filterGames();
     }
 
+
+// GeekedGames parent-side cloud save bridge
+(() => {
+  const SUPABASE_URL = 'https://qmxzlgftdtrmqlkmythc.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_m3_Ry6pJqb8JJGu0zNxOrw_95DjdeOG';
+  const TABLE = 'game_saves';
+  const supabase = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let activeFrame = null;
+  let activeGameId = null;
+  let saveTimer = null;
+  let currentUser = null;
+
+  const safeSnapshot = (data) => {
+    const out = {};
+    if (!data || typeof data !== 'object') return out;
+    for (const [k, v] of Object.entries(data)) {
+      if (/auth|token|password|secret|session|supabase/i.test(k)) continue;
+      if (typeof v === 'string') out[k] = v;
+    }
+    return out;
+  };
+
+  async function refreshUser() {
+    if (!supabase) return null;
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      currentUser = data.user || null;
+    } catch (e) {
+      currentUser = null;
+    }
+    return currentUser;
+  }
+
+  async function fetchSave(gameId) {
+    const user = await refreshUser();
+    if (!user) return {};
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('save_data')
+      .eq('user_id', user.id)
+      .eq('game_id', gameId)
+      .maybeSingle();
+    if (error) {
+      console.warn('[GeekedGames saves] Cloud load failed:', error.message);
+      return {};
+    }
+    return safeSnapshot(data?.save_data);
+  }
+
+  async function uploadSave(gameId, snapshot) {
+    const user = currentUser || await refreshUser();
+    if (!user || !supabase) return;
+    const { error } = await supabase.from(TABLE).upsert({
+      user_id: user.id,
+      game_id: gameId,
+      save_data: safeSnapshot(snapshot),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,game_id' });
+    if (error) console.warn('[GeekedGames saves] Cloud save failed:', error.message);
+  }
+
+  function sendToGame(message) {
+    if (activeFrame?.contentWindow) {
+      activeFrame.contentWindow.postMessage(message, '*');
+    }
+  }
+
+  window.__GG_PREPARE_GAME__ = async (gameId) => {
+    activeGameId = gameId;
+    return await fetchSave(gameId);
+  };
+
+  window.addEventListener('message', (event) => {
+    if (!activeFrame || event.source !== activeFrame.contentWindow) return;
+    const msg = event.data;
+    if (!msg || msg.__geekedCloudSave !== true) return;
+
+    if (msg.type === 'ready') {
+      sendToGame({ __geekedCloudSave: true, type: 'restore', data: window.__GG_PENDING_SAVE__ || {} });
+    } else if (msg.type === 'change' && activeGameId) {
+      const snapshot = safeSnapshot(msg.data);
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => uploadSave(activeGameId, snapshot), 900);
+    }
+  });
+
+  window.__GG_SET_ACTIVE_FRAME__ = (frame, gameId, initialSave) => {
+    activeFrame = frame;
+    activeGameId = gameId;
+    window.__GG_PENDING_SAVE__ = safeSnapshot(initialSave);
+  };
+
+  if (supabase) {
+    supabase.auth.onAuthStateChange(async () => {
+      await refreshUser();
+      if (activeGameId && activeFrame) {
+        const snapshot = await fetchSave(activeGameId);
+        window.__GG_PENDING_SAVE__ = snapshot;
+        sendToGame({ __geekedCloudSave: true, type: 'restore', data: snapshot });
+      }
+    });
+  }
+})();
+
     let originalDocumentTitle = document.title;
 
     function clearRemoteGame() { /* games run in a sandboxed iframe — nothing to inject or clean up */ }
@@ -2191,20 +2297,68 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
       container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:white;font:16px system-ui">Loading game…</div>';
 
       let blobUrl;
+      let gameId = 'geekedgame:' + url.split('#')[0].split('?')[0];
+      let initialSave = {};
       try {
         // jsDelivr serves .html as text/plain so we must fetch it and re-serve as a blob
         const res = await fetch(url, { cache: 'force-cache' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         let html = await res.text();
 
-        // Inject a <base> tag so relative asset paths resolve against the CDN URL
-        const baseTag = '<base href="' + url + '">';
+        // Give each game a stable cloud-save identity based on its source URL.
+        initialSave = await (window.__GG_PREPARE_GAME__ ? window.__GG_PREPARE_GAME__(gameId) : {});
+        const safeInitialSave = JSON.stringify(initialSave || {}).replace(/</g, '\\u003c');
+
+        // The shim is installed before the game's own scripts. It provides a
+        // localStorage-compatible store inside the opaque sandbox and relays changes.
+        const saveBridge = `<script>
+        (() => {
+          const values = ${safeInitialSave};
+          const notify = () => {
+            try { parent.postMessage({__geekedCloudSave:true,type:'change',data:Object.fromEntries(Object.entries(values))}, '*'); } catch(e) {}
+          };
+          const storage = new Proxy({}, {
+            get(_t, key) {
+              if (key === 'getItem') return (k) => Object.prototype.hasOwnProperty.call(values, String(k)) ? values[String(k)] : null;
+              if (key === 'setItem') return (k,v) => { values[String(k)] = String(v); notify(); };
+              if (key === 'removeItem') return (k) => { delete values[String(k)]; notify(); };
+              if (key === 'clear') return () => { for (const k of Object.keys(values)) delete values[k]; notify(); };
+              if (key === 'key') return (i) => Object.keys(values)[i] ?? null;
+              if (key === 'length') return Object.keys(values).length;
+              if (key === Symbol.toStringTag) return 'Storage';
+              if (typeof key === 'string' && Object.prototype.hasOwnProperty.call(values, key)) return values[key];
+              return undefined;
+            },
+            set(_t, key, value) { values[String(key)] = String(value); notify(); return true; },
+            deleteProperty(_t, key) { delete values[String(key)]; notify(); return true; },
+            ownKeys() { return Reflect.ownKeys(values); },
+            has(_t, key) { return key in values; },
+            getOwnPropertyDescriptor(_t, key) {
+              if (Object.prototype.hasOwnProperty.call(values, key)) return { enumerable:true, configurable:true, value:values[key], writable:true };
+            }
+          });
+          try { Object.defineProperty(window, 'localStorage', { configurable:true, value:storage }); }
+          catch(e) { try { window.localStorage = storage; } catch(_) {} }
+          window.addEventListener('message', (event) => {
+            const m = event.data;
+            if (!m || m.__geekedCloudSave !== true || m.type !== 'restore') return;
+            for (const k of Object.keys(values)) delete values[k];
+            Object.assign(values, m.data || {});
+            notify();
+          });
+          parent.postMessage({__geekedCloudSave:true,type:'ready'}, '*');
+        })();
+        <\/script>`;
+
+        // Inject the base URL and save shim before all game scripts execute.
+        const baseHref = url.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const baseTag = '<base href="' + baseHref + '">';
         if (/<head[\s>]/i.test(html)) {
-          html = html.replace(/(<head[\s>][^>]*>)/i, '$1' + baseTag);
+          html = html.replace(/(<head[\s>][^>]*>)/i, '$1' + baseTag + saveBridge);
         } else if (/<html[\s>]/i.test(html)) {
-          html = html.replace(/(<html[\s>][^>]*>)/i, '$1<head>' + baseTag + '</head>');
+          html = html.replace(/(<html[\s>][^>]*>)/i, '$1<head>' + baseTag + saveBridge + '</head>');
         } else {
-          html = baseTag + html;
+          html = baseTag + saveBridge + html;
         }
 
         const blob = new Blob([html], { type: 'text/html' });
@@ -2224,10 +2378,11 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
       iframe.setAttribute('allowfullscreen', '');
       // Note: allow-same-origin omitted intentionally so the blob-origin iframe
       // cannot access the parent page's DOM. Games load sub-resources via the <base> tag.
-      iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock allow-presentation allow-same-origin');
+      iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock allow-presentation');
       iframe.src = blobUrl;
       container.innerHTML = '';
       container.appendChild(iframe);
+      if (window.__GG_SET_ACTIVE_FRAME__) window.__GG_SET_ACTIVE_FRAME__(iframe, gameId, initialSave);
       loadGameControlsCorner();
     }
 
@@ -2280,18 +2435,45 @@ html[data-mode="light"] .game-card .card-title { color:#fff !important; text-sha
     // ===== Load games from math.json (jsDelivr) =====
     const MATH_JSON = 'https://cdn.jsdelivr.net/gh/Humid-Mouse48/mathassignments@main/math.json';
     const CDN_BASE  = 'https://cdn.jsdelivr.net/gh/Humid-Mouse48/mathassignments@main/';
-    // Some entries use cdn.gitdelivr.in – we rewrite those to jsDelivr so only one CDN is needed
-    const GITDELIVR = /^https?:\/\/cdn\.gitdelivr\.in\/gh\//i;
 
-    function resolveUrl(url) {
-      if (!url) return '';
-      // rewrite gitdelivr.in -> jsdelivr.net
-      if (GITDELIVR.test(url)) {
-        return 'https://cdn.jsdelivr.net/gh/' + url.replace(GITDELIVR, '').replace('/main/', '@main/');
+    // Resolve repo-relative paths and direct HTML links, including nested folders.
+    // Examples: game.html, folder/game.html, folder/subfolder/game.html,
+    // ./folder/game.html, and ../folder/game.html.
+    function resolveUrl(input) {
+      if (input == null) return '';
+      let value = String(input).trim();
+      if (!value) return '';
+
+      // Convert GitHub's HTML preview URL into a directly fetchable CDN URL.
+      let match = value.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/i);
+      if (match) {
+        return 'https://cdn.jsdelivr.net/gh/' + match[1] + '/' + match[2] + '@' + match[3] + '/' + match[4];
       }
-      if (/^https?:\/\//.test(url)) return url;
-      // relative path (no leading slash) -> resolve against CDN base
-      return CDN_BASE + url.replace(/^\.?\//, '');
+
+      // Convert raw.githubusercontent.com links (modern and legacy branch formats).
+      match = value.match(/^https?:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/(?:refs\/heads\/)?([^/]+)\/(.+)$/i);
+      if (match) {
+        return 'https://cdn.jsdelivr.net/gh/' + match[1] + '/' + match[2] + '@' + match[3] + '/' + match[4];
+      }
+
+      // Keep support for the older GitDelivr host.
+      if (/^https?:\/\/cdn\.gitdelivr\.in\/gh\//i.test(value)) {
+        value = value.replace(/^https?:\/\/cdn\.gitdelivr\.in\/gh\//i, 'https://cdn.jsdelivr.net/gh/');
+        value = value.replace(/\/main\//, '@main/');
+      }
+
+      if (/^https?:\/\//i.test(value)) {
+        try { return new URL(value).href; } catch (_) { return value; }
+      }
+
+      // Treat paths beginning with / as repository-root paths, not website-root paths.
+      value = value.replace(/^\/+/, '');
+      try {
+        // URL() correctly normalizes ./ and ../ and preserves nested directories.
+        return new URL(value, CDN_BASE).href;
+      } catch (_) {
+        return CDN_BASE + value.split('/').map(encodeURIComponent).join('/');
+      }
     }
 
     function buildCard(game) {

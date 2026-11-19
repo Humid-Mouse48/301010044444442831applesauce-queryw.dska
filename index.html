@@ -471,6 +471,70 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   background: var(--season-bg) !important;
 }
 </style>
+<style id="account-menu-styles">
+#themeMenu .set-panel[data-panel="account"] .theme-block {
+  background: linear-gradient(135deg, var(--season-panel-2), var(--season-panel) 58%, var(--season-bg)) !important;
+  border-color: var(--season-border-soft) !important;
+}
+#themeMenu .set-panel[data-panel="account"] .theme-cat { color: var(--season-text) !important; }
+.acct-status {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; margin-bottom: 10px; border-radius: 12px;
+  background: var(--season-bg); border: 1px solid var(--season-border-soft);
+  font-size: 12.5px; font-weight: 700; color: var(--season-text);
+}
+.acct-dot { width: 9px; height: 9px; border-radius: 50%; background: #7a8a84; flex: 0 0 auto; }
+.acct-status.on .acct-dot { background: var(--season-accent); box-shadow: 0 0 8px rgba(var(--season-accent-rgb), .7); }
+.acct-status.off .acct-dot { background: #ff6b6b; }
+.acct-email { font-size: 12px; color: var(--season-muted); margin: 0 2px 10px; word-break: break-all; }
+.acct-modes { display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: rgba(0,0,0,.22); margin-bottom: 10px; }
+.acct-mode {
+  appearance: none; flex: 1; padding: 7px 6px; border-radius: 10px; border: 1px solid transparent;
+  background: transparent; color: var(--season-muted); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.acct-mode:hover { color: var(--season-text); }
+.acct-mode.active { color: var(--season-accent); background: rgba(var(--season-accent-rgb), .14); border-color: var(--season-border); }
+.acct-input {
+  width: 100%; margin-bottom: 8px; padding: 9px 11px; border-radius: 10px;
+  border: 1px solid var(--season-border-soft); background: var(--season-bg);
+  color: var(--season-text); font: inherit; font-size: 13px; outline: none;
+}
+.acct-input:focus { border-color: var(--season-border); box-shadow: 0 0 0 2px rgba(var(--season-accent-rgb), .15); }
+.acct-input::placeholder { color: var(--season-muted); }
+.acct-btn {
+  appearance: none; width: 100%; padding: 9px 12px; border-radius: 10px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid var(--season-border); background: rgba(var(--season-accent-rgb), .16);
+  color: var(--season-accent); font: inherit; font-size: 12.5px; font-weight: 800;
+  transition: background .15s ease, transform .15s ease;
+}
+.acct-btn:hover { background: rgba(var(--season-accent-rgb), .26); }
+.acct-btn:disabled { opacity: .55; cursor: wait; }
+.acct-btn-ghost { background: transparent; color: var(--season-text); border-color: var(--season-border-soft); }
+.acct-btn-ghost:hover { background: var(--season-panel-hover); }
+.acct-btn-google { background: #fff; color: #1f1f1f; border-color: #fff; }
+.acct-btn-google:hover { background: #ececec; }
+.acct-btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.acct-google-logo {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex: 0 0 18px;
+}
+
+.acct-or { display: flex; align-items: center; gap: 8px; margin: 10px 0; color: var(--season-muted); font-size: 11px; }
+.acct-or::before, .acct-or::after { content: ""; flex: 1; height: 1px; background: var(--season-border-soft); }
+.acct-msg { margin-top: 10px; padding: 8px 10px; border-radius: 10px; font-size: 12px; line-height: 1.35; background: var(--season-bg); border: 1px solid var(--season-border-soft); color: var(--season-text); }
+.acct-msg.error { border-color: rgba(255,107,107,.5); color: #ffb3b3; }
+.acct-msg.ok { border-color: var(--season-border); color: var(--season-accent); }
+[hidden] { display: none !important; }
+</style>
 </head>
 <body>
 
@@ -490,6 +554,7 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
       <div class="set-tabs" role="tablist" aria-label="Settings categories">
         <button class="set-tab active" type="button" role="tab" data-tab="theme" aria-selected="true">Theme</button>
         <button class="set-tab" type="button" role="tab" data-tab="layout" aria-selected="false">Layout</button>
+        <button class="set-tab" type="button" role="tab" data-tab="account" aria-selected="false">Account</button>
       </div>
       <div class="set-panel active" data-panel="theme">
       <section class="theme-block cat-default">
@@ -540,6 +605,40 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
           </div>
         </section>
     </div>
+      <div class="set-panel" data-panel="account">
+        <section class="theme-block cat-default">
+          <div class="theme-cat">Account</div>
+          <div class="acct-status" id="acctStatus" role="status" aria-live="polite">
+            <span class="acct-dot" id="acctDot"></span>
+            <span id="acctStatusText">Checking...</span>
+          </div>
+
+          <!-- Shown when logged in -->
+          <div id="acctIn" hidden>
+            <div class="acct-email" id="acctEmail"></div>
+            <button class="acct-btn acct-btn-ghost" id="acctLogout" type="button">Log out</button>
+          </div>
+
+          <!-- Shown when logged out -->
+          <div id="acctOut" hidden>
+            <div class="acct-modes" role="group" aria-label="Sign in or sign up">
+              <button class="acct-mode active" type="button" data-mode="signin">Sign in</button>
+              <button class="acct-mode" type="button" data-mode="signup">Sign up</button>
+            </div>
+            <button class="acct-btn acct-btn-google" id="acctGoogle" type="button">
+              <img class="acct-google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="" width="18" height="18" loading="eager">
+              <span>Continue with Google</span>
+            </button>
+            <div class="acct-or"><span>or</span></div>
+            <form id="acctForm" novalidate>
+              <input class="acct-input" id="acctEmailInput" type="email" placeholder="Email" autocomplete="email" required>
+              <input class="acct-input" id="acctPassInput" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+              <button class="acct-btn" id="acctSubmit" type="submit">Sign in</button>
+            </form>
+          </div>
+          <div class="acct-msg" id="acctMsg" role="alert" hidden></div>
+        </section>
+      </div>
   </div>
 </header>
 <div class="bar-zone" id="barZone">
@@ -592,6 +691,7 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
 </script>
 
 <script>window.addEventListener("beforeunload", (event) => {
+  if (window.__authRedirect) return; // let Google sign-in redirect without the "Leave site?" prompt
   event.preventDefault();
   event.returnValue = true;
 });</script>
@@ -910,6 +1010,111 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   zone.addEventListener('mouseenter', () => setNear(true));   // also works over the iframe
   zone.addEventListener('mouseleave', () => setNear(false));
   document.addEventListener('mouseleave', () => setNear(false));
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(() => {
+  // ====== SUPABASE CONFIG ======
+  const SUPABASE_URL = 'https://qmxzlgftdtrmqlkmythc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_m3_Ry6pJqb8JJGu0zNxOrw_95DjdeOG'; // Supabase dashboard > Project Settings > API > "anon public" key
+  // =============================
+
+  const $ = id => document.getElementById(id);
+  const statusBox = $('acctStatus'), statusText = $('acctStatusText');
+  const inView = $('acctIn'), outView = $('acctOut'), emailLabel = $('acctEmail');
+  const form = $('acctForm'), emailInput = $('acctEmailInput'), passInput = $('acctPassInput');
+  const submitBtn = $('acctSubmit'), googleBtn = $('acctGoogle'), logoutBtn = $('acctLogout'), msg = $('acctMsg');
+  let mode = 'signin';
+  let sb = null;
+
+  // The settings panel changes height between tabs, so ask the menu to re-position itself.
+  const reflow = () => setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
+
+  function say(text, kind) {
+    if (!text) { msg.hidden = true; msg.textContent = ''; msg.className = 'acct-msg'; }
+    else { msg.hidden = false; msg.textContent = text; msg.className = 'acct-msg ' + (kind || ''); }
+    reflow();
+  }
+
+  function render(session) {
+    const user = session && session.user;
+    statusBox.classList.toggle('on', !!user);
+    statusBox.classList.toggle('off', !user);
+    statusText.textContent = user ? 'Logged in' : 'Not logged in';
+    inView.hidden = !user;
+    outView.hidden = !!user;
+    emailLabel.textContent = user ? (user.email || 'Signed in') : '';
+    if (user) say('');
+    reflow();
+  }
+
+  function setMode(next) {
+    mode = next;
+    document.querySelectorAll('.acct-mode').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+    passInput.autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
+    say('');
+  }
+
+  document.querySelectorAll('.acct-mode').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  document.querySelector('.set-tab[data-tab="account"]').addEventListener('click', reflow);
+
+  if (!window.supabase || SUPABASE_ANON_KEY.startsWith('PASTE_')) {
+    render(null);
+    statusText.textContent = 'Not set up';
+    say(!window.supabase ? 'Could not load Supabase.' : 'Add your Supabase anon key in index.html to turn on accounts.', 'error');
+    submitBtn.disabled = googleBtn.disabled = true;
+    return;
+  }
+
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const redirectTo = location.origin + location.pathname;
+
+  sb.auth.getSession().then(({ data }) => render(data.session));
+  sb.auth.onAuthStateChange((_event, session) => render(session));
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = emailInput.value.trim(), password = passInput.value;
+    if (!email || !password) return say('Enter your email and password.', 'error');
+    if (mode === 'signup' && password.length < 6) return say('Password must be at least 6 characters.', 'error');
+    submitBtn.disabled = true; say('');
+    try {
+      if (mode === 'signup') {
+        const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } });
+        if (error) throw error;
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          say('That email already has an account. Try signing in.', 'error');
+        } else if (!data.session) {
+          say('Check your email to confirm your account, then sign in.', 'ok');
+        }
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        passInput.value = '';
+      }
+    } catch (err) {
+      say(err.message || 'Something went wrong.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  googleBtn.addEventListener('click', async () => {
+    say('');
+    window.__authRedirect = true; // skip the "Leave site?" prompt for this redirect
+    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+    if (error) { window.__authRedirect = false; say(error.message, 'error'); }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    logoutBtn.disabled = true;
+    const { error } = await sb.auth.signOut();
+    logoutBtn.disabled = false;
+    if (error) say(error.message, 'error');
+  });
 })();
 </script>
 
