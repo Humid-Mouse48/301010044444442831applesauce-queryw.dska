@@ -1105,8 +1105,17 @@ html[data-menu-pos="right"] .topbar.is-collapsed { flex-direction: column; }
   googleBtn.addEventListener('click', async () => {
     say('');
     window.__authRedirect = true; // skip the "Leave site?" prompt for this redirect
-    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-    if (error) { window.__authRedirect = false; say(error.message, 'error'); }
+    const { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Dynamically return to the same domain the user is currently visiting.
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      window.__authRedirect = false;
+      say(error.message, 'error');
+    }
   });
 
   logoutBtn.addEventListener('click', async () => {
