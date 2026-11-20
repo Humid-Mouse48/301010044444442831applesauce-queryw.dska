@@ -118,6 +118,18 @@
   }
   select option { background-color: var(--bg-dark); color: var(--text-main); }
 
+  .ico { width: 1em; height: 1em; display: block; flex: 0 0 auto; fill: currentColor; color: var(--secondary-color); pointer-events: none; }
+  .ico.s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #btn-key, #btn-size, #btn-queue, .hero-btn, .card-eq { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  #btn-key .ico { width: 16px; height: 16px; }
+  #btn-size .ico, #btn-queue .ico { width: 14px; height: 14px; }
+  .hero-btn .ico { width: 16px; height: 16px; }
+  .card-eq .ico { width: 10px; height: 10px; }
+  .card-add .ico { width: 16px; height: 16px; }
+  .q-x .ico { width: 11px; height: 11px; }
+  #ctrls button .ico { width: 18px; height: 18px; }
+  #ctrls #btn-play .ico { width: 22px; height: 22px; }
+  #pxstat::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor; margin-right: 6px; vertical-align: middle; }
   button { cursor: pointer; font-weight: 600; }
   button:hover { border-color: var(--season-accent, rgba(193,138,89,0.6)); color: var(--secondary-color); }
   button:disabled { opacity: .45; cursor: default; }
@@ -200,7 +212,7 @@
   .card-meta { font-size: .75rem; color: var(--secondary-color); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .card-add {
     position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; padding: 0; border-radius: 50%;
-    display: grid; place-items: center; font-size: 18px; line-height: 1; opacity: 0;
+    display: grid; place-items: center; line-height: 1; opacity: 0;
   }
   .card:hover .card-add, .card-add:focus-visible { opacity: 1; }
   .card-eq { position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 9999px; background: rgba(0,0,0,.65); color: var(--season-accent, #c18a59); display: none; }
@@ -250,7 +262,7 @@
   #dockmain { flex: 1 1 auto; min-width: 0; }
   #np-title { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #np-artist { font-size: .82rem; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-  #ctrls { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 6px; }
+  #ctrls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 10px 0 6px; }
   #ctrls button { width: 38px; height: 38px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: 16px; }
   #ctrls #btn-play { width: 48px; height: 48px; font-size: 20px; border-color: var(--season-accent, #c18a59); color: var(--secondary-color); }
   #ctrls button.on { color: var(--season-accent, #c18a59); border-color: var(--season-accent, #c18a59); box-shadow: 0 0 12px var(--season-accent-soft, rgba(170,112,62,.3)); }
@@ -258,13 +270,10 @@
   #seekrow input { flex: 1; min-width: 0; }
   input[type=range] { accent-color: var(--season-accent, #c18a59); cursor: pointer; }
   #dockright { flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: stretch; width: 178px; }
-  #volrow { display: flex; align-items: center; gap: 8px; }
-  #volrow button { width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: 14px; flex: 0 0 auto; }
-  #volrow input { flex: 1; min-width: 0; }
   #dockbtns { display: flex; gap: 8px; }
   #dockbtns button { flex: 1; padding: 7px 8px; font-size: 12px; white-space: nowrap; }
   #pxstat { font-size: 11px; color: var(--text-muted); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #dock.basic #seekrow, #dock.basic #btn-play, #dock.basic #volrow { opacity: .35; pointer-events: none; }
+
 
   #queuepanel {
     position: fixed; right: 12px; bottom: 190px; z-index: 61; width: 360px; max-width: calc(100vw - 24px);
@@ -299,7 +308,6 @@
     #vidbox.med { width: 100%; height: auto; aspect-ratio: 16/9; }
     #vidbox.large { width: 100%; height: auto; aspect-ratio: 16/9; }
     #dockright { width: 100%; flex-direction: row; align-items: center; }
-    #volrow { flex: 1; }
     #pxstat { display: none; }
     .hero-title { font-size: 1.5rem; }
   }
@@ -413,7 +421,7 @@ body[data-season="iconic"] {
       <option value="starter">Starter Picks</option>
       <option value="recent">Recently Played</option>
     </select>
-    <button id="btn-key" title="YouTube API key">⚙</button>
+    <button id="btn-key" title="YouTube API key" aria-label="Settings" data-icon="gear"></button>
   </div>
 </header>
 
@@ -423,15 +431,20 @@ body[data-season="iconic"] {
     <div class="hero-meta" id="hero-meta">--</div>
     <h1 class="hero-title" id="hero-title">--</h1>
     <p class="hero-desc" id="hero-desc">--</p>
-    <button class="hero-btn" id="hero-play">▶ Play</button><button class="hero-btn" id="hero-all">Play all</button>
+    <button class="hero-btn" id="hero-play" data-icon="play">Play</button><button class="hero-btn" id="hero-all">Play all</button>
   </div>
 </div>
 
 <div id="keybox">
   <h3>YouTube API key</h3>
-  <p>A built-in key is already set up. You can use your own instead: a free key turns on search and trending. Create one at <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> (enable “YouTube Data API v3”). Without one you can still paste a YouTube link into the search box, or use Starter Picks.</p>
+  <p>A built-in key is already set up. You can use your own instead: a free key turns on search and trending. The player uses Piped by default, which does not require an API key to play songs. Create one at <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> (enable “YouTube Data API v3”). Without one you can still paste a YouTube link into the search box, or use Starter Picks.</p>
   <input type="text" id="key" placeholder="API key" autocomplete="off" spellcheck="false">
   <button id="key-save">Save key</button> <button id="key-clear">Remove key</button> <button id="key-close">Close</button>
+
+  <h3 style="margin-top:20px">Player source (optional)</h3>
+  <p>The player currently uses <strong>cf.piped.video</strong> by default. You can paste a different embed address here — put <code>{id}</code> where the video ID goes. To switch back to Piped, leave the box empty and save.</p>
+  <input type="text" id="embed-src" placeholder="https://.../embed/{id}" autocomplete="off" spellcheck="false">
+  <button id="embed-save">Save player source</button> <button id="embed-clear">Use YouTube</button>
 </div>
 
 <div class="section-title" id="section-label">Starter Picks</div>
@@ -447,11 +460,13 @@ body[data-season="iconic"] {
     <div id="np-title">Nothing playing</div>
     <div id="np-artist">Pick a song to start</div>
     <div id="ctrls">
-      <button id="btn-shuffle" title="Shuffle" aria-label="Shuffle">⇄</button>
-      <button id="btn-prev" title="Previous" aria-label="Previous">⏮</button>
-      <button id="btn-play" title="Play / pause" aria-label="Play or pause">▶</button>
-      <button id="btn-next" title="Next" aria-label="Next">⏭</button>
-      <button id="btn-repeat" title="Repeat: off" aria-label="Repeat">⟳</button>
+      <button id="btn-shuffle" title="Shuffle" aria-label="Shuffle" data-icon="shuffle"></button>
+      <button id="btn-prev" title="Previous" aria-label="Previous" data-icon="prev"></button>
+      <button id="btn-back" title="Back 10 seconds" aria-label="Back 10 seconds" data-icon="back"></button>
+      <button id="btn-play" title="Play / pause" aria-label="Play or pause" data-icon="play"></button>
+      <button id="btn-fwd" title="Forward 10 seconds" aria-label="Forward 10 seconds" data-icon="fwd"></button>
+      <button id="btn-next" title="Next" aria-label="Next" data-icon="next"></button>
+      <button id="btn-repeat" title="Repeat: off" aria-label="Repeat" data-icon="repeat"></button>
     </div>
     <div id="seekrow">
       <span id="tcur">0:00</span>
@@ -461,15 +476,11 @@ body[data-season="iconic"] {
   </div>
 
   <div id="dockright">
-    <div id="volrow">
-      <button id="btn-mute" title="Mute" aria-label="Mute">🔊</button>
-      <input type="range" id="vol" min="0" max="100" value="80" aria-label="Volume">
-    </div>
     <div id="dockbtns">
-      <button id="btn-size" title="Video size">⤢ Video</button>
-      <button id="btn-queue" title="Queue">☰ Queue <span id="qcount">0</span></button>
+      <button id="btn-size" title="Video size" data-icon="expand">Video</button>
+      <button id="btn-queue" title="Queue" data-icon="queue">Queue <span id="qcount">0</span></button>
     </div>
-    <div id="pxstat">● Proxy: starting…</div>
+    <div id="pxstat">Proxy: starting…</div>
   </div>
 </div>
 
@@ -485,12 +496,35 @@ body[data-season="iconic"] {
   "use strict";
   const $ = (id) => document.getElementById(id);
 
+  /* ===== SVG icons (all drawn here, no emoji) ===== */
+  const fillSvg = (d) => '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+  const lineSvg = (d) => '<svg class="ico s" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+  const REPEAT_PATHS = '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>';
+  const ICON = {
+    play:    fillSvg('<path d="M8 5v14l11-7z"/>'),
+    pause:   fillSvg('<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'),
+    prev:    fillSvg('<path d="M6 5h2.5v14H6zM20 5v14L9.5 12z"/>'),
+    next:    fillSvg('<path d="M15.5 5H18v14h-2.5zM4 5v14l10.5-7z"/>'),
+    back:    fillSvg('<path d="M11 6v12L2 12zM22 6v12l-9-6z"/>'),
+    fwd:     fillSvg('<path d="M13 6v12l9-6zM2 6v12l9-6z"/>'),
+    shuffle: lineSvg('<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>'),
+    repeat:  lineSvg(REPEAT_PATHS),
+    repeat1: lineSvg(REPEAT_PATHS + '<path d="M11 10l1.5-1v6.5"/>'),
+    expand:  lineSvg('<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>'),
+    queue:   lineSvg('<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/>'),
+    gear:    lineSvg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
+    plus:    lineSvg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
+    close:   lineSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>')
+  };
+  document.querySelectorAll("[data-icon]").forEach((el) => el.insertAdjacentHTML("afterbegin", ICON[el.dataset.icon]));
+  const setPlayIcon = (playing) => { $("btn-play").innerHTML = ICON[playing ? "pause" : "play"]; };
+
   /* ===== settings ===== */
   const TRANSPORT = "epoxy";                              // "epoxy" or "libcurl"
   const TRANSPORT_PATHS = { epoxy: "/epoxy-transport/dist/index.mjs", libcurl: "/libcurl-transport/dist/index.mjs" };
   const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
   const BARE_SERVERS = ["https://tomp.app/"];
-  const KEY_STORE = "geeked_music_yt_key", RECENT_STORE = "geeked_music_recent", VOL_STORE = "geeked_music_vol";
+  const KEY_STORE = "geeked_music_yt_key", RECENT_STORE = "geeked_music_recent", EMBED_STORE = "geeked_music_embed";
 
   /* ===== public Wisp servers (same list as the other pages) ===== */
   const PUBLIC_WISP_LIST_URL = "https://cdn.jsdelivr.net/gh/virtuan4-max/ghostlinkhub@main/proxy/wisps.html";
@@ -644,7 +678,7 @@ const DEFAULT_PUBLIC_WISPS = [
   }
 
   const hostOf = (u) => { try { return new URL(u).host; } catch (e) { return u; } };
-  function setProxyStatus(text) { $("pxstat").textContent = "● " + text; }
+  function setProxyStatus(text) { $("pxstat").textContent = text; }
 
   let candidates = [], candIdx = 0, proxyP = null;
   async function connectCandidate(i) {
@@ -772,18 +806,54 @@ const DEFAULT_PUBLIC_WISPS = [
   let basicMode = false, seeking = false, retries = 0;
 
   function navFrame(url) { frame.src = url; }
+  // Default embed: Piped (privacy-friendly YouTube frontend). Falls back to YouTube if changed in settings.
+  const DEFAULT_EMBED = "https://cf.piped.video/embed/{id}?autoplay=1&listen=0";
+  let customEmbed = (store.get(EMBED_STORE) || DEFAULT_EMBED).trim();
   function embedUrl(id) {
-    const p = new URLSearchParams({
-      enablejsapi: "1", autoplay: "1", playsinline: "1", rel: "0", modestbranding: "1", iv_load_policy: "3",
-      controls: basicMode ? "1" : "0", disablekb: basicMode ? "0" : "1", fs: "0",
-      origin: location.origin, widgetid: String(WIDGET_ID)
-    });
-    return "https://www.youtube.com/embed/" + id + "?" + p.toString();
+    return customEmbed.split("{id}").join(encodeURIComponent(id));
   }
   function post(obj) {
     try { frame.contentWindow.postMessage(JSON.stringify(Object.assign({ id: WIDGET_ID, channel: "widget" }, obj)), "*"); } catch (e) {}
   }
   const cmd = (func, args) => post({ event: "command", func, args: args || [] });
+
+  /* The player page is served through the proxy, so it is same-origin and we can reach its <video>
+     element directly. This works for Piped (which has no IFrame API) as well as for YouTube. */
+  let frameLoaded = false, warnedNoVideo = false, loadStarted = 0;
+  frame.addEventListener("load", () => { frameLoaded = true; });
+  function getVideo() {
+    if (!frameLoaded) return null;
+    try {
+      const d = frame.contentDocument;
+      return (d && d.querySelector("video")) || null;
+    } catch (e) { return null; }
+  }
+  function seekBy(sec) {
+    const v = getVideo();
+    if (v) {
+      const max = isFinite(v.duration) ? v.duration : Infinity;
+      v.currentTime = Math.min(Math.max(0, v.currentTime + sec), max);
+      yt.time = v.currentTime; updateTime();
+    } else if (yt.ready && !basicMode) {
+      cmd("seekTo", [Math.max(0, yt.time + sec), true]);
+    } else toast("The player is still loading.");
+  }
+  function pollVideo() {
+    const v = getVideo();
+    if (!v) {
+      if (cur() && !warnedNoVideo && loadStarted && Date.now() - loadStarted > 25000) {
+        warnedNoVideo = true;
+        toast("Can't reach the player's video yet. Use the video's own controls if the buttons don't respond.");
+      }
+      return false;
+    }
+    if (isFinite(v.duration) && v.duration > 0) yt.duration = v.duration;
+    if (!seeking) yt.time = v.currentTime || 0;
+    setState(v.ended ? 0 : v.paused ? 2 : (v.readyState < 3 ? 3 : 1));
+    updateTime();
+    return true;
+  }
+  setInterval(pollVideo, 250);
 
   function frameLooksBroken() {
     try {
@@ -800,6 +870,7 @@ const DEFAULT_PUBLIC_WISPS = [
       if (yt.ready) { clearInterval(yt.hs); return; }
       tries++;
       post({ event: "listening" });
+      if (tries % 3 === 0) showPlayerProblem(readPlayerError());
       if (tries % 5 === 0 && frameLooksBroken()) { clearInterval(yt.hs); onProxyError(); return; }
       if (tries > 45) { clearInterval(yt.hs); enterBasicMode(); }      // ~18 s without a reply
     }, 400);
@@ -812,15 +883,66 @@ const DEFAULT_PUBLIC_WISPS = [
     if (await nextServer()) loadFresh(cur().id); else toast("No other proxy servers worked.");
   }
 
+  /* ---- what is the player actually saying? (read from the proxied page, which is same-origin) ---- */
+  let lastProblem = "";
+  function readPlayerError() {
+    try {
+      const d = frame.contentDocument;
+      if (!d || !d.body) return "";
+      const el = d.querySelector(".ytp-error-content-wrap-reason, .ytp-error, #error-screen, .error-message");
+      let t = "";
+      if (el) {
+        const parts = Array.from(el.querySelectorAll("span")).map((x) => x.textContent.trim()).filter(Boolean);
+        t = parts.length > 1 ? parts.join(" - ") : (el.innerText || el.textContent);
+      }
+      if (!t) {
+        const body = (d.body.innerText || "").slice(0, 500);
+        if (/sign in to confirm|not a bot|video unavailable|error \d{3}|can.t be played|configuration error|playback on other websites/i.test(body)) t = body;
+      }
+      return (t || "").replace(/\s+/g, " ").trim().slice(0, 200);
+    } catch (e) { return ""; }
+  }
+  function showPlayerProblem(msg) {
+    if (!msg || msg === lastProblem) return;
+    lastProblem = msg;
+    $("vidph").textContent = msg;
+    $("vidbox").classList.remove("has");
+    toast("Player problem: " + msg);
+    console.warn("[music] player problem:", msg);
+  }
+  const PLAYER_ERRORS = {
+    2: "the video ID is not valid",
+    5: "the player hit an error",
+    100: "the video was removed or is private",
+    101: "the owner does not allow embedding",
+    150: "the owner does not allow embedding",
+    153: "YouTube rejected the embed (player configuration error, often a missing or unrecognised referrer)"
+  };
+
+  // For custom player sources there is no API handshake, so just watch the page for problems
+  function watchPlayer() {
+    clearInterval(yt.hs);
+    let n = 0;
+    yt.hs = setInterval(() => {
+      n++;
+      if (frameLooksBroken()) { clearInterval(yt.hs); onProxyError(); return; }
+      showPlayerProblem(readPlayerError());
+      if (n === 2) $("vidbox").classList.add("has");
+      if (n >= 12) clearInterval(yt.hs);
+    }, 1000);
+  }
+
   async function loadFresh(id) {
     try { await proxyReady(); } catch (e) { toast("Proxy is not available: " + e.message); return; }
     yt.ready = false; yt.state = -1; yt.time = 0; yt.duration = 0; yt.loadedId = id;
+    lastProblem = ""; frameLoaded = false; warnedNoVideo = false; loadStarted = Date.now();
     navFrame(proxied(embedUrl(id)));
-    startHandshake();
+    if (customEmbed) watchPlayer(); else startHandshake();
   }
 
   function loadTrackIntoPlayer(id) {
-    if (yt.ready && !basicMode && yt.loadedId) {
+    // loadVideoById only works with YouTube's IFrame API; Piped always needs a fresh load
+    if (yt.ready && !basicMode && yt.loadedId && customEmbed.includes("youtube.com/embed")) {
       yt.loadedId = id; yt.time = 0; yt.duration = 0;
       cmd("loadVideoById", [id]);
     } else {
@@ -832,7 +954,8 @@ const DEFAULT_PUBLIC_WISPS = [
     if (basicMode) return;
     basicMode = true;
     $("dock").classList.add("basic");
-    toast("Player controls are not reachable through the proxy, so the video's own controls are shown.");
+    toast(lastProblem ? "The player reported: " + lastProblem
+                      : "Player controls are not reachable through the proxy, so the video's own controls are shown.");
     if (cur()) loadFresh(cur().id);
   }
 
@@ -849,8 +972,7 @@ const DEFAULT_PUBLIC_WISPS = [
         clearInterval(yt.hs);
         cmd("addEventListener", ["onStateChange"]);
         cmd("addEventListener", ["onError"]);
-        applyVolume();
-      }
+          }
     }
     if (d.info && typeof d.info === "object") {
       const i = d.info;
@@ -865,22 +987,32 @@ const DEFAULT_PUBLIC_WISPS = [
     }
     if (d.event === "onStateChange" && typeof d.info === "number") setState(d.info);
     if (d.event === "onError") {
-      toast("That video can't be played here, skipping…");
-      setTimeout(() => next(true), 800);
+      const code = typeof d.info === "number" ? d.info : 0;
+      const why = PLAYER_ERRORS[code] || ("error code " + code);
+      if (code === 100 || code === 101 || code === 150) {          // only this video is the problem: skip it
+        toast("Skipping: " + why + ".");
+        setTimeout(() => next(true), 800);
+      } else {                                                       // every video will fail: say why, don't skip through the list
+        showPlayerProblem("YouTube error " + code + ": " + why);
+      }
     }
   });
 
   function setState(s) {
     if (s === yt.state) return;
     yt.state = s;
-    $("btn-play").textContent = s === 1 || s === 3 ? "⏸" : "▶";
+    setPlayIcon(s === 1 || s === 3);
     if (s === 1) $("vidbox").classList.add("has");
     updateCards();
     if (s === 0) onEnded();
   }
 
   function onEnded() {
-    if (repeat === 2) { cmd("seekTo", [0, true]); cmd("playVideo"); return; }
+    if (repeat === 2) {
+      const v = getVideo();
+      if (v) { v.currentTime = 0; v.play().catch(() => {}); } else { cmd("seekTo", [0, true]); cmd("playVideo"); }
+      return;
+    }
     next(false);
   }
 
@@ -922,21 +1054,23 @@ const DEFAULT_PUBLIC_WISPS = [
     } else if (repeat === 1 || !auto) {
       qi = 0;
     } else {
-      $("btn-play").textContent = "▶";   // reached the end of the queue
+      setPlayIcon(false);   // reached the end of the queue
       return;
     }
     playCurrent();
   }
   function prev() {
     if (!queue.length) return;
-    if (yt.time > 3 && yt.ready && !basicMode) { cmd("seekTo", [0, true]); return; }
+    if (yt.time > 3) { const v = getVideo(); if (v) { v.currentTime = 0; return; } if (yt.ready && !basicMode) { cmd("seekTo", [0, true]); return; } }
     qi = qi > 0 ? qi - 1 : queue.length - 1;
     playCurrent();
   }
   function togglePlay() {
     if (!cur()) { if (currentList.length) playFrom(currentList, 0); return; }
-    if (basicMode) return;
-    cmd(yt.state === 1 || yt.state === 3 ? "pauseVideo" : "playVideo");
+    const v = getVideo();
+    if (v) { if (v.paused || v.ended) v.play().catch(() => {}); else v.pause(); return; }
+    if (yt.ready && !basicMode) { cmd(yt.state === 1 || yt.state === 3 ? "pauseVideo" : "playVideo"); return; }
+    toast("The player is still loading.");
   }
 
   /* ===== recently played ===== */
@@ -980,8 +1114,8 @@ const DEFAULT_PUBLIC_WISPS = [
       proxyReady().then(() => { img.src = proxied(thumb(t.id)); }).catch(() => {});
     };
 
-    const eq = document.createElement("div"); eq.className = "card-eq"; eq.textContent = "▶ PLAYING";
-    const add = document.createElement("button"); add.className = "card-add"; add.textContent = "+"; add.title = "Add to queue"; add.setAttribute("aria-label", "Add to queue");
+    const eq = document.createElement("div"); eq.className = "card-eq"; eq.innerHTML = ICON.play + " PLAYING";
+    const add = document.createElement("button"); add.className = "card-add"; add.innerHTML = ICON.plus; add.title = "Add to queue"; add.setAttribute("aria-label", "Add to queue");
     add.onclick = (ev) => { ev.stopPropagation(); addToQueue(t); };
 
     const text = document.createElement("div"); text.className = "card-text";
@@ -1039,7 +1173,7 @@ const DEFAULT_PUBLIC_WISPS = [
       const a = document.createElement("div"); a.className = "q-title"; a.textContent = t.title;
       const b = document.createElement("div"); b.className = "q-artist"; b.textContent = t.artist;
       tx.append(a, b);
-      const x = document.createElement("button"); x.className = "q-x"; x.textContent = "✕"; x.title = "Remove"; x.setAttribute("aria-label", "Remove from queue");
+      const x = document.createElement("button"); x.className = "q-x"; x.innerHTML = ICON.close; x.title = "Remove"; x.setAttribute("aria-label", "Remove from queue");
       x.onclick = (ev) => {
         ev.stopPropagation();
         queue.splice(i, 1);
@@ -1060,25 +1194,12 @@ const DEFAULT_PUBLIC_WISPS = [
     $("seek").value = yt.duration > 0 ? String(Math.round((yt.time / yt.duration) * 1000)) : "0";
   }
 
-  /* ===== volume ===== */
-  let volume = parseInt(store.get(VOL_STORE) || "80", 10); if (!(volume >= 0 && volume <= 100)) volume = 80;
-  let muted = false;
-  function applyVolume() {
-    if (!yt.ready || basicMode) return;
-    cmd("setVolume", [volume]);
-    cmd(muted || volume === 0 ? "mute" : "unMute");
-  }
-  function renderVolume() {
-    $("vol").value = String(volume);
-    $("btn-mute").textContent = muted || volume === 0 ? "🔇" : "🔊";
-  }
-
   /* ===== hide-able extras ===== */
   function toggleKeyBox(show) {
     const k = $("keybox");
     const on = show === undefined ? k.style.display !== "block" : show;
     k.style.display = on ? "block" : "none";
-    if (on) { $("key").value = store.get(KEY_STORE) || ""; k.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+    if (on) { $("key").value = store.get(KEY_STORE) || ""; $("embed-src").value = customEmbed; k.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
   }
 
   function mediaSession() {
@@ -1090,6 +1211,8 @@ const DEFAULT_PUBLIC_WISPS = [
       navigator.mediaSession.setActionHandler("pause", togglePlay);
       navigator.mediaSession.setActionHandler("nexttrack", () => next(false));
       navigator.mediaSession.setActionHandler("previoustrack", prev);
+      navigator.mediaSession.setActionHandler("seekbackward", () => seekBy(-10));
+      navigator.mediaSession.setActionHandler("seekforward", () => seekBy(10));
     } catch (e) {}
   }
 
@@ -1105,7 +1228,7 @@ const DEFAULT_PUBLIC_WISPS = [
         renderList(getRecent(), "Recently Played", "Nothing played yet. Pick a song and it will show up here.");
       } else {
         if (!API_KEY) {
-          renderList([], "Trending Music", "Trending needs a YouTube API key. Click ⚙ to add one, or use Starter Picks and paste YouTube links.");
+          renderList([], "Trending Music", "Trending needs a YouTube API key. Click the settings button to add one, or use Starter Picks and paste YouTube links.");
           toggleKeyBox(true);
           return;
         }
@@ -1135,7 +1258,7 @@ const DEFAULT_PUBLIC_WISPS = [
       return;
     }
     if (!API_KEY) {
-      renderList([], "Search", "Searching by name needs a YouTube API key. Click ⚙ to add one, or paste a YouTube link here.");
+      renderList([], "Search", "Searching by name needs a YouTube API key. Click the settings button to add one, or paste a YouTube link here.");
       toggleKeyBox(true);
       return;
     }
@@ -1172,27 +1295,48 @@ const DEFAULT_PUBLIC_WISPS = [
     toast(API_KEY ? "Your key was removed. Using the built-in key." : "API key removed.");
   };
 
+  $("embed-save").onclick = () => {
+    const v = $("embed-src").value.trim();
+    if (v && (!/^https?:\/\//i.test(v) || !v.includes("{id}"))) { toast("The address must start with https:// and contain {id}."); return; }
+    customEmbed = v || DEFAULT_EMBED;
+    if (v) store.set(EMBED_STORE, v); else store.del(EMBED_STORE);
+    basicMode = !customEmbed.includes("youtube.com/embed");
+    $("dock").classList.toggle("basic", basicMode);
+    toggleKeyBox(false);
+    toast(v ? "Player source saved. The video's own controls are used, and Next is manual." : "Using YouTube's player.");
+    if (cur()) loadFresh(cur().id);
+  };
+  $("embed-clear").onclick = () => {
+    store.del(EMBED_STORE); $("embed-src").value = "";
+    customEmbed = DEFAULT_EMBED;
+    basicMode = true; $("dock").classList.add("basic");
+    toast("Switched back to Piped.");
+    if (cur()) loadFresh(cur().id);
+  };
   $("btn-play").onclick = togglePlay;
   $("btn-next").onclick = () => next(false);
   $("btn-prev").onclick = prev;
+  $("btn-back").onclick = () => seekBy(-10);
+  $("btn-fwd").onclick = () => seekBy(10);
   $("btn-shuffle").onclick = () => { shuffle = !shuffle; $("btn-shuffle").classList.toggle("on", shuffle); $("btn-shuffle").title = "Shuffle: " + (shuffle ? "on" : "off"); };
   $("btn-repeat").onclick = () => {
     repeat = (repeat + 1) % 3;
     const b = $("btn-repeat");
     b.classList.toggle("on", repeat > 0);
-    b.textContent = repeat === 2 ? "⟳1" : "⟳";
+    b.innerHTML = ICON[repeat === 2 ? "repeat1" : "repeat"];
     b.title = "Repeat: " + ["off", "all", "one"][repeat];
   };
 
   const seek = $("seek");
   seek.addEventListener("input", () => { seeking = true; $("tcur").textContent = fmt((seek.value / 1000) * yt.duration); });
   seek.addEventListener("change", () => {
-    if (yt.duration > 0 && yt.ready && !basicMode) cmd("seekTo", [(seek.value / 1000) * yt.duration, true]);
+    if (yt.duration > 0) {
+      const t = (seek.value / 1000) * yt.duration, v = getVideo();
+      if (v) v.currentTime = t; else if (yt.ready && !basicMode) cmd("seekTo", [t, true]);
+      yt.time = t;
+    }
     seeking = false;
   });
-
-  $("vol").addEventListener("input", (e) => { volume = parseInt(e.target.value, 10); muted = false; store.set(VOL_STORE, String(volume)); renderVolume(); applyVolume(); });
-  $("btn-mute").onclick = () => { muted = !muted; renderVolume(); applyVolume(); };
 
   const sizes = ["mini", "med", "large"];
   $("btn-size").onclick = () => {
@@ -1224,13 +1368,18 @@ const DEFAULT_PUBLIC_WISPS = [
   document.addEventListener("keydown", (e) => {
     const tag = (e.target && e.target.tagName) || "";
     if (e.code === "Space" && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(tag)) { e.preventDefault(); togglePlay(); }
+    if (!/INPUT|TEXTAREA|SELECT/.test(tag)) {
+      if (e.code === "ArrowLeft") seekBy(-10);
+      else if (e.code === "ArrowRight") seekBy(10);
+    }
   });
 
   // smooth time updates between the player's own infoDelivery messages
-  setInterval(() => { if (yt.state === 1 && !seeking) { yt.time += 0.25; updateTime(); } }, 250);
+  setInterval(() => { if (yt.state === 1 && !seeking && !getVideo()) { yt.time += 0.25; updateTime(); } }, 250);
 
   /* ===== start ===== */
-  renderVolume();
+  // Piped and other frontends don't speak the IFrame API, so always use basic mode
+  if (customEmbed && !customEmbed.includes("youtube.com/embed")) { basicMode = true; $("dock").classList.add("basic"); }
   renderQueue();
   (async () => {
     if (!API_KEY) API_KEY = await embeddedKey();
