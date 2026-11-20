@@ -409,13 +409,17 @@ body[data-season="iconic"] {
       <button type="button" class="search-icon" id="btn-search" aria-label="Search">
         <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </button>
-      <input type="text" id="q" placeholder="Search songs or paste a link..." aria-label="Search songs" autocomplete="off">
+      <input type="text" id="q" placeholder="Search, or paste a video or playlist link..." aria-label="Search songs" autocomplete="off">
       <button type="button" id="clear-search" aria-label="Clear search">
         <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
     </div>
   </div>
   <div class="search-extras">
+    <select id="stype" aria-label="Search for">
+      <option value="video">Search: Songs</option>
+      <option value="playlist">Search: Playlists</option>
+    </select>
     <select id="cat" aria-label="Category">
       <option value="trending">Trending Music</option>
       <option value="starter">Starter Picks</option>
@@ -437,12 +441,12 @@ body[data-season="iconic"] {
 
 <div id="keybox">
   <h3>YouTube API key</h3>
-  <p>A built-in key is already set up. You can use your own instead: a free key turns on search and trending. The player uses Piped by default, which does not require an API key to play songs. Create one at <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> (enable “YouTube Data API v3”). Without one you can still paste a YouTube link into the search box, or use Starter Picks.</p>
+  <p>A built-in key is already set up. You can use your own instead: a free key turns on search and trending. Create one at <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> (enable “YouTube Data API v3”). Without one you can still paste a YouTube link into the search box, or use Starter Picks.</p>
   <input type="text" id="key" placeholder="API key" autocomplete="off" spellcheck="false">
   <button id="key-save">Save key</button> <button id="key-clear">Remove key</button> <button id="key-close">Close</button>
 
   <h3 style="margin-top:20px">Player source (optional)</h3>
-  <p>The player currently uses <strong>cf.piped.video</strong> by default. You can paste a different embed address here — put <code>{id}</code> where the video ID goes. To switch back to Piped, leave the box empty and save.</p>
+  <p>The player currently uses <strong>YouTube's embed</strong> by default. You can paste a different embed address here — put <code>{id}</code> where the video ID goes, and <code>{list}</code> where the playlist ID goes (it is left out for songs that aren't from a playlist). If a source fails, the player automatically tries the others (another Piped server, YouTube, then several Invidious servers) and keeps using the one that worked for the rest of your visit. To go back to the default, leave the box empty and save.</p>
   <input type="text" id="embed-src" placeholder="https://.../embed/{id}" autocomplete="off" spellcheck="false">
   <button id="embed-save">Save player source</button> <button id="embed-clear">Use YouTube</button>
 </div>
@@ -524,7 +528,7 @@ body[data-season="iconic"] {
   const TRANSPORT_PATHS = { epoxy: "/epoxy-transport/dist/index.mjs", libcurl: "/libcurl-transport/dist/index.mjs" };
   const BARE_TRANSPORT_PATH = "/bare-as-module3/dist/index.mjs";   // only used if no Wisp server works
   const BARE_SERVERS = ["https://tomp.app/"];
-  const KEY_STORE = "geeked_music_yt_key", RECENT_STORE = "geeked_music_recent", EMBED_STORE = "geeked_music_embed";
+  const KEY_STORE = "geeked_music_yt_key", RECENT_STORE = "geeked_music_recent", EMBED_STORE = "geeked_music_embed", GOOD_STORE = "geeked_music_good_embed";
 
   /* ===== public Wisp servers (same list as the other pages) ===== */
   const PUBLIC_WISP_LIST_URL = "https://cdn.jsdelivr.net/gh/virtuan4-max/ghostlinkhub@main/proxy/wisps.html";
@@ -743,7 +747,8 @@ const DEFAULT_PUBLIC_WISPS = [
     } catch (e) { return ""; }
   }
   const thumb = (id) => "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg";
-  const mk = (id, title, artist) => ({ id, title: decodeEntities(title) || "Untitled", artist: decodeEntities(artist) || "" });
+  const mk = (id, title, artist, img) => ({ id, title: decodeEntities(title) || "Untitled", artist: decodeEntities(artist) || "", img: img || "" });
+  const thumbOf = (t) => t.img || thumb(t.id);
 
   const STARTER = [
     mk("dQw4w9WgXcQ", "Never Gonna Give You Up", "Rick Astley"),
@@ -771,6 +776,58 @@ const DEFAULT_PUBLIC_WISPS = [
     const d = await ytApi("search", { part: "snippet", type: "video", videoCategoryId: "10", videoEmbeddable: "true", maxResults: "24", q });
     return (d.items || []).filter((v) => v.id && v.id.videoId).map((v) => mk(v.id.videoId, v.snippet.title, v.snippet.channelTitle));
   }
+  async function apiSearchPlaylists(q) {
+    const d = await ytApi("search", { part: "snippet", type: "playlist", maxResults: "24", q });
+    return (d.items || []).filter((v) => v.id && v.id.playlistId).map((v) => {
+      const th = v.snippet.thumbnails || {};
+      const t = mk(v.id.playlistId, v.snippet.title, "Playlist - " + v.snippet.channelTitle, (th.medium || th.high || th.default || {}).url);
+      t.pl = true;
+      return t;
+    });
+  }
+  function parsePlaylistId(input) {
+    const s = (input || "").trim();
+    if (/^(PL|UU|OL|FL|LL)[\w-]{10,}$/.test(s)) return s;
+    try {
+      const u = new URL(/^https?:\/\//i.test(s) ? s : "https://" + s);
+      const h = u.hostname.replace(/^(www|m|music)\./, "");
+      {
+        const l = u.searchParams.get("list");
+        if (l && /^(PL|UU|OL|FL)[\w-]{10,}$/.test(l)) return l;
+      }
+    } catch (e) {}
+    return null;
+  }
+  async function openPlaylist(t) {
+    const pid = typeof t === "string" ? t : t.id, name = typeof t === "string" ? "Playlist" : t.title;
+    if (!API_KEY) { toast("Playlists need a YouTube API key. Click the settings button to add one."); toggleKeyBox(true); return; }
+    $("section-label").textContent = "Loading playlist…";
+    try {
+      const tracks = [];
+      let token = "";
+      for (let n = 0; n < 4; n++) {                       // up to 200 songs
+        const params = { part: "snippet,status", playlistId: pid, maxResults: "50" };
+        if (token) params.pageToken = token;
+        const d = await ytApi("playlistItems", params);
+        (d.items || []).forEach((v) => {
+          const sn = v.snippet || {};
+          const vid = sn.resourceId && sn.resourceId.videoId;
+          if (!vid || /^(Private|Deleted) video$/i.test(sn.title || "")) return;
+          const tr = mk(vid, sn.title, (sn.videoOwnerChannelTitle || sn.channelTitle || "").replace(/ - Topic$/, ""));
+          tr.list = pid;
+          tracks.push(tr);
+        });
+        token = d.nextPageToken;
+        if (!token) break;
+      }
+      if (!tracks.length) { renderList([], name, "That playlist is empty, private, or has no playable videos."); return; }
+      renderList(tracks, name + " (" + tracks.length + " songs)");
+      playFrom(tracks, 0);
+    } catch (e) {
+      renderList([], name, "Could not load the playlist: " + e.message);
+    }
+  }
+
   async function oembed(id) {
     try {
       const r = await netFetch("https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + id));
@@ -786,10 +843,10 @@ const DEFAULT_PUBLIC_WISPS = [
       const u = new URL(/^https?:\/\//i.test(s) ? s : "https://" + s);
       const h = u.hostname.replace(/^(www|m|music)\./, "");
       if (h === "youtu.be") { const id = u.pathname.slice(1, 12); return /^[\w-]{11}$/.test(id) ? id : null; }
-      if (h === "youtube.com") {
+      if (h !== "youtu.be") {                       // youtube.com, piped.video, invidious hosts, any mirror
         const v = u.searchParams.get("v");
         if (v && /^[\w-]{11}/.test(v)) return v.slice(0, 11);
-        const m = u.pathname.match(/\/(?:embed|shorts|live|v)\/([\w-]{11})/);
+        const m = u.pathname.match(/\/(?:embed|shorts|live|v|w)\/([\w-]{11})/) || (/piped/.test(h) && u.pathname.match(/^\/([\w-]{11})\/?$/));
         if (m) return m[1];
       }
     } catch (e) {}
@@ -807,17 +864,26 @@ const DEFAULT_PUBLIC_WISPS = [
 
   function navFrame(url) { frame.src = url; }
   // Default embed: Piped (privacy-friendly YouTube frontend). Falls back to YouTube if changed in settings.
-  const DEFAULT_EMBED = "https://cf.piped.video/embed/{id}?autoplay=1&listen=0";
+  const DEFAULT_EMBED = "https://piped.video/embed/{id}?autoplay=1&listen=0&list={list}";
   let customEmbed = (store.get(EMBED_STORE) || DEFAULT_EMBED).trim();
   const FALLBACK_EMBEDS = [
-    "https://www.youtube-nocookie.com/embed/{id}?autoplay=1&playsinline=1&rel=0",
-    "https://www.youtube.com/embed/{id}?autoplay=1&playsinline=1&rel=0"
+    "https://cf.piped.video/embed/{id}?autoplay=1&listen=0&list={list}",
+    "https://www.youtube-nocookie.com/embed/{id}?autoplay=1&playsinline=1&rel=0&list={list}",
+    "https://www.youtube.com/embed/{id}?autoplay=1&playsinline=1&rel=0&list={list}",
+    "https://inv.nadeko.net/embed/{id}?autoplay=1&list={list}",
+    "https://yewtu.be/embed/{id}?autoplay=1&list={list}",
+    "https://invidious.nerdvpn.de/embed/{id}?autoplay=1&list={list}",
+    "https://invidious.f5.si/embed/{id}?autoplay=1&list={list}"
   ];
   let embedAttempt = 0;                         // 0 = your chosen source, then the fallbacks above
-  const embedList = () => [customEmbed].concat(FALLBACK_EMBEDS.filter((x) => x !== customEmbed));
+  const embedList = () => [customEmbed].concat([DEFAULT_EMBED].concat(FALLBACK_EMBEDS).filter((x) => x !== customEmbed));
   function embedUrl(id) {
     const list = embedList();
-    return list[Math.min(embedAttempt, list.length - 1)].split("{id}").join(encodeURIComponent(id));
+    let tpl = list[Math.min(embedAttempt, list.length - 1)];
+    const t = cur(), pl = t && t.id === id && t.list ? t.list : "";
+    if (pl) tpl = tpl.split("{list}").join(encodeURIComponent(pl));
+    else tpl = tpl.replace(/&list=\{list\}/g, "").replace(/\?list=\{list\}&?/, "?").replace(/\?$/, "");
+    return tpl.split("{list}").join("").split("{id}").join(encodeURIComponent(id));
   }
   function post(obj) {
     try { frame.contentWindow.postMessage(JSON.stringify(Object.assign({ id: WIDGET_ID, channel: "widget" }, obj)), "*"); } catch (e) {}
@@ -864,7 +930,13 @@ const DEFAULT_PUBLIC_WISPS = [
     if (v.error) { failover("The video failed to load (error " + v.error.code + ")."); return true; }
     if (isFinite(v.duration) && v.duration > 0) yt.duration = v.duration;
     if (!seeking) yt.time = v.currentTime || 0;
-    if (!v.paused && v.currentTime > 0) startedPlaying = true;
+    if (!v.paused && v.currentTime > 0 && !startedPlaying) {
+      startedPlaying = true;
+      if (embedAttempt > 0 && !store.get(EMBED_STORE)) {            // a fallback worked: use it for the rest of this visit
+        const u = embedList()[embedAttempt];
+        customEmbed = u; embedAttempt = 0;
+      }
+    }
     // the embed's own autoplay can be blocked: ask the video to start once ourselves
     if (!kicked && v.paused && v.readyState >= 2) {
       kicked = true;
@@ -880,7 +952,7 @@ const DEFAULT_PUBLIC_WISPS = [
     if (!cur() || !loadStarted || startedPlaying || yt.state === 0) return;
     const waited = Date.now() - loadStarted;
     const v = getVideo();
-    if (!v && waited > 15000) { loadStarted = Date.now(); failover("The player page didn't produce a video."); }
+    if (!v && waited > 9000) { loadStarted = Date.now(); failover("The player page didn't produce a video."); }
     else if (v && v.readyState === 0 && waited > 15000) { loadStarted = Date.now(); failover("The video never started loading."); }
   }, 1000);
   setInterval(pollVideo, 250);
@@ -1121,11 +1193,12 @@ const DEFAULT_PUBLIC_WISPS = [
 
   function setHero(t, nowPlaying) {
     if (!t) return;
-    $("hero-bg").style.backgroundImage = "url('" + thumb(t.id) + "')";
+    $("hero-bg").style.backgroundImage = "url('" + thumbOf(t) + "')";
     $("hero-meta").textContent = nowPlaying ? "Now playing" : "Featured";
     $("hero-title").textContent = t.title;
     $("hero-desc").textContent = t.artist || "YouTube";
     $("hero-play").onclick = () => {
+      if (t.pl) { openPlaylist(t); return; }
       const i = currentList.findIndex((x) => x.id === t.id);
       if (i >= 0) playFrom(currentList, i); else playFrom([t], 0);
     };
@@ -1138,10 +1211,10 @@ const DEFAULT_PUBLIC_WISPS = [
     d.dataset.id = t.id;
 
     const img = new Image();
-    img.loading = "lazy"; img.alt = ""; img.src = thumb(t.id);
+    img.loading = "lazy"; img.alt = ""; img.src = thumbOf(t);
     img.onerror = () => {                       // thumbnails blocked? fetch them through the proxy
       img.onerror = null;
-      proxyReady().then(() => { img.src = proxied(thumb(t.id)); }).catch(() => {});
+      proxyReady().then(() => { img.src = proxied(thumbOf(t)); }).catch(() => {});
     };
 
     const eq = document.createElement("div"); eq.className = "card-eq"; eq.innerHTML = ICON.play + " PLAYING";
@@ -1154,8 +1227,10 @@ const DEFAULT_PUBLIC_WISPS = [
     text.append(title, meta);
 
     d.append(img, eq, add, text);
-    d.onclick = () => playFrom(currentList, i);
-    d.onkeydown = (ev) => { if (ev.key === "Enter") playFrom(currentList, i); };
+    const open = () => { if (t.pl) openPlaylist(t); else playFrom(currentList, i); };
+    if (t.pl) add.style.display = "none";
+    d.onclick = open;
+    d.onkeydown = (ev) => { if (ev.key === "Enter") open(); };
     return d;
   }
 
@@ -1170,7 +1245,7 @@ const DEFAULT_PUBLIC_WISPS = [
       return;
     }
     list.forEach((t, i) => grid.appendChild(cardEl(t, i)));
-    $("hero-all").onclick = () => playFrom(currentList, 0);
+    $("hero-all").onclick = () => { if (currentList[0] && currentList[0].pl) openPlaylist(currentList[0]); else playFrom(currentList, 0); };
     if (!cur()) setHero(list[0], false);
     updateCards();
   }
@@ -1198,7 +1273,7 @@ const DEFAULT_PUBLIC_WISPS = [
     }
     queue.forEach((t, i) => {
       const row = document.createElement("div"); row.className = "q-item" + (i === qi ? " cur" : "");
-      const img = new Image(); img.alt = ""; img.src = thumb(t.id);
+      const img = new Image(); img.alt = ""; img.src = thumbOf(t);
       const tx = document.createElement("div"); tx.className = "q-text";
       const a = document.createElement("div"); a.className = "q-title"; a.textContent = t.title;
       const b = document.createElement("div"); b.className = "q-artist"; b.textContent = t.artist;
@@ -1236,7 +1311,7 @@ const DEFAULT_PUBLIC_WISPS = [
     try {
       const t = cur();
       if (!("mediaSession" in navigator) || !t) return;
-      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumb(t.id), sizes: "480x360", type: "image/jpeg" }] });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumbOf(t), sizes: "480x360", type: "image/jpeg" }] });
       navigator.mediaSession.setActionHandler("play", togglePlay);
       navigator.mediaSession.setActionHandler("pause", togglePlay);
       navigator.mediaSession.setActionHandler("nexttrack", () => next(false));
@@ -1279,6 +1354,8 @@ const DEFAULT_PUBLIC_WISPS = [
   async function search() {
     const q = $("q").value.trim();
     if (!q) return loadCategory();
+    const plId = parsePlaylistId(q);
+    if (plId) { openPlaylist(plId); return; }
     const id = parseId(q);
     if (id) {
       renderList([mk(id, "Loading…", "")], "Link");
@@ -1294,7 +1371,8 @@ const DEFAULT_PUBLIC_WISPS = [
     }
     $("section-label").textContent = 'Searching for "' + q + '"…';
     try {
-      renderList(await apiSearch(q), 'Results for "' + q + '"', "No songs found.");
+      const pls = $("stype").value === "playlist";
+      renderList(pls ? await apiSearchPlaylists(q) : await apiSearch(q), 'Results for "' + q + '"', pls ? "No playlists found." : "No songs found.");
     } catch (e) {
       renderList([], "Search", "Search failed: " + e.message);
     }
@@ -1308,6 +1386,7 @@ const DEFAULT_PUBLIC_WISPS = [
   $("clear-search").onclick = () => { $("q").value = ""; toggleClear(); $("q").focus(); loadCategory(); };
   $("btn-search").onclick = search;
   $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
+  $("stype").onchange = () => { if ($("q").value.trim()) search(); };
   $("cat").onchange = () => { $("q").value = ""; toggleClear(); loadCategory(); };
   $("btn-key").onclick = () => toggleKeyBox();
   $("key-close").onclick = () => toggleKeyBox(false);
@@ -1329,7 +1408,7 @@ const DEFAULT_PUBLIC_WISPS = [
     const v = $("embed-src").value.trim();
     if (v && (!/^https?:\/\//i.test(v) || !v.includes("{id}"))) { toast("The address must start with https:// and contain {id}."); return; }
     customEmbed = v || DEFAULT_EMBED;
-    if (v) store.set(EMBED_STORE, v); else store.del(EMBED_STORE);
+    if (v) store.set(EMBED_STORE, v); else { store.del(EMBED_STORE); store.del(GOOD_STORE); }
     basicMode = !customEmbed.includes("youtube.com/embed");
     $("dock").classList.toggle("basic", basicMode);
     toggleKeyBox(false);
@@ -1338,11 +1417,10 @@ const DEFAULT_PUBLIC_WISPS = [
     if (cur()) loadFresh(cur().id);
   };
   $("embed-clear").onclick = () => {
-    store.del(EMBED_STORE); $("embed-src").value = "";
-    customEmbed = FALLBACK_EMBEDS[0];
-    store.set(EMBED_STORE, customEmbed); $("embed-src").value = customEmbed;
+    store.del(EMBED_STORE); store.del(GOOD_STORE); $("embed-src").value = "";
+    customEmbed = DEFAULT_EMBED;
     embedAttempt = 0;
-    toast("Switched to the YouTube player source.");
+    toast("Using the default YouTube player source.");
     if (cur()) loadFresh(cur().id);
   };
   $("btn-play").onclick = togglePlay;
