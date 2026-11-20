@@ -809,8 +809,15 @@ const DEFAULT_PUBLIC_WISPS = [
   // Default embed: Piped (privacy-friendly YouTube frontend). Falls back to YouTube if changed in settings.
   const DEFAULT_EMBED = "https://cf.piped.video/embed/{id}?autoplay=1&listen=0";
   let customEmbed = (store.get(EMBED_STORE) || DEFAULT_EMBED).trim();
+  const FALLBACK_EMBEDS = [
+    "https://www.youtube-nocookie.com/embed/{id}?autoplay=1&playsinline=1&rel=0",
+    "https://www.youtube.com/embed/{id}?autoplay=1&playsinline=1&rel=0"
+  ];
+  let embedAttempt = 0;                         // 0 = your chosen source, then the fallbacks above
+  const embedList = () => [customEmbed].concat(FALLBACK_EMBEDS.filter((x) => x !== customEmbed));
   function embedUrl(id) {
-    return customEmbed.split("{id}").join(encodeURIComponent(id));
+    const list = embedList();
+    return list[Math.min(embedAttempt, list.length - 1)].split("{id}").join(encodeURIComponent(id));
   }
   function post(obj) {
     try { frame.contentWindow.postMessage(JSON.stringify(Object.assign({ id: WIDGET_ID, channel: "widget" }, obj)), "*"); } catch (e) {}
@@ -838,21 +845,44 @@ const DEFAULT_PUBLIC_WISPS = [
       cmd("seekTo", [Math.max(0, yt.time + sec), true]);
     } else toast("The player is still loading.");
   }
+  let startedPlaying = false, kicked = false, hintedPress = false;
+  function failover(reason) {
+    const list = embedList();
+    if (!cur()) return;
+    if (embedAttempt + 1 < list.length) {
+      embedAttempt++;
+      toast(reason + " Trying another player source…");
+      loadFresh(cur().id);
+    } else if (!warnedNoVideo) {
+      warnedNoVideo = true;
+      toast(reason + " No other player sources to try. Open the settings (gear) to set a different one.");
+    }
+  }
   function pollVideo() {
     const v = getVideo();
-    if (!v) {
-      if (cur() && !warnedNoVideo && loadStarted && Date.now() - loadStarted > 25000) {
-        warnedNoVideo = true;
-        toast("Can't reach the player's video yet. Use the video's own controls if the buttons don't respond.");
-      }
-      return false;
-    }
+    if (!v) return false;
+    if (v.error) { failover("The video failed to load (error " + v.error.code + ")."); return true; }
     if (isFinite(v.duration) && v.duration > 0) yt.duration = v.duration;
     if (!seeking) yt.time = v.currentTime || 0;
+    if (!v.paused && v.currentTime > 0) startedPlaying = true;
+    // the embed's own autoplay can be blocked: ask the video to start once ourselves
+    if (!kicked && v.paused && v.readyState >= 2) {
+      kicked = true;
+      const pr = v.play();
+      if (pr && pr.catch) pr.catch(() => { if (!hintedPress) { hintedPress = true; toast("Your browser blocked autoplay. Press the play button."); } });
+    }
     setState(v.ended ? 0 : v.paused ? 2 : (v.readyState < 3 ? 3 : 1));
     updateTime();
     return true;
   }
+  // nothing started? try the next player source
+  setInterval(() => {
+    if (!cur() || !loadStarted || startedPlaying || yt.state === 0) return;
+    const waited = Date.now() - loadStarted;
+    const v = getVideo();
+    if (!v && waited > 15000) { loadStarted = Date.now(); failover("The player page didn't produce a video."); }
+    else if (v && v.readyState === 0 && waited > 15000) { loadStarted = Date.now(); failover("The video never started loading."); }
+  }, 1000);
   setInterval(pollVideo, 250);
 
   function frameLooksBroken() {
@@ -935,7 +965,7 @@ const DEFAULT_PUBLIC_WISPS = [
   async function loadFresh(id) {
     try { await proxyReady(); } catch (e) { toast("Proxy is not available: " + e.message); return; }
     yt.ready = false; yt.state = -1; yt.time = 0; yt.duration = 0; yt.loadedId = id;
-    lastProblem = ""; frameLoaded = false; warnedNoVideo = false; loadStarted = Date.now();
+    lastProblem = ""; frameLoaded = false; warnedNoVideo = false; startedPlaying = false; kicked = false; hintedPress = false; loadStarted = Date.now();
     navFrame(proxied(embedUrl(id)));
     if (customEmbed) watchPlayer(); else startHandshake();
   }
@@ -1030,7 +1060,7 @@ const DEFAULT_PUBLIC_WISPS = [
   function playCurrent() {
     const t = cur();
     if (!t) return;
-    retries = 0;
+    retries = 0; embedAttempt = 0;
     addRecent(t);
     renderNow();
     renderQueue();
@@ -1303,14 +1333,16 @@ const DEFAULT_PUBLIC_WISPS = [
     basicMode = !customEmbed.includes("youtube.com/embed");
     $("dock").classList.toggle("basic", basicMode);
     toggleKeyBox(false);
-    toast(v ? "Player source saved. The video's own controls are used, and Next is manual." : "Using YouTube's player.");
+    toast(v ? "Player source saved." : "Using the default player source.");
+    embedAttempt = 0;
     if (cur()) loadFresh(cur().id);
   };
   $("embed-clear").onclick = () => {
     store.del(EMBED_STORE); $("embed-src").value = "";
-    customEmbed = DEFAULT_EMBED;
-    basicMode = true; $("dock").classList.add("basic");
-    toast("Switched back to Piped.");
+    customEmbed = FALLBACK_EMBEDS[0];
+    store.set(EMBED_STORE, customEmbed); $("embed-src").value = customEmbed;
+    embedAttempt = 0;
+    toast("Switched to the YouTube player source.");
     if (cur()) loadFresh(cur().id);
   };
   $("btn-play").onclick = togglePlay;
